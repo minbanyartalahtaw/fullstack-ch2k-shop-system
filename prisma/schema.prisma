@@ -1,0 +1,52 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Invoice {
+  id               Int           @id @default(autoincrement())
+  invoiceId        String        @unique // Make unique to ensure no duplicate invoice numbers
+  customer_Name    String
+  mobile_Number    String?       // Optional
+  address          String?       // Optional
+  purchase_date    DateTime
+  total_Amount     Float?        // Use Float for decimal numbers, optional
+  reject_Amount    Float?
+  remaining_Amount Float?
+  appointment_Date DateTime?
+  seller           String
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  // Relationship to ProductDetails
+  productDetailsId Int
+  productDetails   ProductDetails @relation(fields: [productDetailsId], references: [id])
+}
+
+model ProductDetails {
+  id           Int      @id @default(autoincrement())
+  product_Type String
+  product_Name String
+  purity_16    Float?    // Optional
+  purity_15    Float?
+  purity_14    Float?
+  purity_14_2  Float?
+  // Store weight as JSON. PostgreSQL supports JsonB.
+  // Make sure your Prisma client is configured for this, or
+  // normalize it into a separate model if structure is fixed.
+  weight       Json      // JsonB type in PostgreSQL
+  handWidth    String?   // Changed to String to match form
+  length       String?   // Changed to String to match form
+  isOrder      Boolean   @default(false)
+  isOrderTaken Boolean   @default(false)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  invoices Invoice[] // One-to-many or One-to-one relationship depending on your logic
+}

@@ -17,7 +17,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "./ui/collap
 
 export function AppSidebar() {
     return (
-        <Sidebar variant="floating">
+        <Sidebar variant="floating" className="pt-12">
             <SidebarContent>
                 <SidebarGroup>
                     <SidebarGroupLabel>Application</SidebarGroupLabel>
@@ -28,6 +28,17 @@ export function AppSidebar() {
                                     <a href="/office/">
                                         <div>
                                             <AppIcon name="home" className="h-4 w-4" />
+                                        </div>
+                                        <span>Home</span>
+                                    </a>
+                                </SidebarMenuButton>
+                            </SidebarMenuItem>
+
+                            <SidebarMenuItem>
+                                <SidebarMenuButton asChild>
+                                    <a href="/office/dashboard">
+                                        <div>
+                                            <AppIcon name="chart" className="h-4 w-4" />
                                         </div>
                                         <span>Dashboard</span>
                                     </a>
@@ -62,7 +73,7 @@ export function AppSidebar() {
 
                                             <SidebarMenuItem>
                                                 <SidebarMenuButton asChild>
-                                                    <a href="#">
+                                                    <a href="/office/invoice/search">
                                                         <div>
                                                             <AppIcon name="searchInvoice" className="h-4 w-4" />
                                                         </div>
@@ -73,7 +84,7 @@ export function AppSidebar() {
 
                                             <SidebarMenuItem>
                                                 <SidebarMenuButton asChild>
-                                                    <a href="#">
+                                                    <a href="/office/invoice/history">
                                                         <div>
                                                             <AppIcon name="invoiceHistory" className="h-4 w-4" />
                                                         </div>

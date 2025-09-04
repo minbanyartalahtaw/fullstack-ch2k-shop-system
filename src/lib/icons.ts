@@ -13,6 +13,7 @@ import {
     FileClock,
     Package,
     DollarSign,
+    ChartLine,
 } from "lucide-react";
 
 // Pick ONLY the icons your app should use.
@@ -30,7 +31,8 @@ export const ICONS = {
     searchInvoice: FileSearch,
     invoiceHistory: FileClock,
     product: Package,
-    price: DollarSign
+    price: DollarSign,
+    chart: ChartLine
 } satisfies Record<string, LucideIcon>;
 
 export type IconName = keyof typeof ICONS;

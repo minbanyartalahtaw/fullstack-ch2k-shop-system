@@ -2,7 +2,7 @@ import { NewInvoiceForm } from "./NewInvoiceForm";
 
 export default function Page() {
     return (
-        <div>
+        <div className=" px-4">
             <NewInvoiceForm />
         </div>
     )

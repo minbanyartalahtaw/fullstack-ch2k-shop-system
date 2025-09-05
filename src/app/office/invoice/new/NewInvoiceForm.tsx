@@ -423,7 +423,7 @@ export function NewInvoiceForm() {
                             type="text" // Changed to text to match interface
                             value={formData.product_Details.handWidth}
                             onChange={(e) => updateProductDetails("handWidth", e.target.value)}
-                            required
+
                         />
                     </div>
 
@@ -435,7 +435,7 @@ export function NewInvoiceForm() {
                             type="text" // Changed to text to match interface
                             value={formData.product_Details.length}
                             onChange={(e) => updateProductDetails("length", e.target.value)}
-                            required
+
                         />
                     </div>
 

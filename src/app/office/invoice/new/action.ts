@@ -59,7 +59,7 @@ export async function createInvoice(formData: InvoiceDataInput) {
 
         const invoice = await prisma.invoice.create({
             data: {
-                invoiceId: `INV-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+                invoiceId: `INV-${Date.now().toString().slice(0, 4)}-${Date.now().toString().slice(4, 8)}-${Date.now().toString().slice(8, 12)}-${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}`,
                 customer_Name: formData.customer_Name,
                 mobile_Number: formData.mobile_Number,
                 address: formData.address,

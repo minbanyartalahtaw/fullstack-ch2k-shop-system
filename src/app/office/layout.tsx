@@ -19,7 +19,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                     <SidebarTrigger />
                     <Separator orientation="vertical" />
                 </div>
-                <div className="pt-13 px-3 mx-auto w-[99vw] ">
+                <div className="pt-12  mx-auto w-[100vw] ">
                     <Toaster richColors position="top-right" /> {/* ✅ place here */}
                     {children}
                 </div>

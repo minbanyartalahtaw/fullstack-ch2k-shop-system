@@ -14,6 +14,15 @@ import {
     Package,
     DollarSign,
     ChartLine,
+    RefreshCcw,
+    Eye,
+    Edit,
+    ArrowUp,
+    ArrowDown,
+    ListFilter,
+    SquareArrowOutUpRight,
+    ChevronLeft,
+    ChevronRight,
 } from "lucide-react";
 
 // Pick ONLY the icons your app should use.
@@ -32,7 +41,16 @@ export const ICONS = {
     invoiceHistory: FileClock,
     product: Package,
     price: DollarSign,
-    chart: ChartLine
+    chart: ChartLine,
+    reset: RefreshCcw,
+    view: Eye,
+    edit: Edit,
+    arrowUp: ArrowUp,
+    arrowDown: ArrowDown,
+    filter: ListFilter,
+    squareArrow: SquareArrowOutUpRight,
+    arrowLeft: ChevronLeft,
+    arrowRight: ChevronRight,
 } satisfies Record<string, LucideIcon>;
 
 export type IconName = keyof typeof ICONS;

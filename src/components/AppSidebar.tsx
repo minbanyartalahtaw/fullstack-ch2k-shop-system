@@ -14,6 +14,7 @@ import {
 
 } from "@/components/ui/sidebar"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "./ui/collapsible"
+import Link from "next/link"
 
 export function AppSidebar() {
     return (
@@ -40,7 +41,7 @@ export function AppSidebar() {
                                         <div>
                                             <AppIcon name="chart" className="h-4 w-4" />
                                         </div>
-                                        <span>Dashboard</span>
+                                        <span>စရင်းဇယား</span>
                                     </a>
                                 </SidebarMenuButton>
                             </SidebarMenuItem>
@@ -51,7 +52,7 @@ export function AppSidebar() {
                                         <SidebarMenuButton className="flex justify-between items-center gap-2">
                                             <div className="flex items-center gap-2 ">
                                                 <AppIcon name="invoice" className="h-4 w-4" />
-                                                <span>Invoice</span>
+                                                <span>ဘောက်ချာ</span>
                                             </div>
                                             <div className="transition-transform duration-200 group-data-[state=open]/collapsible:rotate-180">
                                                 <AppIcon name="chevronDown" className="h-4 w-4" />
@@ -62,36 +63,37 @@ export function AppSidebar() {
                                         <SidebarMenuSub>
                                             <SidebarMenuItem>
                                                 <SidebarMenuButton asChild>
-                                                    <a href="/office/invoice/new">
+                                                    <Link href="/office/invoice/new">
                                                         <div>
                                                             <AppIcon name="newInvoice" className="h-4 w-4" />
                                                         </div>
-                                                        <span>New Invoice</span>
-                                                    </a>
+                                                        <span>အသစ်လုပ်ရန်</span>
+                                                    </Link>
                                                 </SidebarMenuButton>
                                             </SidebarMenuItem>
-
                                             <SidebarMenuItem>
                                                 <SidebarMenuButton asChild>
-                                                    <a href="/office/invoice/search">
-                                                        <div>
-                                                            <AppIcon name="searchInvoice" className="h-4 w-4" />
-                                                        </div>
-                                                        <span>Search</span>
-                                                    </a>
-                                                </SidebarMenuButton>
-                                            </SidebarMenuItem>
-
-                                            <SidebarMenuItem>
-                                                <SidebarMenuButton asChild>
-                                                    <a href="/office/invoice/history">
+                                                    <Link href="/office/invoice/history">
                                                         <div>
                                                             <AppIcon name="invoiceHistory" className="h-4 w-4" />
                                                         </div>
-                                                        <span>History</span>
-                                                    </a>
+                                                        <span>အဟောင်းများ</span>
+                                                    </Link>
                                                 </SidebarMenuButton>
                                             </SidebarMenuItem>
+
+                                            <SidebarMenuItem>
+                                                <SidebarMenuButton asChild>
+                                                    <Link href="/office/invoice/search">
+                                                        <div>
+                                                            <AppIcon name="searchInvoice" className="h-4 w-4" />
+                                                        </div>
+                                                        <span>ရှာဖွေရန်</span>
+                                                    </Link>
+                                                </SidebarMenuButton>
+                                            </SidebarMenuItem>
+
+
 
                                         </SidebarMenuSub>
                                     </CollapsibleContent>
@@ -104,19 +106,19 @@ export function AppSidebar() {
                                         <div>
                                             <AppIcon name="order" className="h-4 w-4" />
                                         </div>
-                                        <span>Order</span>
+                                        <span>အော်ဒါများ</span>
                                     </a>
                                 </SidebarMenuButton>
                             </SidebarMenuItem>
 
                             <SidebarMenuItem>
                                 <SidebarMenuButton asChild>
-                                    <a href="/office/customer">
+                                    <Link href="/office/customer">
                                         <div>
                                             <AppIcon name="user" className="h-4 w-4" />
                                         </div>
                                         <span>Customer</span>
-                                    </a>
+                                    </Link>
                                 </SidebarMenuButton>
                             </SidebarMenuItem>
 

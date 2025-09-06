@@ -202,6 +202,13 @@ export function NewInvoiceForm() {
 
     return (
         <form onSubmit={handleSubmit} className="space-y-6 mx-auto max-w-4xl">
+            <Card className="bg-muted">
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                        ဘောက်ချာအသစ်လုပ်ရန်
+                    </CardTitle>
+                </CardHeader>
+            </Card>
             {/* Customer Information */}
             <Card>
                 <CardHeader>
@@ -501,7 +508,7 @@ export function NewInvoiceForm() {
 
 
             {/* Submit Button */}
-            <div className="flex justify-end space-x-4">
+            <div className="flex justify-end space-x-4 px-2">
                 <div className="space-y-2">
                     <Select
                         value={formData.seller} // Controlled component

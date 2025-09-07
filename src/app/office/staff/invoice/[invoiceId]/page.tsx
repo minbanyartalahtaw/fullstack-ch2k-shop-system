@@ -207,8 +207,8 @@ export default async function InvoicePage({ params }: Props) {
                           : "text-red-500"
                       }>
                       {invoice.productDetails.isOrderTaken
-                        ? "အော်ဒါပေးပြီး"
-                        : "အော်ဒါမပေးရသေးပါ"}
+                        ? "ပစ္စည်းပေးပြီး"
+                        : "ပစ္စည်းမပေးရသေးပါ"}
                     </TableCell>
                   </TableRow>
                 </TableBody>

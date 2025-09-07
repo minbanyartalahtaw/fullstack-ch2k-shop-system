@@ -25,7 +25,7 @@ import {
   Dialog,
   DialogContent,
   DialogFooter,
-  DialogHeader,
+
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
@@ -47,6 +47,7 @@ const COLUMNS: ColumnConfig[] = [
   { id: "purchaseDate", label: "ရက်စွဲ", visible: true },
   { id: 'appointmentDate', label: 'ရက်ချိန်း', visible: true },
   { id: "productType", label: "ပစ္စည်းအမျိုးအစား", visible: true },
+  { id: "productName", label: "ပစ္စည်းအမည်", visible: true },
   { id: "totalAmount", label: "တန်ဖိုး", visible: true },
   { id: "receivedAmount", label: "စရံငွေ", visible: false },
   { id: "remainingAmount", label: "ကျန်ငွေ", visible: false },
@@ -125,6 +126,7 @@ export function InvoiceHistoryTable() {
       toast.error("Server Error.", {
         description: "Please try again later"
       });
+      throw error;
     }
   }
 
@@ -199,6 +201,11 @@ export function InvoiceHistoryTable() {
             {invoice.productDetails.product_Type}
           </TableCell>
         )}
+        {columnVisibility.productName && (
+          <TableCell className="border">
+            {invoice.productDetails.product_Name}
+          </TableCell>
+        )}
         {columnVisibility.totalAmount && (
           <TableCell className="border">
             {formatCurrency(invoice.total_Amount)}
@@ -229,16 +236,16 @@ export function InvoiceHistoryTable() {
             <Dialog>
               <DialogTrigger
                 className={`px-4 py-2 rounded-md text-sm ${invoice.productDetails.isOrderTaken
-                  ? 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200'
-                  : 'bg-green-100 text-green-800 hover:bg-green-200'
+                  ? 'bg-yellow-200 text-yellow-800 '
+                  : 'bg-green-100 text-green-800 hover:bg-green-200 cursor-pointer'
                   }`}
                 disabled={invoice.productDetails.isOrderTaken}
               >
-                {invoice.productDetails.isOrderTaken ? '✓ ပစ္စည်းပေးပြီး' : '⦿  ပစ္စည်းပေးရန်'}
+                {invoice.productDetails.isOrderTaken ? 'ပစ္စည်းပေးပြီး' : 'ပစ္စည်းပေးရန်'}
               </DialogTrigger>
               <DialogContent>
 
-                <DialogTitle>ပစ္စည်းထုတ်ယူခြင်း အတည်ပြုရန်</DialogTitle>
+                <DialogTitle>အတည်ပြုရန်</DialogTitle>
 
                 <Table>
                   <TableBody>
@@ -258,7 +265,7 @@ export function InvoiceHistoryTable() {
                 </Table>
 
                 <DialogFooter>
-                  <Button onClick={() => handleIsOrderTakenClick(invoice.invoiceId, invoice.customer_Name)}>ပစ္စည်းပေးရန်</Button>
+                  <Button className="cursor-pointer" variant="destructive" onClick={() => handleIsOrderTakenClick(invoice.invoiceId, invoice.customer_Name)}>ပစ္စည်းပေးရန်</Button>
                 </DialogFooter>
 
               </DialogContent>

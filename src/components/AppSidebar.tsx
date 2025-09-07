@@ -16,36 +16,17 @@ import {
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "./ui/collapsible"
 import Link from "next/link"
 
+
+
 export function AppSidebar() {
+
     return (
         <Sidebar variant="floating" className="pt-12">
             <SidebarContent>
                 <SidebarGroup>
-                    <SidebarGroupLabel>Application</SidebarGroupLabel>
+                    <SidebarGroupLabel>ဝန်ထမ်း</SidebarGroupLabel>
                     <SidebarGroupContent>
                         <SidebarMenu>
-                            <SidebarMenuItem>
-                                <SidebarMenuButton asChild>
-                                    <a href="/office/">
-                                        <div>
-                                            <AppIcon name="home" className="h-4 w-4" />
-                                        </div>
-                                        <span>Home</span>
-                                    </a>
-                                </SidebarMenuButton>
-                            </SidebarMenuItem>
-
-                            <SidebarMenuItem>
-                                <SidebarMenuButton asChild>
-                                    <a href="/office/dashboard">
-                                        <div>
-                                            <AppIcon name="chart" className="h-4 w-4" />
-                                        </div>
-                                        <span>စရင်းဇယား</span>
-                                    </a>
-                                </SidebarMenuButton>
-                            </SidebarMenuItem>
-
                             <Collapsible defaultOpen className="group/collapsible">
                                 <SidebarMenuItem>
                                     <CollapsibleTrigger asChild>
@@ -63,7 +44,7 @@ export function AppSidebar() {
                                         <SidebarMenuSub>
                                             <SidebarMenuItem>
                                                 <SidebarMenuButton asChild>
-                                                    <Link href="/office/invoice/new">
+                                                    <Link href="/office/staff/invoice/new">
                                                         <div>
                                                             <AppIcon name="newInvoice" className="h-4 w-4" />
                                                         </div>
@@ -73,7 +54,7 @@ export function AppSidebar() {
                                             </SidebarMenuItem>
                                             <SidebarMenuItem>
                                                 <SidebarMenuButton asChild>
-                                                    <Link href="/office/invoice/history">
+                                                    <Link href="/office/staff/invoice/history">
                                                         <div>
                                                             <AppIcon name="invoiceHistory" className="h-4 w-4" />
                                                         </div>
@@ -84,7 +65,7 @@ export function AppSidebar() {
 
                                             <SidebarMenuItem>
                                                 <SidebarMenuButton asChild>
-                                                    <Link href="/office/invoice/search">
+                                                    <Link href="/office/staff/invoice/search">
                                                         <div>
                                                             <AppIcon name="searchInvoice" className="h-4 w-4" />
                                                         </div>
@@ -102,7 +83,7 @@ export function AppSidebar() {
 
                             <SidebarMenuItem>
                                 <SidebarMenuButton asChild>
-                                    <a href="/office/order">
+                                    <a href="/office/staff/order">
                                         <div>
                                             <AppIcon name="order" className="h-4 w-4" />
                                         </div>
@@ -113,7 +94,7 @@ export function AppSidebar() {
 
                             <SidebarMenuItem>
                                 <SidebarMenuButton asChild>
-                                    <Link href="/office/customer">
+                                    <Link href="/office/staff/customer">
                                         <div>
                                             <AppIcon name="user" className="h-4 w-4" />
                                         </div>
@@ -122,6 +103,36 @@ export function AppSidebar() {
                                 </SidebarMenuButton>
                             </SidebarMenuItem>
 
+                        </SidebarMenu>
+                    </SidebarGroupContent>
+                </SidebarGroup>
+
+
+                <SidebarGroup>
+                    <SidebarGroupLabel>Owner</SidebarGroupLabel>
+                    <SidebarGroupContent>
+                        <SidebarMenu>
+                            <SidebarMenuItem>
+                                <SidebarMenuButton asChild>
+                                    <a href="/office/manager/dashboard">
+                                        <div>
+                                            <AppIcon name="chart" className="h-4 w-4" />
+                                        </div>
+                                        <span>စရင်းဇယား</span>
+                                    </a>
+                                </SidebarMenuButton>
+                            </SidebarMenuItem>
+
+                            <SidebarMenuItem>
+                                <SidebarMenuButton asChild>
+                                    <a href="/office/manager/manage-staff">
+                                        <div>
+                                            <AppIcon name="user" className="h-4 w-4" />
+                                        </div>
+                                        <span>ဝန်ထမ်း</span>
+                                    </a>
+                                </SidebarMenuButton>
+                            </SidebarMenuItem>
                         </SidebarMenu>
                     </SidebarGroupContent>
                 </SidebarGroup>

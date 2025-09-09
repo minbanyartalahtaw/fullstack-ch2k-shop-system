@@ -7,7 +7,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Label } from "@radix-ui/react-label";
-import { getInvoice, InvoiceWithDetails } from "./action";
+import { getSingleInvoice, InvoiceWithDetails } from "./action";
 
 interface Props {
   params: Promise<{
@@ -17,7 +17,7 @@ interface Props {
 
 export default async function InvoicePage({ params }: Props) {
   const { invoiceId } = await params;
-  const invoice: InvoiceWithDetails | null = await getInvoice(invoiceId);
+  const invoice: InvoiceWithDetails | null = await getSingleInvoice(invoiceId);
   if (!invoice) {
     return (
       <div className="flex h-[50vh] items-center justify-center text-gray-500">
@@ -85,7 +85,7 @@ export default async function InvoicePage({ params }: Props) {
               </TableRow>
               <TableRow>
                 <TableCell className="font-medium">ပစ္စည်းအမျိုးအစား</TableCell>
-                <TableCell>{invoice.productDetails.product_Type}</TableCell>
+                <TableCell>{invoice.productDetails.productType}</TableCell>
                 <TableCell></TableCell>
               </TableRow>
               <TableRow>

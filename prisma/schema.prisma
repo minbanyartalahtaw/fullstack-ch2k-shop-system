@@ -9,6 +9,52 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  STAFF
+  MANAGER
+}
+
+model Staff {
+  id        Int      @id @default(autoincrement())
+  staffId   String   @unique @default(uuid()) // Using UUID for secure, unique staff IDs
+  name      String
+  email     String?  @unique
+  phone     String  @unique
+  address   String
+  password  String   
+  role      Role     @default(STAFF) // STAFF | MANAGER
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ProductType {
+  id Int @id @default(autoincrement())
+  name String
+  createdAt DateTime @default(now())
+}
+
+model ProductDetails {
+  id           Int      @id @default(autoincrement())
+  productType String
+  product_Name String
+  purity_16    Float?    // Optional
+  purity_15    Float?
+  purity_14    Float?
+  purity_14_2  Float?
+  // Store weight as JSON. PostgreSQL supports JsonB.
+  // Make sure your Prisma client is configured for this, or
+  // normalize it into a separate model if structure is fixed.
+  weight       Json      // JsonB type in PostgreSQL
+  handWidth    String?   // Changed to String to match form
+  length       String?   // Changed to String to match form
+  isOrder      Boolean   @default(false)
+  isOrderTaken Boolean   @default(false)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  invoices Invoice[] // One-to-many or One-to-one relationship depending on your logic
+}
+
 model Invoice {
   id               Int           @id @default(autoincrement())
   invoiceId        String        @unique // Make unique to ensure no duplicate invoice numbers
@@ -27,26 +73,4 @@ model Invoice {
   // Relationship to ProductDetails
   productDetailsId Int
   productDetails   ProductDetails @relation(fields: [productDetailsId], references: [id])
-}
-
-model ProductDetails {
-  id           Int      @id @default(autoincrement())
-  product_Type String
-  product_Name String
-  purity_16    Float?    // Optional
-  purity_15    Float?
-  purity_14    Float?
-  purity_14_2  Float?
-  // Store weight as JSON. PostgreSQL supports JsonB.
-  // Make sure your Prisma client is configured for this, or
-  // normalize it into a separate model if structure is fixed.
-  weight       Json      // JsonB type in PostgreSQL
-  handWidth    String?   // Changed to String to match form
-  length       String?   // Changed to String to match form
-  isOrder      Boolean   @default(false)
-  isOrderTaken Boolean   @default(false)
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-
-  invoices Invoice[] // One-to-many or One-to-one relationship depending on your logic
 }

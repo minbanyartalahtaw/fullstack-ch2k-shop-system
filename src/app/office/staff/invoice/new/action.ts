@@ -2,8 +2,13 @@
 
 import prisma from "@/lib/prisma"
 
+export interface ProductType {
+    id: number;
+    name: string;
+}
+
 interface ProductDetailsInput {
-    product_Type: string;
+    productType: string;
     product_Name: string;
     purity_16?: number | null;
     purity_15?: number | null;
@@ -37,12 +42,31 @@ interface InvoiceDataInput {
     seller: string;
 }
 
+export async function getProductTypes() {
+    try {
+        const productTypes: ProductType[] = await prisma.productType.findMany({
+            select: {
+                id: true,
+                name: true,
+            }
+        });
+        return { success: true, productTypes };
+    } catch (error) {
+        console.error("Failed to get product types:", error);
+        return { success: false, error: (error as Error).message };
+    }
+}
+
 export async function createInvoice(formData: InvoiceDataInput) {
     try {
+        if (!formData.product_Details.productType) {
+            return { success: false, error: "ပစ္စည်းအမျိုးအစားရွေးရန်" };
+        }
+
         const productDetails = await prisma.productDetails.create({
             data: {
-                product_Type: formData.product_Details.product_Type,
                 product_Name: formData.product_Details.product_Name,
+                productType: formData.product_Details.productType,
                 // Ensure null for optional fields if they are undefined
                 purity_16: formData.product_Details.purity_16 ?? null,
                 purity_15: formData.product_Details.purity_15 ?? null,
@@ -75,11 +99,20 @@ export async function createInvoice(formData: InvoiceDataInput) {
                 productDetails: true,
             }
         })
-
-        console.log("Invoice created successfully:", invoice);
         return { success: true, invoice };
     } catch (error) {
         console.error("Failed to create invoice:", error);
+        return { success: false, error: (error as Error).message };
+    }
+}
+
+export async function getSellers() {
+    try {
+        const staff = await prisma.staff.findMany({ select: { id: true, name: true } });
+
+        return { success: true, staff };
+    } catch (error) {
+        console.error("Failed to get sellers:", error);
         return { success: false, error: (error as Error).message };
     }
 }

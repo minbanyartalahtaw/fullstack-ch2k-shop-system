@@ -153,14 +153,14 @@ async function getProductStats() {
 
     // Get product type distribution for chart
     const productTypes = await prisma.productDetails.groupBy({
-        by: ['product_Type'],
+        by: ['productType'],
         _count: {
             id: true
         }
     });
 
     const productTypeData = {
-        labels: productTypes.map(type => type.product_Type || 'Unspecified'),
+        labels: productTypes.map(type => type.productType || 'Unspecified'),
         counts: productTypes.map(type => type._count.id)
     };
 
@@ -248,7 +248,7 @@ async function DashboardContent() {
                         </Table>
                     </CardContent>
                     <CardFooter >
-                        <Link href="/office/order">
+                        <Link href="/office/staff/order">
                             <Button variant="ghost" className="w-full">
                                 အသေးစိတ်ကြည့်ရန်
                             </Button>

@@ -145,7 +145,7 @@ export function InvoiceHistoryTable() {
         )}
         {columnVisibility.productType && (
           <TableCell className="border">
-            {invoice.productDetails.product_Type}
+            {invoice.productDetails.productType}
           </TableCell>
         )}
         {columnVisibility.totalAmount && (
@@ -166,18 +166,17 @@ export function InvoiceHistoryTable() {
         {columnVisibility.orderType && (
           <TableCell className="min-w-[62px] border">
             <span
-              className={`inline-flex text-center items-center rounded-full px-2 py-1 text-xs font-medium ${
-                invoice.productDetails.isOrder
-                  ? "bg-green-50 text-green-700"
-                  : "bg-yellow-50 text-yellow-700"
-              }`}>
+              className={`inline-flex text-center items-center rounded-full px-2 py-1 text-xs font-medium ${invoice.productDetails.isOrder
+                ? "bg-green-50 text-green-700"
+                : "bg-yellow-50 text-yellow-700"
+                }`}>
               {invoice.productDetails.isOrder ? "အော်ဒါ" : "အရောင်း"}
             </span>
           </TableCell>
         )}
         {columnVisibility.actions && (
           <TableCell>
-            <a href={`/office/invoice/${invoice.invoiceId}`}>
+            <a href={`/office/staff/invoice/${invoice.invoiceId}`}>
               <AppIcon name="squareArrow" className="h-4 w-4" />
               <span className="sr-only">View</span>
             </a>

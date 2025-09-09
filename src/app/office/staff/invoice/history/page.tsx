@@ -7,10 +7,10 @@ import { InvoiceHistoryTable } from './components/invoice-history-table'
 import { InvoiceHistorySkeleton } from './components/invoice-history-skeleton'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { AppIcon } from '@/components/app-icons'
-import { useIsMobile } from '@/hooks/use-mobile'
+
 
 export default function InvoiceHistory() {
-    const isMobile = useIsMobile();
+
     return (
         <div className="w-full h-full overflow-auto  px-1">
             <Card className="w-full">
@@ -19,7 +19,7 @@ export default function InvoiceHistory() {
                         <AppIcon name="invoiceHistory" className="h-5 w-5" />
                         ဘောက်ချာအဟောင်းများ                    </CardTitle>
                 </CardHeader>
-                <CardContent className={`${isMobile ? 'p-1' : ''}`} >
+                <CardContent>
                     <Suspense fallback={<InvoiceHistorySkeleton />}>
                         <InvoiceHistoryTable />
                     </Suspense>

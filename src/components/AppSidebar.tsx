@@ -16,10 +16,12 @@ import {
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "./ui/collapsible"
 import Link from "next/link"
 
+interface Prop {
+    role: string
+}
 
 
-export function AppSidebar() {
-
+export function AppSidebar({ role }: Prop) {
     return (
         <Sidebar variant="floating" className="pt-12">
             <SidebarContent>
@@ -96,7 +98,7 @@ export function AppSidebar() {
                                 <SidebarMenuButton asChild>
                                     <Link href="/office/staff/customer">
                                         <div>
-                                            <AppIcon name="user" className="h-4 w-4" />
+                                            <AppIcon name="customer" className="h-4 w-4" />
                                         </div>
                                         <span>Customer</span>
                                     </Link>
@@ -108,34 +110,78 @@ export function AppSidebar() {
                 </SidebarGroup>
 
 
-                <SidebarGroup>
-                    <SidebarGroupLabel>Owner</SidebarGroupLabel>
-                    <SidebarGroupContent>
-                        <SidebarMenu>
-                            <SidebarMenuItem>
-                                <SidebarMenuButton asChild>
-                                    <a href="/office/manager/dashboard">
-                                        <div>
-                                            <AppIcon name="chart" className="h-4 w-4" />
-                                        </div>
-                                        <span>စရင်းဇယား</span>
-                                    </a>
-                                </SidebarMenuButton>
-                            </SidebarMenuItem>
+                {role === "MANAGER" && (
+                    <SidebarGroup>
+                        <SidebarGroupLabel>မန်နေဂျာ</SidebarGroupLabel>
+                        <SidebarGroupContent>
+                            <SidebarMenu>
+                                <SidebarMenuItem>
+                                    <SidebarMenuButton asChild>
+                                        <a href="/office/manager/dashboard">
+                                            <div>
+                                                <AppIcon name="chart" className="h-4 w-4" />
+                                            </div>
+                                            <span>စရင်းဇယား</span>
+                                        </a>
+                                    </SidebarMenuButton>
+                                </SidebarMenuItem>
 
-                            <SidebarMenuItem>
-                                <SidebarMenuButton asChild>
-                                    <a href="/office/manager/manage-staff">
-                                        <div>
-                                            <AppIcon name="user" className="h-4 w-4" />
-                                        </div>
-                                        <span>ဝန်ထမ်း</span>
-                                    </a>
-                                </SidebarMenuButton>
-                            </SidebarMenuItem>
-                        </SidebarMenu>
-                    </SidebarGroupContent>
-                </SidebarGroup>
+
+                                <Collapsible defaultOpen={false} className="group/collapsible">
+                                    <SidebarMenuItem>
+                                        <CollapsibleTrigger asChild>
+                                            <SidebarMenuButton className="flex justify-between items-center gap-2">
+                                                <div className="flex items-center gap-2 ">
+                                                    <AppIcon name="staff" className="h-4 w-4" />
+                                                    <span>ဝန်ထမ်းဆိုင်ရာ</span>
+                                                </div>
+                                                <div className="transition-transform duration-200 group-data-[state=open]/collapsible:rotate-180">
+                                                    <AppIcon name="chevronDown" className="h-4 w-4" />
+                                                </div>
+                                            </SidebarMenuButton>
+                                        </CollapsibleTrigger>
+                                        <CollapsibleContent>
+                                            <SidebarMenuSub>
+                                                <SidebarMenuItem>
+                                                    <SidebarMenuButton asChild>
+                                                        <Link href="/office/manager/manage-staff/new">
+                                                            <div>
+                                                                <AppIcon name="staffAdd" className="h-4 w-4" />
+                                                            </div>
+                                                            <span>ဝန်ထမ်းအသစ်လုပ်ရန်</span>
+                                                        </Link>
+                                                    </SidebarMenuButton>
+                                                </SidebarMenuItem>
+                                                <SidebarMenuItem>
+                                                    <SidebarMenuButton asChild>
+                                                        <Link href="/office/manager/manage-staff/edit">
+                                                            <div>
+                                                                <AppIcon name="staffEdit" className="h-4 w-4" />
+                                                            </div>
+                                                            <span>ဝန်ထမ်းပြင်ရန်</span>
+                                                        </Link>
+                                                    </SidebarMenuButton>
+                                                </SidebarMenuItem>
+
+                                            </SidebarMenuSub>
+                                        </CollapsibleContent>
+                                    </SidebarMenuItem>
+                                </Collapsible>
+
+                                <SidebarMenuItem>
+                                    <SidebarMenuButton asChild>
+                                        <a href="/office/manager/productType">
+                                            <div>
+                                                <AppIcon name="productTypeNew" className="h-4 w-4" />
+                                            </div>
+                                            <span>ပစ္စည်းအမျိုးအစား</span>
+                                        </a>
+                                    </SidebarMenuButton>
+                                </SidebarMenuItem>
+                            </SidebarMenu>
+                        </SidebarGroupContent>
+                    </SidebarGroup>
+                )}
             </SidebarContent>
         </Sidebar>
     )

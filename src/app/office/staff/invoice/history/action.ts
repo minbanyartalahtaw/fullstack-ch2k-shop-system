@@ -19,7 +19,7 @@ export type InvoiceWithDetails = {
   productDetailsId: number
   productDetails: {
     id: number
-    product_Type: string
+    productType: string
     product_Name: string
     purity_16: number | null
     purity_15: number | null

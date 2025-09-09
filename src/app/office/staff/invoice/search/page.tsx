@@ -18,7 +18,7 @@ export default function InvoiceHistory() {
   });
 
   return (
-    <div className="w-full h-full overflow-auto px-2">
+    <div className="w-full h-full overflow-auto px-1">
       <Card className="w-full">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">

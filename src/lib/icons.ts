@@ -23,6 +23,10 @@ import {
     SquareArrowOutUpRight,
     ChevronLeft,
     ChevronRight,
+    CircleUserRound,
+    UserRoundPlus,
+    UserRoundPen,
+    FileType,
 } from "lucide-react";
 
 // Pick ONLY the icons your app should use.
@@ -31,7 +35,8 @@ export const ICONS = {
     home: Home,
     search: Search,
     settings: Settings,
-    user: User,
+    customer: CircleUserRound,
+    staff: User,
     calendar: Calendar,
     order: ShoppingCart,
     invoice: FileText,
@@ -51,6 +56,9 @@ export const ICONS = {
     squareArrow: SquareArrowOutUpRight,
     arrowLeft: ChevronLeft,
     arrowRight: ChevronRight,
+    staffAdd: UserRoundPlus,
+    staffEdit: UserRoundPen,
+    productTypeNew: FileType,
 } satisfies Record<string, LucideIcon>;
 
 export type IconName = keyof typeof ICONS;

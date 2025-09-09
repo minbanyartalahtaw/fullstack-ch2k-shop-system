@@ -15,7 +15,7 @@ export type InvoiceWithDetails = {
     seller: string
     productDetails: {
         id: number
-        product_Type: string
+        productType: string
         product_Name: string
         purity_16: number | null
         purity_15: number | null
@@ -32,14 +32,14 @@ export type InvoiceWithDetails = {
     }
 }
 
-export async function getInvoice(invoiceId: string): Promise<InvoiceWithDetails | null> {
-    const invoice: InvoiceWithDetails | null = await prisma.invoice.findUnique({
+export async function getSingleInvoice(invoiceId: string): Promise<InvoiceWithDetails | null> {
+    const invoice = await prisma.invoice.findUnique({
         where: {
             invoiceId,
         },
         include: {
             productDetails: true,
         }
-    })
+    }) as InvoiceWithDetails;
     return invoice;
 }

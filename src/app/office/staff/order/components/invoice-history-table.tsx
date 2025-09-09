@@ -25,7 +25,6 @@ import {
   Dialog,
   DialogContent,
   DialogFooter,
-
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
@@ -198,7 +197,7 @@ export function InvoiceHistoryTable() {
         )}
         {columnVisibility.productType && (
           <TableCell className="border">
-            {invoice.productDetails.product_Type}
+            {invoice.productDetails.productType}
           </TableCell>
         )}
         {columnVisibility.productName && (
@@ -259,7 +258,7 @@ export function InvoiceHistoryTable() {
                     </TableRow>
                     <TableRow>
                       <TableCell className="font-semibold">ပစ္စည်းအမျိုးအစား</TableCell>
-                      <TableCell>{invoice.productDetails.product_Type}</TableCell>
+                      <TableCell>{invoice.productDetails.productType}</TableCell>
                     </TableRow>
                   </TableBody>
                 </Table>
@@ -274,7 +273,7 @@ export function InvoiceHistoryTable() {
         )}
         {columnVisibility.actions && (
           <TableCell>
-            <a href={`/office/invoice/${invoice.invoiceId}`}>
+            <a href={`/office/staff/invoice/${invoice.invoiceId}`}>
               <AppIcon name="squareArrow" className="h-4 w-4" />
               <span className="sr-only">View</span>
             </a>

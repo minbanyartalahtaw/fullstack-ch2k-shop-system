@@ -19,7 +19,7 @@ export type InvoiceWithDetails = {
   productDetailsId: number
   productDetails: {
     id: number
-    product_Type: string
+    productType: string
     product_Name: string
     purity_16: number | null
     purity_15: number | null
@@ -98,14 +98,31 @@ export async function getInvoices(params: GetInvoicesParams = {}) {
     const invoices = await prisma.invoice.findMany({
       where,
       include: {
-        productDetails: true,
+        productDetails: {
+          select: {
+            id: true,
+            productType: true,
+            product_Name: true,
+            purity_16: true,
+            purity_15: true,
+            purity_14: true,
+            purity_14_2: true,
+            weight: true,
+            handWidth: true,
+            length: true,
+            isOrder: true,
+            isOrderTaken: true,
+            createdAt: true,
+            updatedAt: true
+          }
+        }
       },
       orderBy: {
-        createdAt: 'desc',
+        createdAt: "desc",
       },
       skip,
       take: limit,
-    })
+    }) as InvoiceWithDetails[];
 
     // Simulate 2 second delay
     // await new Promise(resolve => setTimeout(resolve, 500))

@@ -9,7 +9,7 @@ export interface ProductType {
 
 interface ProductDetailsInput {
     productType: string;
-    product_Name: string;
+    productName: string;
     purity_16?: number | null;
     purity_15?: number | null;
     purity_14?: number | null;
@@ -65,7 +65,7 @@ export async function createInvoice(formData: InvoiceDataInput) {
 
         const productDetails = await prisma.productDetails.create({
             data: {
-                product_Name: formData.product_Details.product_Name,
+                productName: formData.product_Details.productName,
                 productType: formData.product_Details.productType,
                 // Ensure null for optional fields if they are undefined
                 purity_16: formData.product_Details.purity_16 ?? null,

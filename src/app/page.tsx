@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 
 export default function Home() {
   const router = useRouter();
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const formData = new FormData(e.target as HTMLFormElement)
@@ -28,31 +29,29 @@ export default function Home() {
     return
   }
   return (
-    <Card className="flex h-screen w-full items-center justify-center bg-gray-50">
-      <CardContent className="w-full max-w-md space-y-8 rounded-lg bg-white p-6 shadow-lg">
-
-        <CardTitle className="text-2xl font-bold tracking-tight text-gray-900 text-center">
-          Welcome
+    <Card className="flex h-screen w-full items-center justify-center bg-white">
+      <CardContent className="w-full max-w-sm space-y-6 p-8">
+        <CardTitle className="text-xl font-medium text-gray-900 text-center">
+          Welcome Back
         </CardTitle>
 
-
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+        <form className="space-y-5" onSubmit={handleSubmit}>
           <div className="space-y-4">
             <div>
-              <Label htmlFor="email" className="block text-sm font-medium text-gray-700">
+              <Label htmlFor="phoneNumber" className="text-sm text-gray-600">
                 Phone Number
               </Label>
               <Input
                 id="phoneNumber"
                 name="phoneNumber"
                 required
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+                className="mt-2 w-full border-gray-200 bg-gray-50/50 focus:border-gray-300 focus:ring-0"
                 placeholder="Enter your phone number"
               />
             </div>
 
             <div>
-              <Label htmlFor="password" className="block text-sm font-medium text-gray-700">
+              <Label htmlFor="password" className="text-sm text-gray-600">
                 Password
               </Label>
               <Input
@@ -61,16 +60,15 @@ export default function Home() {
                 type="password"
                 autoComplete="current-password"
                 required
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+                className="mt-2 w-full border-gray-200 bg-gray-50/50 focus:border-gray-300 focus:ring-0"
                 placeholder="Enter your password"
               />
             </div>
           </div>
 
-
           <Button
             type="submit"
-            className="w-full"
+            className="w-full bg-gray-900 hover:bg-gray-800 transition-colors"
           >
             Sign in
           </Button>

@@ -4,6 +4,7 @@ import { AppIcon } from "./app-icons"
 import {
     Sidebar,
     SidebarContent,
+    SidebarFooter,
     SidebarGroup,
     SidebarGroupContent,
     SidebarGroupLabel,
@@ -15,6 +16,7 @@ import {
 } from "@/components/ui/sidebar"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "./ui/collapsible"
 import Link from "next/link"
+import { Button } from "./ui/button"
 
 interface Prop {
     role: string
@@ -94,7 +96,7 @@ export function AppSidebar({ role }: Prop) {
                                 </SidebarMenuButton>
                             </SidebarMenuItem>
 
-                            <SidebarMenuItem>
+                            {/*                             <SidebarMenuItem>
                                 <SidebarMenuButton asChild>
                                     <Link href="/office/staff/customer">
                                         <div>
@@ -103,7 +105,7 @@ export function AppSidebar({ role }: Prop) {
                                         <span>Customer</span>
                                     </Link>
                                 </SidebarMenuButton>
-                            </SidebarMenuItem>
+                            </SidebarMenuItem> */}
 
                         </SidebarMenu>
                     </SidebarGroupContent>
@@ -183,6 +185,18 @@ export function AppSidebar({ role }: Prop) {
                     </SidebarGroup>
                 )}
             </SidebarContent>
+            {/*             <SidebarFooter>
+
+                <SidebarMenuButton asChild>
+                    <Button>
+                        <div>
+                            <AppIcon name="view" className="h-4 w-4" />
+                        </div>
+                        <span>Logout</span>
+                    </Button>
+                </SidebarMenuButton>
+
+            </SidebarFooter> */}
         </Sidebar>
     )
 }

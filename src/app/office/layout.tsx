@@ -14,8 +14,6 @@ export const metadata: Metadata = {
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
   const token = (await cookies()).get("staff-token")?.value;
-  const sidebarOpen = (await cookies()).get("sidebar_state")?.value;
-  console.log(sidebarOpen)
   if (!token) return null
   const payload = await verifyJwt(token);
   if (!payload) return null

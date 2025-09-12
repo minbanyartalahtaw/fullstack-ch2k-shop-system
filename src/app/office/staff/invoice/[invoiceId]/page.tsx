@@ -30,7 +30,7 @@ export default async function InvoicePage({ params }: Props) {
       <Card className="">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            ဘောက်ချာနံပါတ် : {invoice.invoiceId}
+            {invoice.invoiceId}
           </CardTitle>
         </CardHeader>
       </Card>
@@ -80,7 +80,7 @@ export default async function InvoicePage({ params }: Props) {
             <TableBody>
               <TableRow>
                 <TableCell className="font-medium">ပစ္စည်းအမည်</TableCell>
-                <TableCell>{invoice.productDetails.product_Name}</TableCell>
+                <TableCell>{invoice.productDetails.productName}</TableCell>
                 <TableCell></TableCell>
               </TableRow>
               <TableRow>
@@ -93,16 +93,7 @@ export default async function InvoicePage({ params }: Props) {
                 <TableCell>{invoice.total_Amount}</TableCell>
                 <TableCell className="font-medium">ကျပ်</TableCell>
               </TableRow>
-              <TableRow>
-                <TableCell className="font-medium">လက်တိုင်း</TableCell>
-                <TableCell>{invoice.productDetails.handWidth || "-"}</TableCell>
-                <TableCell></TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="font-medium">ကြိုးအရှည်</TableCell>
-                <TableCell>{invoice.productDetails.length || "-"}</TableCell>
-                <TableCell></TableCell>
-              </TableRow>
+
             </TableBody>
           </Table>
 
@@ -185,6 +176,16 @@ export default async function InvoicePage({ params }: Props) {
               </div>
               <Table>
                 <TableBody>
+                  <TableRow className="hover:bg-white">
+                    <TableCell className="font-medium ">လက်တိုင်း</TableCell>
+                    <TableCell>{invoice.productDetails.handWidth || "-"}</TableCell>
+                    <TableCell></TableCell>
+                  </TableRow>
+                  <TableRow className="hover:bg-white">
+                    <TableCell className="font-medium">ကြိုးအရှည်</TableCell>
+                    <TableCell>{invoice.productDetails.length || "-"}</TableCell>
+                    <TableCell></TableCell>
+                  </TableRow>
                   <TableRow className="hover:bg-white">
                     <TableCell className="font-medium">စရံငွေ</TableCell>
                     <TableCell>{invoice.reject_Amount}</TableCell>

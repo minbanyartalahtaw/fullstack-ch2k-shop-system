@@ -17,7 +17,7 @@ export async function loginAction(formData: FormData) {
             staffId: true,
         }
     })
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+
     if (!result) {
         return { success: false, message: "မှားယွင်းနေပါသည်" }
     }

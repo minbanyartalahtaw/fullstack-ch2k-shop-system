@@ -25,18 +25,21 @@ model Staff {
   role      Role     @default(STAFF) // STAFF | MANAGER
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  isFire    Boolean  @default(false)
 }
 
 model ProductType {
   id Int @id @default(autoincrement())
   name String
   createdAt DateTime @default(now())
+  isAvailable Boolean @default(true)
 }
 
 model ProductDetails {
   id           Int      @id @default(autoincrement())
   productType String
-  product_Name String
+  productName String
   purity_16    Float?    // Optional
   purity_15    Float?
   purity_14    Float?

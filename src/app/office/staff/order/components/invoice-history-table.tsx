@@ -156,7 +156,7 @@ export function InvoiceHistoryTable() {
     if (loading)
       return (
         <TableRow>
-          <TableCell colSpan={10}>
+          <TableCell colSpan={11}>
             <InvoiceHistorySkeleton />
           </TableCell>
         </TableRow>
@@ -202,7 +202,7 @@ export function InvoiceHistoryTable() {
         )}
         {columnVisibility.productName && (
           <TableCell className="border">
-            {invoice.productDetails.product_Name}
+            {invoice.productDetails.productName}
           </TableCell>
         )}
         {columnVisibility.totalAmount && (

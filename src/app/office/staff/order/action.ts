@@ -20,7 +20,7 @@ export type InvoiceWithDetails = {
   productDetails: {
     id: number
     productType: string
-    product_Name: string
+    productName: string
     purity_16: number | null
     purity_15: number | null
     purity_14: number | null
@@ -90,6 +90,8 @@ export async function getInvoices(params: GetInvoicesParams = {}) {
     }
   }
 
+
+
   try {
     // Get total count for pagination
     const total = await prisma.invoice.count({ where })
@@ -102,7 +104,7 @@ export async function getInvoices(params: GetInvoicesParams = {}) {
           select: {
             id: true,
             productType: true,
-            product_Name: true,
+            productName: true,
             purity_16: true,
             purity_15: true,
             purity_14: true,

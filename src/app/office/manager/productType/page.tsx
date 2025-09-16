@@ -47,70 +47,72 @@ export default function NewProductType() {
     }, [])
 
     return (
-        <div className="p-4 space-y-6">
-            <div className="flex justify-between items-center">
-
-                <Dialog>
-                    <DialogTrigger asChild>
-                        <Button>
-                            ပစ္စည်းအမျိုးအစားထည့်ရန်
-                        </Button>
-                    </DialogTrigger>
-                    <DialogContent className="sm:max-w-md">
-                        <DialogTitle>Add New Product Type</DialogTitle>
-                        <form onSubmit={handleSubmit} className="space-y-4 py-4">
-                            <div className="space-y-2">
-                                <Input placeholder="Enter product type name" name="productName" />
-                            </div>
-                            <DialogFooter className="flex justify-end gap-2">
-                                <Button type="submit" >Add</Button>
-                            </DialogFooter>
-                        </form>
-                    </DialogContent>
-                </Dialog>
-            </div>
-
+        <div className="px-1">
             <Card>
                 <CardHeader>
                     <CardTitle>Product Types</CardTitle>
                 </CardHeader>
+                <div className="pl-5">
+                    <Dialog>
+                        <DialogTrigger asChild>
+                            <Button variant="outline" className="w-fit">
+                                ပစ္စည်းအမျိုးအစားထည့်ရန်
+                            </Button>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-md">
+                            <DialogTitle>Add New Product Type</DialogTitle>
+                            <form onSubmit={handleSubmit} className="space-y-4 py-4">
+                                <div className="space-y-2">
+                                    <Input placeholder="Enter product type name" name="productName" />
+                                </div>
+                                <DialogFooter className="flex justify-end gap-2">
+                                    <Button type="submit" >Add</Button>
+                                </DialogFooter>
+                            </form>
+                        </DialogContent>
+                    </Dialog>
+                </div>
                 <CardContent>
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>စဥ်</TableHead>
-                                <TableHead>ပစ္စည်းအမျိုးအစား</TableHead>
-                                <TableHead>createdAt</TableHead>
-                                <TableHead>Action</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {productTypes.length === 0 ? (
-                                <TableRow>
-                                    <TableCell colSpan={2} className="text-center text-muted-foreground py-6">No product types found</TableCell>
-                                </TableRow>
-                            ) : (
-                                productTypes.map((productType) => (
-                                    <TableRow key={productType.id}>
-                                        <TableCell>{productType.id}</TableCell>
-                                        <TableCell>{productType.name}</TableCell>
-                                        <TableCell>
-                                            {productType.createdAt.toLocaleDateString()}
-                                        </TableCell>
-                                        <TableCell>
-                                            <Button
-                                                variant="outline"
-                                                className={productType.isAvailable ? "text-green-500 border-green-500 hover:bg-green-100 cursor-pointer" : "text-yellow-500 border-yellow-500 hover:bg-yellow-100 cursor-pointer"}
-                                            >
-                                                {productType.isAvailable ? "Disable" : "Enable"}
-                                            </Button>
-
-                                        </TableCell>
+                    <div className="rounded-md border overflow-hidden">
+                        <div className="overflow-x-auto">
+                            <Table>
+                                <TableHeader>
+                                    <TableRow>
+                                        <TableHead>စဥ်</TableHead>
+                                        <TableHead>ပစ္စည်းအမျိုးအစား</TableHead>
+                                        <TableHead>createdAt</TableHead>
+                                        <TableHead>Action</TableHead>
                                     </TableRow>
-                                ))
-                            )}
-                        </TableBody>
-                    </Table>
+                                </TableHeader>
+                                <TableBody>
+                                    {productTypes.length === 0 ? (
+                                        <TableRow>
+                                            <TableCell colSpan={2} className="text-center text-muted-foreground py-6">No product types found</TableCell>
+                                        </TableRow>
+                                    ) : (
+                                        productTypes.map((productType) => (
+                                            <TableRow key={productType.id}>
+                                                <TableCell>{productType.id}</TableCell>
+                                                <TableCell>{productType.name}</TableCell>
+                                                <TableCell>
+                                                    {productType.createdAt.toLocaleDateString()}
+                                                </TableCell>
+                                                <TableCell>
+                                                    <Button
+                                                        variant="outline"
+                                                        className={productType.isAvailable ? "text-green-500 border-green-500 hover:bg-green-100 cursor-pointer" : "text-yellow-500 border-yellow-500 hover:bg-yellow-100 cursor-pointer"}
+                                                    >
+                                                        {productType.isAvailable ? "Disable" : "Enable"}
+                                                    </Button>
+
+                                                </TableCell>
+                                            </TableRow>
+                                        ))
+                                    )}
+                                </TableBody>
+                            </Table>
+                        </div>
+                    </div>
                 </CardContent>
             </Card>
         </div>

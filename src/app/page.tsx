@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,23 +11,23 @@ export default function Home() {
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    const formData = new FormData(e.target as HTMLFormElement)
+    e.preventDefault();
+    const formData = new FormData(e.target as HTMLFormElement);
     toast.promise(loginAction(formData), {
-      loading: 'ခနစောင့်ပါ...',
-      success: (data: { success: boolean, message: string }) => {
+      loading: "ခနစောင့်ပါ...",
+      success: (data: { success: boolean; message: string }) => {
         if (!data.success) {
           throw new Error(data.message);
         }
         router.push("/office/manager/dashboard");
-        return 'Login successful';
+        return "Login successful";
       },
       error: (err) => {
         return err.message;
-      }
+      },
     });
-    return
-  }
+    return;
+  };
   return (
     <Card className="flex h-screen w-full items-center justify-center bg-white">
       <CardContent className="w-full max-w-sm space-y-6 p-8">
@@ -68,8 +68,7 @@ export default function Home() {
 
           <Button
             type="submit"
-            className="w-full bg-gray-900 hover:bg-gray-800 transition-colors"
-          >
+            className="w-full bg-gray-900 hover:bg-gray-800 transition-colors">
             Sign in
           </Button>
         </form>

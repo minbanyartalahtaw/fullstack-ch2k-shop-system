@@ -11,43 +11,26 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
-import { createStaff, StaffFormData } from "./action";
-import { useState } from "react";
+import { createStaff } from "./action";
+import { useState, useRef } from "react";
 import { Textarea } from "@/components/ui/textarea";
 
 export default function Page() {
-  const [formData, setFormData] = useState<StaffFormData>({
-    name: "",
-    email: "",
-    phone: "",
-    address: "",
-    password: "",
-    role: "MANAGER",
-  });
-
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const formRef = useRef<HTMLFormElement>(null);
 
-  const updateFormData = (field: keyof StaffFormData, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
 
     try {
+      const formData = new FormData(e.currentTarget);
+
       const result = await createStaff(formData);
 
       if (result.success) {
         toast.success(`${result.staff?.name} အကောင့်ဖွင့်ပြီးပါပြီ`);
-        setFormData({
-          name: "",
-          email: "",
-          phone: "",
-          address: "",
-          password: "",
-          role: "STAFF",
-        });
+        formRef.current?.reset();
       } else {
         toast.error(
           result.error || "ဝန်ထမ်းထည့်သွင်းရာတွင်အမှားတစ်ခုဖြစ်ပေါ်ခဲ့သည်"
@@ -60,12 +43,13 @@ export default function Page() {
       setIsSubmitting(false);
     }
   };
+
   return (
     <div className="mt-10">
       <Card className="max-w-xl mx-auto">
         <CardTitle className="text-center">Hello a First User </CardTitle>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-3">
               <div>
                 <Label htmlFor="name" className="text-sm">
@@ -73,8 +57,7 @@ export default function Page() {
                 </Label>
                 <Input
                   id="name"
-                  value={formData.name}
-                  onChange={(e) => updateFormData("name", e.target.value)}
+                  name="name"
                   placeholder="Enter staff name"
                   className="mt-1.5"
                   required
@@ -87,9 +70,8 @@ export default function Page() {
                 </Label>
                 <Input
                   id="email"
+                  name="email"
                   type="email"
-                  value={formData.email || ""}
-                  onChange={(e) => updateFormData("email", e.target.value)}
                   placeholder="Enter email address"
                   className="mt-1.5"
                 />
@@ -101,8 +83,7 @@ export default function Page() {
                 </Label>
                 <Input
                   id="phone"
-                  value={formData.phone}
-                  onChange={(e) => updateFormData("phone", e.target.value)}
+                  name="phone"
                   placeholder="Enter phone number"
                   className="mt-1.5"
                   required
@@ -115,8 +96,7 @@ export default function Page() {
                 </Label>
                 <Textarea
                   id="address"
-                  value={formData.address}
-                  onChange={(e) => updateFormData("address", e.target.value)}
+                  name="address"
                   placeholder="Enter address"
                   className="mt-1.5 resize-none"
                   rows={3}
@@ -130,9 +110,8 @@ export default function Page() {
                 </Label>
                 <Input
                   id="password"
+                  name="password"
                   type="password"
-                  value={formData.password}
-                  onChange={(e) => updateFormData("password", e.target.value)}
                   placeholder="Enter password"
                   className="mt-1.5"
                   required
@@ -143,9 +122,7 @@ export default function Page() {
                 <Label htmlFor="role" className="text-sm">
                   Role
                 </Label>
-                <Select
-                  value={formData.role}
-                  onValueChange={(value) => updateFormData("role", value)}>
+                <Select name="role" defaultValue="MANAGER">
                   <SelectTrigger id="role" className="mt-1.5">
                     <SelectValue placeholder="Select role" />
                   </SelectTrigger>

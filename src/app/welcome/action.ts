@@ -45,13 +45,30 @@ function validateStaffData(data: StaffFormData): {
   return { success: true, message: "Validation successful" };
 }
 
-export async function createStaff(data: StaffFormData) {
+export async function createStaff(formData: FormData) {
   try {
     const isUserExit = await prisma.staff.findFirst();
     if (isUserExit) {
       return { success: false, error: "You Can't Create User From This" };
     }
-    // Validate input data
+
+    // Extract and validate input data
+    const name = formData.get("name") as string;
+    const email = formData.get("email") as string;
+    const phone = formData.get("phone") as string;
+    const address = formData.get("address") as string;
+    const password = formData.get("password") as string;
+    const role = formData.get("role") as "STAFF" | "MANAGER";
+
+    const data: StaffFormData = {
+      name,
+      email: email || null,
+      phone,
+      address,
+      password,
+      role,
+    };
+
     const validation = validateStaffData(data);
 
     if (!validation.success) {
@@ -65,8 +82,8 @@ export async function createStaff(data: StaffFormData) {
         email: data.email || null,
         phone: data.phone,
         address: data.address,
-        password: data.password, // Note: Should be hashed in production
-        role: data.role || "STAFF",
+        password: data.password, // ⚠️ TODO: Hash password with bcrypt in production
+        role: data.role,
       },
       select: {
         name: true,

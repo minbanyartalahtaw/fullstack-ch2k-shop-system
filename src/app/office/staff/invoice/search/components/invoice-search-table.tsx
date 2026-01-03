@@ -110,7 +110,7 @@ export function InvoiceHistoryTable({
   useEffect(() => {
     // Only fetch if search is not empty
     if (searchParams.search.trim() !== "") {
-      const debounceTimer = setTimeout(fetchInvoices, 300);
+      const debounceTimer = setTimeout(fetchInvoices, 500);
       return () => clearTimeout(debounceTimer);
     } else {
       // Clear invoices when search is empty
@@ -200,10 +200,11 @@ export function InvoiceHistoryTable({
         {columnVisibility.orderType && (
           <TableCell className="min-w-[62px] border">
             <span
-              className={`inline-flex text-center items-center rounded-full px-2 py-1 text-xs font-medium ${invoice.productDetails.isOrder
-                ? "bg-green-50 text-green-700"
-                : "bg-yellow-50 text-yellow-700"
-                }`}>
+              className={`inline-flex text-center items-center rounded-full px-2 py-1 text-xs font-medium ${
+                invoice.productDetails.isOrder
+                  ? "bg-green-50 text-green-700"
+                  : "bg-yellow-50 text-yellow-700"
+              }`}>
               {invoice.productDetails.isOrder ? "အော်ဒါ" : "အရောင်း"}
             </span>
           </TableCell>

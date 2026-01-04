@@ -117,6 +117,7 @@ export function InvoiceHistoryTable() {
               toast.info(`Cancel ${name} အော်ဒါပစ္စည်း`);
             } catch (error) {
               toast.error("Failed to undo the action");
+              console.log(error)
             }
           }
         },

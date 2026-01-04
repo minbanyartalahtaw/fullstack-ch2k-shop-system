@@ -8,8 +8,10 @@ import { InvoiceHistorySkeleton } from "./components/invoice-search-skeleton";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AppIcon } from "@/components/app-icons";
 import { Separator } from "@/components/ui/separator";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export default function InvoiceHistory() {
+  const isMobile = useIsMobile();
   const [filters, setFilters] = useState({
     search: "",
     startDate: undefined as Date | undefined,
@@ -19,14 +21,14 @@ export default function InvoiceHistory() {
 
   return (
     <div className="w-full h-full overflow-auto px-1">
-      <Card className="w-full">
+      <Card className="w-full" variant={"noborder"}>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <AppIcon name="searchInvoice" className="h-5 w-5" />
             ဘောက်ချာရှာရန်{" "}
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className={`${isMobile ? 'p-1' : ''}`}>
           <Suspense fallback={<InvoiceHistorySkeleton />}>
             <InvoiceHistoryFilters onFilterChange={(f) => setFilters(f)} />
             <Separator className="my-4" />

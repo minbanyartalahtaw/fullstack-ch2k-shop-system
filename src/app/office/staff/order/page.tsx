@@ -13,7 +13,7 @@ export default function InvoiceHistory() {
     const isMobile = useIsMobile();
     return (
         <div className="w-full h-full overflow-auto  px-1">
-            <Card className="w-full">
+            <Card className="w-full" variant={"noborder"}>
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                         <AppIcon name="order" className="h-5 w-5" />

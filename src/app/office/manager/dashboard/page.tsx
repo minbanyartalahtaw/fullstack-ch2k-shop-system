@@ -289,7 +289,7 @@ async function DashboardContent() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
-        <Card>
+        <Card >
           <CardHeader>
             <CardTitle>Product Type Graph</CardTitle>
           </CardHeader>

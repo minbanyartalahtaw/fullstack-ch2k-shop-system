@@ -1,6 +1,5 @@
 "use client"
 
-import { AppIcon } from "@/components/app-icons";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Suspense } from "react";
 import ManageStaffTable from "./components/manage-staff-table";

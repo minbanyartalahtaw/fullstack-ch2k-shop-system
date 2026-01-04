@@ -228,7 +228,7 @@ export function NewInvoiceForm() {
             success: `${(await promise).invoice?.customer_Name} ဘောက်ချာသိမ်းပြီး `,
             error: (err) => `Error: ${err.message || "Failed to save data!"}`,
             action: {
-                label: "View",
+                label: "ကြည့်ရန်",
                 onClick: async () => {
                     router.push(`/office/staff/invoice/${(await promise).invoice?.invoiceId}`);
                 }
@@ -238,7 +238,7 @@ export function NewInvoiceForm() {
 
     return (
         <form onSubmit={handleSubmit} className="space-y-6 mx-auto max-w-4xl">
-            <Card className="bg-muted">
+            <Card className="bg-muted border shadow-sm">
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                         ဘောက်ချာအသစ်လုပ်ရန်
@@ -246,7 +246,7 @@ export function NewInvoiceForm() {
                 </CardHeader>
             </Card>
             {/* Customer Information */}
-            <Card>
+            <Card >
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                         <AppIcon name="customer" className="h-5 w-5" />
@@ -314,7 +314,7 @@ export function NewInvoiceForm() {
             </Card>
 
             {/* Product Details */}
-            <Card>
+            <Card >
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                         <AppIcon name="product" className="h-5 w-5" />

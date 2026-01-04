@@ -16,14 +16,14 @@ interface DoughnutChartProps {
 
 // Predefined minimalist color palette
 const colorPalette = [
-  { bg: '#E8EAF6', border: '#3F51B5' }, // Indigo
-  { bg: '#FCE4EC', border: '#E91E63' }, // Pink
-  { bg: '#F1F8E9', border: '#8BC34A' }, // Light Green
-  { bg: '#FFF3E0', border: '#FF5722' }, // Deep Orange
-  { bg: '#E1F5FE', border: '#03A9F4' }, // Light Blue
-  { bg: '#F3E5F5', border: '#673AB7' }, // Deep Purple
-  { bg: '#FFFDE7', border: '#FFEB3B' }, // Yellow
-  { bg: '#EFEBE9', border: '#795548' }  // Brown
+  { bg: '#EFF6FF', border: '#3B82F6' }, // Blue
+  { bg: '#F0FDF4', border: '#10B981' }, // Green
+  { bg: '#FEF3C7', border: '#F59E0B' }, // Amber
+  { bg: '#FCE7F3', border: '#EC4899' }, // Pink
+  { bg: '#F0F9FF', border: '#0EA5E9' }, // Sky Blue
+  { bg: '#F5F3FF', border: '#8B5CF6' }, // Violet
+  { bg: '#FFF7ED', border: '#F97316' }, // Orange
+  { bg: '#F1F5F9', border: '#64748B' }  // Slate Gray
 ];
 
 const generateColors = (count: number) => {

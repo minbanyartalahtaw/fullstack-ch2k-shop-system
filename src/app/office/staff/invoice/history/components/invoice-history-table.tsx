@@ -88,6 +88,7 @@ export function InvoiceHistoryTable() {
   // Effects
   useEffect(() => {
     fetchInvoices();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pagination.page, pagination.limit]);
 
   // Render helpers

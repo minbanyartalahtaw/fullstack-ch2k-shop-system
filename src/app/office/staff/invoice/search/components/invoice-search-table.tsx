@@ -119,6 +119,7 @@ export function InvoiceHistoryTable({
       setLoading(false);
       onLoadingChange?.(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pagination.page, pagination.limit, searchParams]);
 
   // Render helpers
@@ -200,11 +201,10 @@ export function InvoiceHistoryTable({
         {columnVisibility.orderType && (
           <TableCell className="min-w-[62px] border">
             <span
-              className={`inline-flex text-center items-center rounded-full px-2 py-1 text-xs font-medium ${
-                invoice.productDetails.isOrder
+              className={`inline-flex text-center items-center rounded-full px-2 py-1 text-xs font-medium ${invoice.productDetails.isOrder
                   ? "bg-green-50 text-green-700"
                   : "bg-yellow-50 text-yellow-700"
-              }`}>
+                }`}>
               {invoice.productDetails.isOrder ? "အော်ဒါ" : "အရောင်း"}
             </span>
           </TableCell>

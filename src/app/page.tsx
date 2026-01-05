@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { loginAction } from "./action";
-import { Card, CardContent, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
@@ -28,50 +28,64 @@ export default function Home() {
     return;
   };
   return (
-    <Card className="flex h-screen w-full items-center justify-center bg-white">
-      <CardContent className="w-full max-w-sm space-y-6 p-8">
-        <CardTitle className="text-xl font-medium text-gray-900 text-center">
-          Welcome Back
-        </CardTitle>
-
-        <form className="space-y-5" onSubmit={handleSubmit}>
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="phoneNumber" className="text-sm text-gray-600">
-                Phone Number
-              </Label>
-              <Input
-                id="phoneNumber"
-                name="phoneNumber"
-                required
-                className="mt-2 w-full border-gray-200 bg-gray-50/50 focus:border-gray-300 focus:ring-0"
-                placeholder="Enter your phone number"
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="password" className="text-sm text-gray-600">
-                Password
-              </Label>
-              <Input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="current-password"
-                required
-                className="mt-2 w-full border-gray-200 bg-gray-50/50 focus:border-gray-300 focus:ring-0"
-                placeholder="Enter your password"
-              />
-            </div>
+    <div className="flex min-h-screen items-center justify-center bg-muted/30 p-4">
+      <Card className="w-full max-w-md border-border/50 shadow-lg">
+        <CardContent className="pt-8 pb-8 px-8">
+          <div className="mb-8 space-y-2">
+            <h1 className="text-2xl font-semibold tracking-tight text-foreground">
+              Welcome Back
+            </h1>
+            <p className="text-sm text-muted-foreground">
+              Sign in to your account to continue
+            </p>
           </div>
 
-          <Button
-            type="submit"
-            className="w-full bg-gray-900 hover:bg-gray-800 transition-colors">
-            Sign in
-          </Button>
-        </form>
-      </CardContent>
-    </Card>
+          <form className="space-y-5" onSubmit={handleSubmit}>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label
+                  htmlFor="phoneNumber"
+                  className="text-sm font-medium text-foreground">
+                  Phone Number
+                </Label>
+                <Input
+                  id="phoneNumber"
+                  name="phoneNumber"
+                  type="tel"
+                  required
+                  className="h-11 bg-background border-input focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-0 transition-shadow"
+                  placeholder="09-XXX-XXX-XXX"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label
+                    htmlFor="password"
+                    className="text-sm font-medium text-foreground">
+                    Password
+                  </Label>
+                </div>
+                <Input
+                  id="password"
+                  name="password"
+                  type="password"
+                  autoComplete="current-password"
+                  required
+                  className="h-11 bg-background border-input focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-0 transition-shadow"
+                  placeholder="Enter your password"
+                />
+              </div>
+            </div>
+
+            <Button
+              type="submit"
+              className="w-full h-11 bg-primary hover:bg-primary/90 text-primary-foreground font-medium transition-colors shadow-sm">
+              Sign in
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
+    </div>
   );
 }

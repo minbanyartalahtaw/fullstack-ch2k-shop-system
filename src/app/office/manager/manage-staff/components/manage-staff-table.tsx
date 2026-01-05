@@ -45,7 +45,7 @@ export default function ManageStaffTable() {
     { id: "name", label: "အမည်", visible: true },
     { id: "phone", label: "ဖုန်းနံပါတ်", visible: true },
     { id: "role", label: "ရာထူး", visible: true },
-    { id: "isFire", label: "Is Fire", visible: true },
+    { id: "isFire", label: "", visible: true },
     { id: "action", label: "", visible: true },
   ];
 
@@ -126,89 +126,100 @@ export default function ManageStaffTable() {
   const renderTableBody = () => {
     return (
       <>
-        {staffData.map((data) => (
-          <TableRow key={data.id}>
-            <TableCell>{data.id}</TableCell>
-            <TableCell>{data.name}</TableCell>
-            <TableCell>{data.phone}</TableCell>
-            <TableCell>
-              <Badge variant={data.role === "STAFF" ? "staff" : "manager"}>
-                {data.role}
-              </Badge>
+        {staffData.length === 0 ? (
+
+          <TableRow>
+            <TableCell colSpan={10}>
+              <ManageStaffSkeleton />
             </TableCell>
-            <TableCell>
-              <Badge
-                variant={
-                  data.isFire ? "isStaffIsNotWorking" : "isStaffIsWorking"
-                }>
-                {data.isFire ? "Yes" : "No"}
-              </Badge>
-            </TableCell>
-            <TableCell>
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button variant="ghost" size="sm">
-                    <AppIcon name="edit" className="h-4 w-4" />
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="max-w-md">
-                  <DialogTitle className="text-lg font-medium mb-4">
-                    Staff Details
-                  </DialogTitle>
-                  <div className="grid gap-4">
-                    {[
-                      { label: "အမည်", value: data.name },
-                      { label: "Email", value: data.email || "-" },
-                      { label: "ဖုန်းနံပါတ်", value: data.phone },
-                      { label: "လိပ်စာ", value: data.address },
-                      {
-                        label: "ရာထူး",
-                        value: (
-                          <Badge
-                            variant={
-                              data.role === "STAFF" ? "staff" : "manager"
-                            }>
-                            {data.role}
-                          </Badge>
-                        ),
-                      },
-                      {
-                        label: "အလုပ်",
-                        value: (
-                          <Badge
-                            variant={
-                              data.isFire
-                                ? "isStaffIsNotWorking"
-                                : "isStaffIsWorking"
-                            }>
-                            {data.isFire ? "Yes" : "No"}
-                          </Badge>
-                        ),
-                      },
-                      {
-                        label: "since",
-                        value: data.createdAt.toLocaleString(),
-                      },
-                      {
-                        label: "Last Update",
-                        value: data.updatedAt.toLocaleString(),
-                      },
-                    ].map(({ label, value }) => (
-                      <div
-                        key={label}
-                        className="grid grid-cols-3 items-center">
-                        <Label className="font-medium">{label}</Label>
-                        <div className="col-span-2 text-sm text-gray-600">
-                          {value}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </DialogContent>
-              </Dialog>
-            </TableCell>
+
           </TableRow>
-        ))}
+        ) : (
+          staffData.map((data) => (
+
+            <TableRow key={data.id}>
+              <TableCell>{data.id}</TableCell>
+              <TableCell>{data.name}</TableCell>
+              <TableCell>{data.phone}</TableCell>
+              <TableCell>
+                <Badge variant={data.role === "STAFF" ? "staff" : "manager"}>
+                  {data.role}
+                </Badge>
+              </TableCell>
+              <TableCell>
+                <Badge
+                  variant={
+                    data.isFire ? "isStaffIsNotWorking" : "isStaffIsWorking"
+                  }>
+                  {data.isFire ? "Yes" : "No"}
+                </Badge>
+              </TableCell>
+              <TableCell>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button variant="ghost" size="sm">
+                      <AppIcon name="edit" className="h-4 w-4" />
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-md">
+                    <DialogTitle className="text-lg font-medium mb-4">
+                      Staff Details
+                    </DialogTitle>
+                    <div className="grid gap-4">
+                      {[
+                        { label: "အမည်", value: data.name },
+                        { label: "Email", value: data.email || "-" },
+                        { label: "ဖုန်းနံပါတ်", value: data.phone },
+                        { label: "လိပ်စာ", value: data.address },
+                        {
+                          label: "ရာထူး",
+                          value: (
+                            <Badge
+                              variant={
+                                data.role === "STAFF" ? "staff" : "manager"
+                              }>
+                              {data.role}
+                            </Badge>
+                          ),
+                        },
+                        {
+                          label: "အလုပ်",
+                          value: (
+                            <Badge
+                              variant={
+                                data.isFire
+                                  ? "isStaffIsNotWorking"
+                                  : "isStaffIsWorking"
+                              }>
+                              {data.isFire ? "Yes" : "No"}
+                            </Badge>
+                          ),
+                        },
+                        {
+                          label: "since",
+                          value: data.createdAt.toLocaleString(),
+                        },
+                        {
+                          label: "Last Update",
+                          value: data.updatedAt.toLocaleString(),
+                        },
+                      ].map(({ label, value }) => (
+                        <div
+                          key={label}
+                          className="grid grid-cols-3 items-center">
+                          <Label className="font-medium">{label}</Label>
+                          <div className="col-span-2 text-sm text-gray-600">
+                            {value}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              </TableCell>
+            </TableRow>
+          ))
+        )}
       </>
     );
   };
@@ -218,20 +229,23 @@ export default function ManageStaffTable() {
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogTrigger asChild className="mb-5">
           <Button variant="outline" size="sm" className="w-fit">
-            Add New Staff
+            ဝန်ထမ်းအသစ်လုပ်ရန်
           </Button>
         </DialogTrigger>
         <DialogTitle hidden></DialogTitle>
         <DialogContent className="w-full">
-          <div className="flex items-center gap-2 mb-1">
-            <AppIcon name="staffAdd" className="h-5 w-5 text-primary" />
-            <h3 className="text-lg font-medium">ဝန်ထမ်းအသစ်လုပ်ရန်</h3>
+          {/* Header */}
+          <div className="flex items-center gap-3 mb-6">
+            <AppIcon name="staffAdd" className="h-6 w-6 text-primary" />
+            <h3 className="text-xl font-semibold text-gray-800">ဝန်ထမ်းအသစ်လုပ်ရန်</h3>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-3">
+          {/* Form */}
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div className="grid gap-5">
+              {/* Name */}
               <div>
-                <Label htmlFor="name" className="text-sm">
+                <Label htmlFor="name" className="text-sm font-medium text-gray-700">
                   ဝန်ထမ်းအမည်
                 </Label>
                 <Input
@@ -239,14 +253,15 @@ export default function ManageStaffTable() {
                   value={formData.name}
                   onChange={(e) => updateFormData("name", e.target.value)}
                   placeholder="Enter staff name"
-                  className="mt-1.5"
+                  className="mt-2"
                   required
                 />
               </div>
 
+              {/* Email */}
               <div>
-                <Label htmlFor="email" className="text-sm">
-                  Email (Optional)
+                <Label htmlFor="email" className="text-sm font-medium text-gray-700">
+                  Email <span className="text-gray-400">(Optional)</span>
                 </Label>
                 <Input
                   id="email"
@@ -254,12 +269,13 @@ export default function ManageStaffTable() {
                   value={formData.email || ""}
                   onChange={(e) => updateFormData("email", e.target.value)}
                   placeholder="Enter email address"
-                  className="mt-1.5"
+                  className="mt-2"
                 />
               </div>
 
+              {/* Phone */}
               <div>
-                <Label htmlFor="phone" className="text-sm">
+                <Label htmlFor="phone" className="text-sm font-medium text-gray-700">
                   ဖုန်းနံပါတ်
                 </Label>
                 <Input
@@ -267,13 +283,14 @@ export default function ManageStaffTable() {
                   value={formData.phone}
                   onChange={(e) => updateFormData("phone", e.target.value)}
                   placeholder="Enter phone number"
-                  className="mt-1.5"
+                  className="mt-2"
                   required
                 />
               </div>
 
+              {/* Address */}
               <div>
-                <Label htmlFor="address" className="text-sm">
+                <Label htmlFor="address" className="text-sm font-medium text-gray-700">
                   လိပ်စာ
                 </Label>
                 <Textarea
@@ -281,14 +298,15 @@ export default function ManageStaffTable() {
                   value={formData.address}
                   onChange={(e) => updateFormData("address", e.target.value)}
                   placeholder="Enter address"
-                  className="mt-1.5 resize-none"
+                  className="mt-2 resize-none"
                   rows={3}
                   required
                 />
               </div>
 
+              {/* Password */}
               <div>
-                <Label htmlFor="password" className="text-sm">
+                <Label htmlFor="password" className="text-sm font-medium text-gray-700">
                   Password
                 </Label>
                 <Input
@@ -297,19 +315,20 @@ export default function ManageStaffTable() {
                   value={formData.password}
                   onChange={(e) => updateFormData("password", e.target.value)}
                   placeholder="Enter password"
-                  className="mt-1.5"
+                  className="mt-2"
                   required
                 />
               </div>
 
+              {/* Role */}
               <div>
-                <Label htmlFor="role" className="text-sm">
+                <Label htmlFor="role" className="text-sm font-medium text-gray-700">
                   Role
                 </Label>
                 <Select
                   value={formData.role}
                   onValueChange={(value) => updateFormData("role", value)}>
-                  <SelectTrigger id="role" className="mt-1.5">
+                  <SelectTrigger id="role" className="mt-2">
                     <SelectValue placeholder="Select role" />
                   </SelectTrigger>
                   <SelectContent>
@@ -320,8 +339,12 @@ export default function ManageStaffTable() {
               </div>
             </div>
 
-            <div className="pt-4">
-              <Button type="submit" className="w-full" disabled={isSubmitting}>
+            {/* Submit Button */}
+            <div className="pt-2">
+              <Button
+                type="submit"
+                className="w-full h-11 text-base font-medium"
+                disabled={isSubmitting}>
                 {isSubmitting ? "Adding..." : "Add Staff"}
               </Button>
             </div>
@@ -330,11 +353,10 @@ export default function ManageStaffTable() {
       </Dialog>
 
       <div className="rounded-md border overflow-hidden">
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto max-h-[calc(100vh-250px)]">
           <Table className="rounded-md border overflow-hidden">
             <TableHeader>{renderTableHeader()}</TableHeader>
-
-            <TableBody>
+            <TableBody >
               {/*                     {staffData.map((data) => (
                         <TableRow key={data.id}>
                             <TableCell>{data.id}</TableCell>
@@ -381,15 +403,7 @@ export default function ManageStaffTable() {
                             </TableCell>
                         </TableRow>
                     ))} */}
-              {staffData.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={6} className="text-center">
-                    <ManageStaffSkeleton />
-                  </TableCell>
-                </TableRow>
-              ) : (
-                renderTableBody()
-              )}
+              {renderTableBody()}
             </TableBody>
           </Table>
         </div>

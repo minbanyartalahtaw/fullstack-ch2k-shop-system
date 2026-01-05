@@ -22,6 +22,7 @@ import { addProductType, getProductTypes } from "./action";
 import { toast } from "sonner";
 import { ProductType } from "@prisma/client";
 import { useEffect, useState } from "react";
+import { InvoiceHistorySkeleton } from "../../staff/order/components/invoice-history-skeleton";
 
 export default function NewProductType() {
   const [productTypes, setProductTypes] = useState<ProductType[]>([]);
@@ -34,6 +35,7 @@ export default function NewProductType() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.target as HTMLFormElement);
+
     try {
       const { status, message } = await addProductType(formData);
       if (!status) {
@@ -53,28 +55,29 @@ export default function NewProductType() {
 
   return (
     <div className="px-1">
-      <Card>
+      <Card variant={"noborder"}>
         <CardHeader>
-          <CardTitle>Product Types</CardTitle>
+          <CardTitle>ပစ္စည်းအမျိုးအစား</CardTitle>
         </CardHeader>
         <div className="pl-5">
           <Dialog>
             <DialogTrigger asChild>
               <Button variant="outline" className="w-fit">
-                ပစ္စည်းအမျိုးအစားထည့်ရန်
+                အသစ်ထည့်ရန်
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-md">
-              <DialogTitle>Add New Product Type</DialogTitle>
+              <DialogTitle></DialogTitle>
               <form onSubmit={handleSubmit} className="space-y-4 py-4">
                 <div className="space-y-2">
                   <Input
-                    placeholder="Enter product type name"
+                    placeholder="ပစ္စည်းအမျိုးအစားအမည်"
                     name="productName"
+                    required
                   />
                 </div>
                 <DialogFooter className="flex justify-end gap-2">
-                  <Button type="submit">Add</Button>
+                  <Button type="submit">အသစ်လုပ်ရန်</Button>
                 </DialogFooter>
               </form>
             </DialogContent>
@@ -82,24 +85,24 @@ export default function NewProductType() {
         </div>
         <CardContent>
           <div className="rounded-md border overflow-hidden">
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto max-h-[calc(100vh-270px)]">
               <Table>
-                <TableHeader>
+                <TableHeader >
                   <TableRow>
                     <TableHead>စဥ်</TableHead>
                     <TableHead>ပစ္စည်းအမျိုးအစား</TableHead>
-                    <TableHead>createdAt</TableHead>
+                    <TableHead>ရက်စွဲ</TableHead>
                     <TableHead>Action</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {productTypes.length === 0 ? (
+
                     <TableRow>
-                      <TableCell
-                        colSpan={2}
-                        className="text-center text-muted-foreground py-6">
-                        No product types found
+                      <TableCell colSpan={10}>
+                        <InvoiceHistorySkeleton />
                       </TableCell>
+
                     </TableRow>
                   ) : (
                     productTypes.map((productType) => (

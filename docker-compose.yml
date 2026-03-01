@@ -10,6 +10,30 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+<<<<<<< HEAD
+=======
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    develop:
+      watch:
+        - path: ./app
+          action: sync
+        - path: ./package.json
+          action: rebuild
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./node_modules:/app/node_modules
+      - ./.next:/app/.next
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/mydb
+      NODE_ENV: development
+      WATCHPACK_POLLING: "true"
+    depends_on:
+      - db
+>>>>>>> 19ef8e4 (add light mode & dark mode)
 
 volumes:
   postgres_data:

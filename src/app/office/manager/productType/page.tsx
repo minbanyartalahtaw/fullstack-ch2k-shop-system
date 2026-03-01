@@ -113,13 +113,7 @@ export default function NewProductType() {
                           {productType.createdAt.toLocaleDateString()}
                         </TableCell>
                         <TableCell>
-                          <Button
-                            variant="outline"
-                            className={
-                              productType.isAvailable
-                                ? "text-green-500 border-green-500 hover:bg-green-100 cursor-pointer"
-                                : "text-yellow-500 border-yellow-500 hover:bg-yellow-100 cursor-pointer"
-                            }>
+                          <Button variant="outline">
                             {productType.isAvailable ? "Disable" : "Enable"}
                           </Button>
                         </TableCell>

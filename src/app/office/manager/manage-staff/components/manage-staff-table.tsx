@@ -45,11 +45,7 @@ export default function ManageStaffTable() {
     { id: "name", label: "အမည်", visible: true },
     { id: "phone", label: "ဖုန်းနံပါတ်", visible: true },
     { id: "role", label: "ရာထူး", visible: true },
-<<<<<<< HEAD
     { id: "isFire", label: "", visible: true },
-=======
-    //{ id: "isFire", label: "Is Fire", visible: true },
->>>>>>> 19ef8e4 (add light mode & dark mode)
     { id: "action", label: "", visible: true },
   ];
 
@@ -130,100 +126,14 @@ export default function ManageStaffTable() {
   const renderTableBody = () => {
     return (
       <>
-<<<<<<< HEAD
         {staffData.length === 0 ? (
-
           <TableRow>
             <TableCell colSpan={10}>
               <ManageStaffSkeleton />
-=======
-        {staffData.map((data) => (
-          <TableRow key={data.id}>
-            <TableCell>{data.id}</TableCell>
-            <TableCell>{data.name}</TableCell>
-            <TableCell>{data.phone}</TableCell>
-            <TableCell>
-              <Badge variant={data.role === "STAFF" ? "staff" : "manager"}>
-                {data.role}
-              </Badge>
             </TableCell>
-            {/*             <TableCell>
-              <Badge
-                variant={
-                  data.isFire ? "isStaffIsNotWorking" : "isStaffIsWorking"
-                }>
-                {data.isFire ? "Yes" : "No"}
-              </Badge>
-            </TableCell> */}
-            <TableCell>
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button variant="default" size="sm">
-                    <AppIcon name="edit" className="h-4 w-4" />
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="max-w-md">
-                  <DialogTitle className="text-lg font-medium mb-4">
-                    Staff Details
-                  </DialogTitle>
-                  <div className="grid gap-4">
-                    {[
-                      { label: "အမည်", value: data.name },
-                      { label: "Email", value: data.email || "-" },
-                      { label: "ဖုန်းနံပါတ်", value: data.phone },
-                      { label: "လိပ်စာ", value: data.address },
-                      {
-                        label: "ရာထူး",
-                        value: (
-                          <Badge
-                            variant={
-                              data.role === "STAFF" ? "staff" : "manager"
-                            }>
-                            {data.role}
-                          </Badge>
-                        ),
-                      },
-                      {
-                        label: "အလုပ်",
-                        value: (
-                          <Badge
-                            variant={
-                              data.isFire
-                                ? "isStaffIsNotWorking"
-                                : "isStaffIsWorking"
-                            }>
-                            {data.isFire ? "Yes" : "No"}
-                          </Badge>
-                        ),
-                      },
-                      {
-                        label: "since",
-                        value: data.createdAt.toLocaleString(),
-                      },
-                      {
-                        label: "Last Update",
-                        value: data.updatedAt.toLocaleString(),
-                      },
-                    ].map(({ label, value }) => (
-                      <div
-                        key={label}
-                        className="grid grid-cols-3 items-center">
-                        <Label className="font-medium">{label}</Label>
-                        <div className="col-span-2 text-sm text-gray-600">
-                          {value}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </DialogContent>
-              </Dialog>
->>>>>>> 19ef8e4 (add light mode & dark mode)
-            </TableCell>
-
           </TableRow>
         ) : (
           staffData.map((data) => (
-
             <TableRow key={data.id}>
               <TableCell>{data.id}</TableCell>
               <TableCell>{data.name}</TableCell>
@@ -316,11 +226,7 @@ export default function ManageStaffTable() {
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogTrigger asChild className="mb-5">
           <Button variant="outline" size="sm" className="w-fit">
-<<<<<<< HEAD
             ဝန်ထမ်းအသစ်လုပ်ရန်
-=======
-            အသစ်လုပ်ရန်
->>>>>>> 19ef8e4 (add light mode & dark mode)
           </Button>
         </DialogTrigger>
         <DialogTitle hidden></DialogTitle>
@@ -328,7 +234,9 @@ export default function ManageStaffTable() {
           {/* Header */}
           <div className="flex items-center gap-3 mb-6">
             <AppIcon name="staffAdd" className="h-6 w-6 text-primary" />
-            <h3 className="text-xl font-semibold text-gray-800">ဝန်ထမ်းအသစ်လုပ်ရန်</h3>
+            <h3 className="text-xl font-semibold text-gray-800">
+              ဝန်ထမ်းအသစ်လုပ်ရန်
+            </h3>
           </div>
 
           {/* Form */}
@@ -336,7 +244,9 @@ export default function ManageStaffTable() {
             <div className="grid gap-5">
               {/* Name */}
               <div>
-                <Label htmlFor="name" className="text-sm font-medium text-gray-700">
+                <Label
+                  htmlFor="name"
+                  className="text-sm font-medium text-gray-700">
                   ဝန်ထမ်းအမည်
                 </Label>
                 <Input
@@ -351,7 +261,9 @@ export default function ManageStaffTable() {
 
               {/* Email */}
               <div>
-                <Label htmlFor="email" className="text-sm font-medium text-gray-700">
+                <Label
+                  htmlFor="email"
+                  className="text-sm font-medium text-gray-700">
                   Email <span className="text-gray-400">(Optional)</span>
                 </Label>
                 <Input
@@ -366,7 +278,9 @@ export default function ManageStaffTable() {
 
               {/* Phone */}
               <div>
-                <Label htmlFor="phone" className="text-sm font-medium text-gray-700">
+                <Label
+                  htmlFor="phone"
+                  className="text-sm font-medium text-gray-700">
                   ဖုန်းနံပါတ်
                 </Label>
                 <Input
@@ -381,7 +295,9 @@ export default function ManageStaffTable() {
 
               {/* Address */}
               <div>
-                <Label htmlFor="address" className="text-sm font-medium text-gray-700">
+                <Label
+                  htmlFor="address"
+                  className="text-sm font-medium text-gray-700">
                   လိပ်စာ
                 </Label>
                 <Textarea
@@ -397,7 +313,9 @@ export default function ManageStaffTable() {
 
               {/* Password */}
               <div>
-                <Label htmlFor="password" className="text-sm font-medium text-gray-700">
+                <Label
+                  htmlFor="password"
+                  className="text-sm font-medium text-gray-700">
                   Password
                 </Label>
                 <Input
@@ -413,7 +331,9 @@ export default function ManageStaffTable() {
 
               {/* Role */}
               <div>
-                <Label htmlFor="role" className="text-sm font-medium text-gray-700">
+                <Label
+                  htmlFor="role"
+                  className="text-sm font-medium text-gray-700">
                   Role
                 </Label>
                 <Select
@@ -447,7 +367,7 @@ export default function ManageStaffTable() {
         <div className="overflow-x-auto max-h-[calc(100vh-250px)]">
           <Table className="rounded-md border overflow-hidden">
             <TableHeader>{renderTableHeader()}</TableHeader>
-            <TableBody >
+            <TableBody>
               {/*                     {staffData.map((data) => (
                         <TableRow key={data.id}>
                             <TableCell>{data.id}</TableCell>

@@ -69,7 +69,7 @@ async function getInvoiceStats() {
           },
         },
       });
-    })
+    }),
   );
 
   const orderInvoiceCountsByMonth = await Promise.all(
@@ -85,7 +85,7 @@ async function getInvoiceStats() {
           },
         },
       });
-    })
+    }),
   );
 
   const sellInvoiceCountsByMonth = await Promise.all(
@@ -101,7 +101,7 @@ async function getInvoiceStats() {
           },
         },
       });
-    })
+    }),
   );
 
   // Create line chart data
@@ -184,7 +184,7 @@ async function DashboardContent() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-xl font-bold">ဘောက်ချာqwd</CardTitle>
+            <CardTitle className="text-xl font-bold">ဘောက်ချာ</CardTitle>
             <AppIcon name="invoice" className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -289,7 +289,7 @@ async function DashboardContent() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
-        <Card >
+        <Card>
           <CardHeader>
             <CardTitle>Product Type Graph</CardTitle>
           </CardHeader>
@@ -328,7 +328,7 @@ async function DashboardContent() {
 
 export default function Page() {
   return (
-    <div className="flex-1 space-y-4  ">
+    <div className="flex-1 space-y-4  p-4">
       <div className="flex items-center justify-between space-y-2">
         <h2 className="text-2xl font-bold tracking-tight">စရင်းဇယား</h2>
       </div>

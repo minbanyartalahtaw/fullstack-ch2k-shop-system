@@ -54,12 +54,12 @@ export function InvoiceHistoryTable() {
   const [pagination, setPagination] = useState({
     total: 0,
     page: 1,
-    limit: 13,
+    limit: 10,
     totalPages: 0,
   });
 
   const [columnVisibility, setColumnVisibility] = useState(
-    Object.fromEntries(COLUMNS.map((col) => [col.id, col.visible]))
+    Object.fromEntries(COLUMNS.map((col) => [col.id, col.visible])),
   );
 
   // Handlers
@@ -103,7 +103,7 @@ export function InvoiceHistoryTable() {
                   {column.label}
                 </Button>
               </TableHead>
-            )
+            ),
         )}
       </TableRow>
     </TableHeader>
@@ -167,10 +167,11 @@ export function InvoiceHistoryTable() {
         {columnVisibility.orderType && (
           <TableCell className="min-w-[62px] border">
             <span
-              className={`inline-flex text-center items-center rounded-full px-2 py-1 text-xs font-medium ${invoice.productDetails.isOrder
-                ? "bg-green-50 text-green-700"
-                : "bg-yellow-50 text-yellow-700"
-                }`}>
+              className={`inline-flex text-center items-center rounded-full px-2 py-1 text-xs font-medium ${
+                invoice.productDetails.isOrder
+                  ? "bg-green-50 text-green-700"
+                  : "bg-yellow-50 text-yellow-700"
+              }`}>
               {invoice.productDetails.isOrder ? "အော်ဒါ" : "အရောင်း"}
             </span>
           </TableCell>

@@ -54,8 +54,8 @@ export default function NewProductType() {
   }, []);
 
   return (
-    <div className="px-1">
-      <Card variant={"noborder"}>
+    <div className="px-1 pt-4">
+      <Card>
         <CardHeader>
           <CardTitle>ပစ္စည်းအမျိုးအစား</CardTitle>
         </CardHeader>
@@ -87,7 +87,7 @@ export default function NewProductType() {
           <div className="rounded-md border overflow-hidden">
             <div className="overflow-x-auto max-h-[calc(100vh-270px)]">
               <Table>
-                <TableHeader >
+                <TableHeader>
                   <TableRow>
                     <TableHead>စဥ်</TableHead>
                     <TableHead>ပစ္စည်းအမျိုးအစား</TableHead>
@@ -97,12 +97,10 @@ export default function NewProductType() {
                 </TableHeader>
                 <TableBody>
                   {productTypes.length === 0 ? (
-
                     <TableRow>
                       <TableCell colSpan={10}>
                         <InvoiceHistorySkeleton />
                       </TableCell>
-
                     </TableRow>
                   ) : (
                     productTypes.map((productType) => (

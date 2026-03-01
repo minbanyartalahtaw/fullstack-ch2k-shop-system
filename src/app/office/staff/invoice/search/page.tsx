@@ -20,15 +20,15 @@ export default function InvoiceHistory() {
   });
 
   return (
-    <div className="w-full h-full overflow-auto px-1">
-      <Card className="w-full" variant={"noborder"}>
+    <div className="w-full h-full overflow-auto px-1 pt-4">
+      <Card className="w-full">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <AppIcon name="searchInvoice" className="h-5 w-5" />
             ဘောက်ချာရှာရန်{" "}
           </CardTitle>
         </CardHeader>
-        <CardContent className={`${isMobile ? 'p-1' : ''}`}>
+        <CardContent className={`${isMobile ? "p-1" : ""}`}>
           <Suspense fallback={<InvoiceHistorySkeleton />}>
             <InvoiceHistoryFilters onFilterChange={(f) => setFilters(f)} />
             <Separator className="my-4" />

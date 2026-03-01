@@ -1,20 +1,10 @@
-<<<<<<< HEAD
-"use client"
-
-import { usePathname } from "next/navigation";
-=======
 "use client";
 
->>>>>>> 19ef8e4 (add light mode & dark mode)
 import { AppIcon } from "./app-icons";
 
 import {
   Sidebar,
   SidebarContent,
-<<<<<<< HEAD
-  SidebarFooter,
-=======
->>>>>>> 19ef8e4 (add light mode & dark mode)
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -29,32 +19,21 @@ import {
   CollapsibleTrigger,
 } from "./ui/collapsible";
 import Link from "next/link";
-<<<<<<< HEAD
-
-=======
 import { usePathname } from "next/navigation";
->>>>>>> 19ef8e4 (add light mode & dark mode)
 
 interface Prop {
   role: string;
 }
 
-<<<<<<< HEAD
-=======
 function isActivePath(pathname: string, href: string) {
   return pathname === href || pathname.startsWith(href + "/");
 }
 
->>>>>>> 19ef8e4 (add light mode & dark mode)
 export function AppSidebar({ role }: Prop) {
   const pathname = usePathname();
 
   return (
-<<<<<<< HEAD
-    <Sidebar>
-=======
     <Sidebar variant="floating" className="pt-12">
->>>>>>> 19ef8e4 (add light mode & dark mode)
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>ဝန်ထမ်း</SidebarGroupLabel>
@@ -76,16 +55,12 @@ export function AppSidebar({ role }: Prop) {
                   <CollapsibleContent>
                     <SidebarMenuSub>
                       <SidebarMenuItem>
-<<<<<<< HEAD
-                        <SidebarMenuButton asChild isActive={pathname === "/office/staff/invoice/new"}>
-=======
                         <SidebarMenuButton
                           asChild
                           isActive={isActivePath(
                             pathname,
                             "/office/staff/invoice/new",
                           )}>
->>>>>>> 19ef8e4 (add light mode & dark mode)
                           <Link href="/office/staff/invoice/new">
                             <div>
                               <AppIcon name="newInvoice" className="h-4 w-4" />
@@ -95,16 +70,12 @@ export function AppSidebar({ role }: Prop) {
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                       <SidebarMenuItem>
-<<<<<<< HEAD
-                        <SidebarMenuButton asChild isActive={pathname === "/office/staff/invoice/history"}>
-=======
                         <SidebarMenuButton
                           asChild
                           isActive={isActivePath(
                             pathname,
                             "/office/staff/invoice/history",
                           )}>
->>>>>>> 19ef8e4 (add light mode & dark mode)
                           <Link href="/office/staff/invoice/history">
                             <div>
                               <AppIcon
@@ -118,16 +89,12 @@ export function AppSidebar({ role }: Prop) {
                       </SidebarMenuItem>
 
                       <SidebarMenuItem>
-<<<<<<< HEAD
-                        <SidebarMenuButton asChild isActive={pathname === "/office/staff/invoice/search"}>
-=======
                         <SidebarMenuButton
                           asChild
                           isActive={isActivePath(
                             pathname,
                             "/office/staff/invoice/search",
                           )}>
->>>>>>> 19ef8e4 (add light mode & dark mode)
                           <Link href="/office/staff/invoice/search">
                             <div>
                               <AppIcon
@@ -145,24 +112,15 @@ export function AppSidebar({ role }: Prop) {
               </Collapsible>
 
               <SidebarMenuItem>
-<<<<<<< HEAD
-                <SidebarMenuButton asChild isActive={pathname === "/office/staff/order"}>
-                  <a href="/office/staff/order">
-=======
                 <SidebarMenuButton
                   asChild
                   isActive={isActivePath(pathname, "/office/staff/order")}>
                   <Link href="/office/staff/order">
->>>>>>> 19ef8e4 (add light mode & dark mode)
                     <div>
                       <AppIcon name="order" className="h-4 w-4" />
                     </div>
                     <span>အော်ဒါများ</span>
-<<<<<<< HEAD
-                  </a>
-=======
                   </Link>
->>>>>>> 19ef8e4 (add light mode & dark mode)
                 </SidebarMenuButton>
               </SidebarMenuItem>
 
@@ -186,10 +144,6 @@ export function AppSidebar({ role }: Prop) {
             <SidebarGroupContent>
               <SidebarMenu>
                 <SidebarMenuItem>
-<<<<<<< HEAD
-                  <SidebarMenuButton asChild isActive={pathname === "/office/manager/dashboard"}>
-                    <a href="/office/manager/dashboard">
-=======
                   <SidebarMenuButton
                     asChild
                     isActive={isActivePath(
@@ -197,24 +151,15 @@ export function AppSidebar({ role }: Prop) {
                       "/office/manager/dashboard",
                     )}>
                     <Link href="/office/manager/dashboard">
->>>>>>> 19ef8e4 (add light mode & dark mode)
                       <div>
                         <AppIcon name="chart" className="h-4 w-4" />
                       </div>
                       <span>စရင်းဇယား</span>
-<<<<<<< HEAD
-                    </a>
-=======
                     </Link>
->>>>>>> 19ef8e4 (add light mode & dark mode)
                   </SidebarMenuButton>
                 </SidebarMenuItem>
 
                 <SidebarMenuItem>
-<<<<<<< HEAD
-                  <SidebarMenuButton asChild isActive={pathname === "/office/manager/manage-staff"}>
-                    <a href="/office/manager/manage-staff">
-=======
                   <SidebarMenuButton
                     asChild
                     isActive={isActivePath(
@@ -222,24 +167,15 @@ export function AppSidebar({ role }: Prop) {
                       "/office/manager/manage-staff",
                     )}>
                     <Link href="/office/manager/manage-staff">
->>>>>>> 19ef8e4 (add light mode & dark mode)
                       <div>
                         <AppIcon name="staff" className="h-4 w-4" />
                       </div>
                       <span>ဝန်ထမ်းဆိုင်ရာ</span>
-<<<<<<< HEAD
-                    </a>
-=======
                     </Link>
->>>>>>> 19ef8e4 (add light mode & dark mode)
                   </SidebarMenuButton>
                 </SidebarMenuItem>
 
                 <SidebarMenuItem>
-<<<<<<< HEAD
-                  <SidebarMenuButton asChild isActive={pathname === "/office/manager/productType"}>
-                    <a href="/office/manager/productType">
-=======
                   <SidebarMenuButton
                     asChild
                     isActive={isActivePath(
@@ -247,16 +183,11 @@ export function AppSidebar({ role }: Prop) {
                       "/office/manager/productType",
                     )}>
                     <Link href="/office/manager/productType">
->>>>>>> 19ef8e4 (add light mode & dark mode)
                       <div>
                         <AppIcon name="productTypeNew" className="h-4 w-4" />
                       </div>
                       <span>ပစ္စည်းအမျိုးအစား</span>
-<<<<<<< HEAD
-                    </a>
-=======
                     </Link>
->>>>>>> 19ef8e4 (add light mode & dark mode)
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               </SidebarMenu>
@@ -264,18 +195,6 @@ export function AppSidebar({ role }: Prop) {
           </SidebarGroup>
         )}
       </SidebarContent>
-      {/*             <SidebarFooter>
-
-                <SidebarMenuButton asChild>
-                    <Button>
-                        <div>
-                            <AppIcon name="view" className="h-4 w-4" />
-                        </div>
-                        <span>Logout</span>
-                    </Button>
-                </SidebarMenuButton>
-
-            </SidebarFooter> */}
     </Sidebar>
   );
 }

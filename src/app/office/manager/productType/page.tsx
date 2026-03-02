@@ -18,14 +18,17 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { addProductType, getProductTypes } from "./action";
+import { addProductType, getProductTypes, toggleProductType } from "./action";
 import { toast } from "sonner";
 import { ProductType } from "@prisma/client";
 import { useEffect, useState } from "react";
+import { Switch } from "@/components/ui/switch";
 import { InvoiceHistorySkeleton } from "../../staff/order/components/invoice-history-skeleton";
 
 export default function NewProductType() {
   const [productTypes, setProductTypes] = useState<ProductType[]>([]);
+  const [togglingIds, setTogglingIds] = useState<Set<number>>(new Set());
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const fetchProductTypes = async () => {
     const productTypes = await getProductTypes();
@@ -42,10 +45,29 @@ export default function NewProductType() {
         return toast.error(message);
       }
       toast.success(message);
+      setIsDialogOpen(false);
       fetchProductTypes();
     } catch (error) {
       console.log(error);
       toast.error("Failed to add product type");
+    }
+  };
+
+  const handleToggle = async (id: number) => {
+    setTogglingIds((prev) => new Set(prev).add(id));
+    try {
+      const { status, message } = await toggleProductType(id);
+      if (!status) return toast.error(message);
+      toast.success(message);
+      fetchProductTypes();
+    } catch {
+      toast.error("Failed to update product type");
+    } finally {
+      setTogglingIds((prev) => {
+        const next = new Set(prev);
+        next.delete(id);
+        return next;
+      });
     }
   };
 
@@ -54,16 +76,16 @@ export default function NewProductType() {
   }, []);
 
   return (
-    <div className="px-1 pt-4">
+    <div className=" pt-4 pb-20">
       <Card>
         <CardHeader>
           <CardTitle>ပစ္စည်းအမျိုးအစား</CardTitle>
         </CardHeader>
-        <div className="pl-5">
-          <Dialog>
+        <div className="pl-6">
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
               <Button variant="outline" className="w-fit">
-                အသစ်ထည့်ရန်
+                အသစ်လုပ်ရန်
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-md">
@@ -92,7 +114,7 @@ export default function NewProductType() {
                     <TableHead>စဥ်</TableHead>
                     <TableHead>ပစ္စည်းအမျိုးအစား</TableHead>
                     <TableHead>ရက်စွဲ</TableHead>
-                    <TableHead>Action</TableHead>
+                    <TableHead></TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -111,9 +133,23 @@ export default function NewProductType() {
                           {productType.createdAt.toLocaleDateString()}
                         </TableCell>
                         <TableCell>
-                          <Button variant="outline">
-                            {productType.isAvailable ? "Disable" : "Enable"}
-                          </Button>
+                          <div className="flex items-center gap-2.5">
+                            <Switch
+                              checked={productType.isAvailable}
+                              onCheckedChange={() =>
+                                handleToggle(productType.id)
+                              }
+                              disabled={togglingIds.has(productType.id)}
+                            />
+                            <span
+                              className={`text-xs font-medium ${
+                                productType.isAvailable
+                                  ? "text-green-600"
+                                  : "text-muted-foreground"
+                              }`}>
+                              {productType.isAvailable ? "Active" : "Inactive"}
+                            </span>
+                          </div>
                         </TableCell>
                       </TableRow>
                     ))

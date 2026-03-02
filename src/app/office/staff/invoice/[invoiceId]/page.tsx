@@ -1,11 +1,6 @@
 "use server";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableRow,
-} from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { Label } from "@radix-ui/react-label";
 import { getSingleInvoice, InvoiceWithDetails } from "./action";
 
@@ -26,7 +21,7 @@ export default async function InvoicePage({ params }: Props) {
     );
   }
   return (
-    <div className="max-w-5xl mx-auto px-4 space-y-2 pb-5">
+    <div className="w-full max-w-3xl mx-auto px-4 space-y-2 pb-5 pt-4">
       <Card className="">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -37,13 +32,12 @@ export default async function InvoicePage({ params }: Props) {
       <Card className="px-1">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            Customer
+            ဝယ်သူအကြောင်းအရာ
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <Table>
             <TableBody>
-
               <TableRow>
                 <TableCell className="font-medium">အမည်</TableCell>
                 <TableCell>{invoice.customer_Name}</TableCell>
@@ -76,12 +70,12 @@ export default async function InvoicePage({ params }: Props) {
         </CardHeader>
 
         <CardContent className="space-y-4">
-          <Table className="mt-0">
+          <Table className="mt-0 table-fixed">
             <TableBody>
               <TableRow>
-                <TableCell className="font-medium">ပစ္စည်းအမည်</TableCell>
+                <TableCell className="font-medium w-1/3">ပစ္စည်းအမည်</TableCell>
                 <TableCell>{invoice.productDetails.productName}</TableCell>
-                <TableCell></TableCell>
+                <TableCell className="w-16"></TableCell>
               </TableRow>
               <TableRow>
                 <TableCell className="font-medium">ပစ္စည်းအမျိုးအစား</TableCell>
@@ -93,17 +87,16 @@ export default async function InvoicePage({ params }: Props) {
                 <TableCell>{invoice.total_Amount}</TableCell>
                 <TableCell className="font-medium">ကျပ်</TableCell>
               </TableRow>
-
             </TableBody>
           </Table>
 
           <CardTitle className="flex items-center gap-2">ရွှေစျေး</CardTitle>
-          <Table>
+          <Table className="table-fixed">
             <TableBody>
               <TableRow>
-                <TableCell className="font-medium">၁၆ ပဲရည်</TableCell>
+                <TableCell className="font-medium w-1/3">၁၆ ပဲရည်</TableCell>
                 <TableCell>{invoice.productDetails.purity_16 || "-"}</TableCell>
-                <TableCell>ကျပ်</TableCell>
+                <TableCell className="w-16">ကျပ်</TableCell>
               </TableRow>
               <TableRow>
                 <TableCell className="font-medium">၁၅ ပဲရည်</TableCell>
@@ -140,7 +133,7 @@ export default async function InvoicePage({ params }: Props) {
               </thead>
               <TableBody>
                 {Object.entries(
-                  invoice.productDetails.weight as Record<string, number[]>
+                  invoice.productDetails.weight as Record<string, number[]>,
                 ).map(([rowName, values]) => (
                   <TableRow key={rowName}>
                     <TableCell className="text-xs border">
@@ -176,27 +169,31 @@ export default async function InvoicePage({ params }: Props) {
               </div>
               <Table>
                 <TableBody>
-                  <TableRow className="hover:bg-white">
-                    <TableCell className="font-medium ">လက်တိုင်း</TableCell>
-                    <TableCell>{invoice.productDetails.handWidth || "-"}</TableCell>
+                  <TableRow className="hover:bg-muted/50">
+                    <TableCell className="font-medium">လက်တိုင်း</TableCell>
+                    <TableCell>
+                      {invoice.productDetails.handWidth || "-"}
+                    </TableCell>
                     <TableCell></TableCell>
                   </TableRow>
-                  <TableRow className="hover:bg-white">
+                  <TableRow className="hover:bg-muted/50">
                     <TableCell className="font-medium">ကြိုးအရှည်</TableCell>
-                    <TableCell>{invoice.productDetails.length || "-"}</TableCell>
+                    <TableCell>
+                      {invoice.productDetails.length || "-"}
+                    </TableCell>
                     <TableCell></TableCell>
                   </TableRow>
-                  <TableRow className="hover:bg-white">
+                  <TableRow className="hover:bg-muted/50">
                     <TableCell className="font-medium">စရံငွေ</TableCell>
                     <TableCell>{invoice.reject_Amount}</TableCell>
                     <TableCell>ကျပ်</TableCell>
                   </TableRow>
-                  <TableRow className="hover:bg-white">
+                  <TableRow className="hover:bg-muted/50">
                     <TableCell className="font-medium">ကျန်ငွေ</TableCell>
                     <TableCell>{invoice.remaining_Amount}</TableCell>
                     <TableCell>ကျပ်</TableCell>
                   </TableRow>
-                  <TableRow className="hover:bg-white">
+                  <TableRow className="hover:bg-muted/50">
                     <TableCell className="font-medium">ရက်ချိန်း</TableCell>
                     <TableCell>
                       {invoice.appointment_Date?.toLocaleDateString()}

@@ -1,38 +1,47 @@
-"use server"
+"use server";
 import { signJwt } from "@/lib/jwt";
 import prisma from "@/lib/prisma";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 export async function loginAction(formData: FormData) {
-    const phoneNumber = formData.get('phoneNumber');
-    const password = formData.get('password');
+  const phoneNumber = formData.get("phoneNumber");
+  const password = formData.get("password");
 
-    const result = await prisma.staff.findUnique({
-        where: {
-            phone: phoneNumber as string,
-            password: password as string,
-        },
-        select: {
-            role: true,
-            staffId: true,
-        }
-    })
+  const result = await prisma.staff.findUnique({
+    where: {
+      phone: phoneNumber as string,
+      password: password as string,
+    },
+    select: {
+      role: true,
+      staffId: true,
+      name: true,
+    },
+  });
 
-    if (!result) {
-        return { success: false, message: "မှားယွင်းနေပါသည်" }
-    }
-    const token = await signJwt({
-        staffId: result.staffId,
-        role: result.role,
-    });
-    (await cookies()).set({
-        name: "staff-token",
-        value: token,
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production", // only secure in production
-        sameSite: "lax", // "strict" may block cross-device requests
-        path: "/",        // make sure cookie is sent for all routes
-    });
+  if (!result) {
+    return { success: false, message: "မှားယွင်းနေပါသည်" };
+  }
+  const token = await signJwt({
+    staffId: result.staffId,
+    name: result.name,
+    role: result.role,
+  });
+  (await cookies()).set({
+    name: "staff-token",
+    value: token,
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production", // only secure in production
+    sameSite: "lax", // "strict" may block cross-device requests
+    path: "/", // make sure cookie is sent for all routes
+  });
 
-    return { success: true, message: "Login successful" }
+  return { success: true, message: "Login successful" };
+}
+
+export async function logoutAction() {
+  (await cookies()).delete("staff-token");
+  console.log("logout successful");
+  redirect("/");
 }

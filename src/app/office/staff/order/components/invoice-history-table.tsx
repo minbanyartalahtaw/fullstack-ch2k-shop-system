@@ -3,7 +3,12 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { AppIcon } from "@/components/app-icons";
-import { getInvoices, undoUpdateOrderTaken, updateInvoiceIsOrderTaken, type InvoiceWithDetails } from "../action";
+import {
+  getInvoices,
+  undoUpdateOrderTaken,
+  updateInvoiceIsOrderTaken,
+  type InvoiceWithDetails,
+} from "../action";
 import { InvoiceHistorySkeleton } from "./invoice-history-skeleton";
 import {
   Popover,
@@ -27,7 +32,7 @@ import {
   DialogFooter,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
+} from "@/components/ui/dialog";
 import { toast } from "sonner";
 
 // Types
@@ -44,7 +49,7 @@ const COLUMNS: ColumnConfig[] = [
   { id: "customerName", label: "အမည်", visible: true },
   { id: "mobile", label: "ဖုန်းနံပါတ်", visible: true },
   { id: "purchaseDate", label: "ရက်စွဲ", visible: true },
-  { id: 'appointmentDate', label: 'ရက်ချိန်း', visible: true },
+  { id: "appointmentDate", label: "ရက်ချိန်း", visible: true },
   { id: "productType", label: "ပစ္စည်းအမျိုးအစား", visible: true },
   { id: "productName", label: "ပစ္စည်းအမည်", visible: true },
   { id: "totalAmount", label: "တန်ဖိုး", visible: true },
@@ -73,7 +78,7 @@ export function InvoiceHistoryTable() {
   });
 
   const [columnVisibility, setColumnVisibility] = useState(
-    Object.fromEntries(COLUMNS.map((col) => [col.id, col.visible]))
+    Object.fromEntries(COLUMNS.map((col) => [col.id, col.visible])),
   );
 
   // Handlers
@@ -106,29 +111,32 @@ export function InvoiceHistoryTable() {
       await updateInvoiceIsOrderTaken(invoiceId);
       await fetchInvoices(); // Refresh table with updated data
 
-      toast.success(`${name} အော်ဒါပစ္စည်းပေးပြီး 
-        `, {
-        action: {
-          label: "cancel",
-          onClick: async () => {
-            try {
-              await undoUpdateOrderTaken(invoiceId); // Toggle back the status
-              await fetchInvoices(); // Refresh with reverted data
-              toast.info(`Cancel ${name} အော်ဒါပစ္စည်း`);
-            } catch (error) {
-              toast.error("Failed to undo the action");
-              console.log(error)
-            }
-          }
+      toast.success(
+        `${name} အော်ဒါပစ္စည်းပေးပြီး 
+        `,
+        {
+          action: {
+            label: "cancel",
+            onClick: async () => {
+              try {
+                await undoUpdateOrderTaken(invoiceId); // Toggle back the status
+                await fetchInvoices(); // Refresh with reverted data
+                toast.info(`Cancel ${name} အော်ဒါပစ္စည်း`);
+              } catch (error) {
+                toast.error("Failed to undo the action");
+                console.log(error);
+              }
+            },
+          },
         },
-      });
+      );
     } catch (error) {
       toast.error("Server Error.", {
-        description: "Please try again later"
+        description: "Please try again later",
       });
       throw error;
     }
-  }
+  };
 
   // Effects
   useEffect(() => {
@@ -143,12 +151,8 @@ export function InvoiceHistoryTable() {
         {COLUMNS.map(
           (column) =>
             columnVisibility[column.id] && (
-              <TableHead key={column.id}>
-                <Button variant="ghost" className="flex items-center gap-1">
-                  {column.label}
-                </Button>
-              </TableHead>
-            )
+              <TableHead key={column.id}>{column.label}</TableHead>
+            ),
         )}
       </TableRow>
     </TableHeader>
@@ -194,7 +198,9 @@ export function InvoiceHistoryTable() {
         )}
         {columnVisibility.appointmentDate && (
           <TableCell className="border">
-            {invoice.appointment_Date ? formatDate(invoice.appointment_Date) : '-'}
+            {invoice.appointment_Date
+              ? formatDate(invoice.appointment_Date)
+              : "-"}
           </TableCell>
         )}
         {columnVisibility.productType && (
@@ -236,22 +242,23 @@ export function InvoiceHistoryTable() {
           <TableCell className="border">
             <Dialog>
               <DialogTrigger
-                className={`px-4 py-2 rounded-md text-sm ${invoice.productDetails.isOrderTaken
-                  ? 'bg-yellow-200 text-yellow-800 '
-                  : 'bg-green-100 text-green-800 hover:bg-green-200 cursor-pointer'
-                  }`}
                 disabled={invoice.productDetails.isOrderTaken}
-              >
-                {invoice.productDetails.isOrderTaken ? 'ပစ္စည်းပေးပြီး' : 'ပစ္စည်းပေးရန်'}
+                asChild>
+                <Button variant="outline" className="flex items-center gap-1">
+                  {invoice.productDetails.isOrderTaken
+                    ? "ပစ္စည်းပေးပြီး"
+                    : "ပစ္စည်းပေးရန်"}
+                </Button>
               </DialogTrigger>
               <DialogContent>
-
                 <DialogTitle>အတည်ပြုရန်</DialogTitle>
 
                 <Table>
                   <TableBody>
                     <TableRow>
-                      <TableCell className="font-semibold">ဘောက်ချာနံပါတ်</TableCell>
+                      <TableCell className="font-semibold">
+                        ဘောက်ချာနံပါတ်
+                      </TableCell>
                       <TableCell>{invoice.invoiceId}</TableCell>
                     </TableRow>
                     <TableRow>
@@ -259,16 +266,29 @@ export function InvoiceHistoryTable() {
                       <TableCell>{invoice.customer_Name}</TableCell>
                     </TableRow>
                     <TableRow>
-                      <TableCell className="font-semibold">ပစ္စည်းအမျိုးအစား</TableCell>
-                      <TableCell>{invoice.productDetails.productType}</TableCell>
+                      <TableCell className="font-semibold">
+                        ပစ္စည်းအမျိုးအစား
+                      </TableCell>
+                      <TableCell>
+                        {invoice.productDetails.productType}
+                      </TableCell>
                     </TableRow>
                   </TableBody>
                 </Table>
 
                 <DialogFooter>
-                  <Button className="cursor-pointer" variant="destructive" onClick={() => handleIsOrderTakenClick(invoice.invoiceId, invoice.customer_Name)}>ပစ္စည်းပေးရန်</Button>
+                  <Button
+                    className="cursor-pointer"
+                    variant="destructive"
+                    onClick={() =>
+                      handleIsOrderTakenClick(
+                        invoice.invoiceId,
+                        invoice.customer_Name,
+                      )
+                    }>
+                    ပစ္စည်းပေးရန်
+                  </Button>
                 </DialogFooter>
-
               </DialogContent>
             </Dialog>
           </TableCell>

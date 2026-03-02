@@ -5,6 +5,7 @@ import { AppIcon } from "./app-icons";
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -20,16 +21,26 @@ import {
 } from "./ui/collapsible";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { logoutAction } from "@/app/action";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
+import { Badge } from "./ui/badge";
 
 interface Prop {
   role: string;
+  name: string;
 }
 
 function isActivePath(pathname: string, href: string) {
   return pathname === href || pathname.startsWith(href + "/");
 }
 
-export function AppSidebar({ role }: Prop) {
+export function AppSidebar({ role, name }: Prop) {
   const pathname = usePathname();
 
   return (
@@ -195,6 +206,43 @@ export function AppSidebar({ role }: Prop) {
           </SidebarGroup>
         )}
       </SidebarContent>
+
+      <SidebarFooter className="shrink-0 ">
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <SidebarMenuButton
+                  size="lg"
+                  className="border border-sidebar-border cursor-pointer data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground w-full justify-between">
+                  <div className="flex items-center gap-2">
+                    <AppIcon name="customer" className="h-4 w-4 shrink-0" />
+                    <span className="truncate">{name}</span>
+                  </div>
+                  <Badge variant={role === "MANAGER" ? "manager" : "staff"}>
+                    {role}
+                  </Badge>
+                </SidebarMenuButton>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                side="top"
+                align="start"
+                className="w-[--radix-dropdown-menu-trigger-width]">
+                <DropdownMenuGroup>
+                  <DropdownMenuItem asChild variant="destructive">
+                    <button
+                      onClick={logoutAction}
+                      className="flex w-full cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none">
+                      <AppIcon name="logout" className="h-4 w-4" />
+                      <span>ထွက်ရန်</span>
+                    </button>
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarFooter>
     </Sidebar>
   );
 }

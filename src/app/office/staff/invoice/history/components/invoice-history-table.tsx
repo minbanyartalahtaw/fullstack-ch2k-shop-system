@@ -20,6 +20,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
 
 // Types
 interface ColumnConfig {
@@ -98,11 +99,7 @@ export function InvoiceHistoryTable() {
         {COLUMNS.map(
           (column) =>
             columnVisibility[column.id] && (
-              <TableHead key={column.id}>
-                <Button variant="ghost" className="flex items-center gap-1">
-                  {column.label}
-                </Button>
-              </TableHead>
+              <TableHead key={column.id}>{column.label}</TableHead>
             ),
         )}
       </TableRow>
@@ -166,14 +163,12 @@ export function InvoiceHistoryTable() {
         )}
         {columnVisibility.orderType && (
           <TableCell className="min-w-[62px] border">
-            <span
-              className={`inline-flex text-center items-center rounded-full px-2 py-1 text-xs font-medium ${
-                invoice.productDetails.isOrder
-                  ? "bg-green-50 text-green-700"
-                  : "bg-yellow-50 text-yellow-700"
-              }`}>
+            <Badge
+              variant={
+                invoice.productDetails.isOrder ? "default" : "secondary"
+              }>
               {invoice.productDetails.isOrder ? "အော်ဒါ" : "အရောင်း"}
-            </span>
+            </Badge>
           </TableCell>
         )}
         {columnVisibility.actions && (

@@ -11,6 +11,11 @@ export interface StaffFormData {
   role: "STAFF" | "MANAGER";
 }
 
+export async function checkUser() {
+  const user = await prisma.staff.findFirst();
+  return !!user;
+}
+
 function validateStaffData(data: StaffFormData): {
   success: boolean;
   message: string;

@@ -15,7 +15,7 @@ export async function addProductType(formData: FormData) {
   if (isProductNameIsTaken) {
     return {
       status: false,
-      message: `${productName} is taken. You can't create a new one.`,
+      message: `${productName} ကိုထပ်ပြုလုပ်၍မရပါ။`,
     };
   }
   const productType = await prisma.productType.create({
@@ -30,5 +30,23 @@ export async function addProductType(formData: FormData) {
 }
 
 export async function getProductTypes() {
-  return prisma.productType.findMany();
+  return prisma.productType.findMany({ orderBy: { id: "asc" } });
+}
+
+export async function toggleProductType(id: number) {
+  const productType = await prisma.productType.findUnique({ where: { id } });
+  if (!productType) {
+    return { status: false, message: "Product type not found" };
+  }
+
+  const updated = await prisma.productType.update({
+    where: { id },
+    data: { isAvailable: !productType.isAvailable },
+    select: { name: true, isAvailable: true },
+  });
+
+  return {
+    status: true,
+    message: `${updated.name} ${updated.isAvailable ? "enabled" : "disabled"}`,
+  };
 }

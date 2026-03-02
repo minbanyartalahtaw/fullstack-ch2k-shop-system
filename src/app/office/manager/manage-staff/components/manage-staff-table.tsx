@@ -12,6 +12,9 @@ import { createStaff, getStaff, Staff, StaffFormData } from "../action";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
@@ -45,7 +48,6 @@ export default function ManageStaffTable() {
     { id: "name", label: "အမည်", visible: true },
     { id: "phone", label: "ဖုန်းနံပါတ်", visible: true },
     { id: "role", label: "ရာထူး", visible: true },
-    { id: "isFire", label: "", visible: true },
     { id: "action", label: "", visible: true },
   ];
 
@@ -143,24 +145,17 @@ export default function ManageStaffTable() {
                   {data.role}
                 </Badge>
               </TableCell>
-              <TableCell>
-                <Badge
-                  variant={
-                    data.isFire ? "isStaffIsNotWorking" : "isStaffIsWorking"
-                  }>
-                  {data.isFire ? "Yes" : "No"}
-                </Badge>
-              </TableCell>
+
               <TableCell>
                 <Dialog>
                   <DialogTrigger asChild>
-                    <Button variant="ghost" size="sm">
+                    <Button variant="outline" size="sm">
                       <AppIcon name="edit" className="h-4 w-4" />
                     </Button>
                   </DialogTrigger>
                   <DialogContent className="max-w-md">
                     <DialogTitle className="text-lg font-medium mb-4">
-                      Staff Details
+                      အသေးစိတ်
                     </DialogTitle>
                     <div className="grid gap-4">
                       {[
@@ -179,7 +174,7 @@ export default function ManageStaffTable() {
                             </Badge>
                           ),
                         },
-                        {
+                        /*                         {
                           label: "အလုပ်",
                           value: (
                             <Badge
@@ -191,7 +186,7 @@ export default function ManageStaffTable() {
                               {data.isFire ? "Yes" : "No"}
                             </Badge>
                           ),
-                        },
+                        }, */
                         {
                           label: "since",
                           value: data.createdAt.toLocaleString(),
@@ -225,140 +220,111 @@ export default function ManageStaffTable() {
     <div>
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogTrigger asChild className="mb-5">
-          <Button variant="outline" size="sm" className="w-fit">
-            ဝန်ထမ်းအသစ်လုပ်ရန်
+          <Button variant="outline" className="w-fit">
+            အသစ်လုပ်ရန်
           </Button>
         </DialogTrigger>
-        <DialogTitle hidden></DialogTitle>
-        <DialogContent className="w-full">
-          {/* Header */}
-          <div className="flex items-center gap-3 mb-6">
-            <AppIcon name="staffAdd" className="h-6 w-6 text-primary" />
-            <h3 className="text-xl font-semibold text-gray-800">
-              ဝန်ထမ်းအသစ်လုပ်ရန်
-            </h3>
-          </div>
-
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <div className="grid gap-5">
-              {/* Name */}
+        <DialogContent className="max-w-md sm:max-w-lg max-h-[90dvh] flex flex-col p-0">
+          <DialogHeader className="px-5 pt-5 sm:px-6 sm:pt-6">
+            <div className="flex items-center gap-3">
               <div>
-                <Label
-                  htmlFor="name"
-                  className="text-sm font-medium text-gray-700">
-                  ဝန်ထမ်းအမည်
-                </Label>
-                <Input
-                  id="name"
-                  value={formData.name}
-                  onChange={(e) => updateFormData("name", e.target.value)}
-                  placeholder="Enter staff name"
-                  className="mt-2"
-                  required
-                />
+                <DialogTitle hidden></DialogTitle>
+                <DialogDescription>
+                  ဝန်ထမ်းအသစ်အတွက် အချက်အလက်များဖြည့်ပါ
+                </DialogDescription>
               </div>
+            </div>
+          </DialogHeader>
 
-              {/* Email */}
-              <div>
-                <Label
-                  htmlFor="email"
-                  className="text-sm font-medium text-gray-700">
-                  Email <span className="text-gray-400">(Optional)</span>
-                </Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={formData.email || ""}
-                  onChange={(e) => updateFormData("email", e.target.value)}
-                  placeholder="Enter email address"
-                  className="mt-2"
-                />
-              </div>
+          <form
+            onSubmit={handleSubmit}
+            className="flex flex-col flex-1 overflow-hidden">
+            <div className="flex-1 overflow-y-auto px-5 py-4 sm:px-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <Label htmlFor="name">ဝန်ထမ်းအမည်</Label>
+                  <Input
+                    id="name"
+                    value={formData.name}
+                    onChange={(e) => updateFormData("name", e.target.value)}
+                    required
+                  />
+                </div>
 
-              {/* Phone */}
-              <div>
-                <Label
-                  htmlFor="phone"
-                  className="text-sm font-medium text-gray-700">
-                  ဖုန်းနံပါတ်
-                </Label>
-                <Input
-                  id="phone"
-                  value={formData.phone}
-                  onChange={(e) => updateFormData("phone", e.target.value)}
-                  placeholder="Enter phone number"
-                  className="mt-2"
-                  required
-                />
-              </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="phone">ဖုန်းနံပါတ်</Label>
+                  <Input
+                    id="phone"
+                    value={formData.phone}
+                    onChange={(e) => updateFormData("phone", e.target.value)}
+                    required
+                  />
+                </div>
 
-              {/* Address */}
-              <div>
-                <Label
-                  htmlFor="address"
-                  className="text-sm font-medium text-gray-700">
-                  လိပ်စာ
-                </Label>
-                <Textarea
-                  id="address"
-                  value={formData.address}
-                  onChange={(e) => updateFormData("address", e.target.value)}
-                  placeholder="Enter address"
-                  className="mt-2 resize-none"
-                  rows={3}
-                  required
-                />
-              </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="email">
+                    Email{" "}
+                    <span className="text-muted-foreground font-normal">
+                      (Optional)
+                    </span>
+                  </Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={formData.email || ""}
+                    onChange={(e) => updateFormData("email", e.target.value)}
+                  />
+                </div>
 
-              {/* Password */}
-              <div>
-                <Label
-                  htmlFor="password"
-                  className="text-sm font-medium text-gray-700">
-                  Password
-                </Label>
-                <Input
-                  id="password"
-                  type="password"
-                  value={formData.password}
-                  onChange={(e) => updateFormData("password", e.target.value)}
-                  placeholder="Enter password"
-                  className="mt-2"
-                  required
-                />
-              </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="password">Password</Label>
+                  <Input
+                    id="password"
+                    type="password"
+                    value={formData.password}
+                    onChange={(e) => updateFormData("password", e.target.value)}
+                    required
+                  />
+                </div>
 
-              {/* Role */}
-              <div>
-                <Label
-                  htmlFor="role"
-                  className="text-sm font-medium text-gray-700">
-                  Role
-                </Label>
-                <Select
-                  value={formData.role}
-                  onValueChange={(value) => updateFormData("role", value)}>
-                  <SelectTrigger id="role" className="mt-2">
-                    <SelectValue placeholder="Select role" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="STAFF">Staff</SelectItem>
-                    <SelectItem value="MANAGER">Manager</SelectItem>
-                  </SelectContent>
-                </Select>
+                <div className="space-y-1.5 sm:col-span-2">
+                  <Label htmlFor="address">လိပ်စာ</Label>
+                  <Textarea
+                    id="address"
+                    value={formData.address}
+                    onChange={(e) => updateFormData("address", e.target.value)}
+                    placeholder="လိပ်စာထည့်ပါ"
+                    className="resize-none"
+                    rows={2}
+                    required
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label htmlFor="role">Role</Label>
+                  <Select
+                    value={formData.role}
+                    onValueChange={(value) => updateFormData("role", value)}>
+                    <SelectTrigger id="role">
+                      <SelectValue placeholder="Select role" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="STAFF">Staff</SelectItem>
+                      <SelectItem value="MANAGER">Manager</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
             </div>
 
-            {/* Submit Button */}
-            <div className="pt-2">
+            <DialogFooter className="border-t px-5 py-4 sm:px-6">
               <Button
                 type="submit"
-                className="w-full h-11 text-base font-medium"
+                className="w-full sm:w-auto"
                 disabled={isSubmitting}>
-                {isSubmitting ? "Adding..." : "Add Staff"}
+                ပြုလုပ်ရန်
               </Button>
-            </div>
+            </DialogFooter>
           </form>
         </DialogContent>
       </Dialog>
@@ -367,55 +333,7 @@ export default function ManageStaffTable() {
         <div className="overflow-x-auto max-h-[calc(100vh-250px)]">
           <Table className="rounded-md border overflow-hidden">
             <TableHeader>{renderTableHeader()}</TableHeader>
-            <TableBody>
-              {/*                     {staffData.map((data) => (
-                        <TableRow key={data.id}>
-                            <TableCell>{data.id}</TableCell>
-                            <TableCell>{data.name}</TableCell>
-                            <TableCell>{data.phone}</TableCell>
-                            <TableCell>
-                                <Badge variant={data.role === "STAFF" ? "staff" : "manager"}>
-                                    {data.role}
-                                </Badge>
-                            </TableCell>
-                            <TableCell>
-                                <Badge variant={data.isFire ? "isStaffIsNotWorking" : "isStaffIsWorking"}>
-                                    {data.isFire ? "Yes" : "No"}
-                                </Badge>
-                            </TableCell>
-                            <TableCell>
-                                <Dialog>
-                                    <DialogTrigger asChild>
-                                        <Button variant="ghost" size="sm">
-                                            <AppIcon name="edit" className="h-4 w-4" />
-                                        </Button>
-                                    </DialogTrigger>
-                                    <DialogContent className="max-w-md">
-                                        <DialogTitle className="text-lg font-medium mb-4">Staff Details</DialogTitle>
-                                        <div className="grid gap-4">
-                                            {[
-                                                { label: "အမည်", value: data.name },
-                                                { label: "Email", value: data.email || "-" },
-                                                { label: "ဖုန်းနံပါတ်", value: data.phone },
-                                                { label: "လိပ်စာ", value: data.address },
-                                                { label: "ရာထူး", value: <Badge variant={data.role === "STAFF" ? "staff" : "manager"}>{data.role}</Badge> },
-                                                { label: "အလုပ်", value: <Badge variant={data.isFire ? "isStaffIsNotWorking" : "isStaffIsWorking"}>{data.isFire ? "Yes" : "No"}</Badge> },
-                                                { label: "since", value: data.createdAt.toLocaleString() },
-                                                { label: "Last Update", value: data.updatedAt.toLocaleString() },
-                                            ].map(({ label, value }) => (
-                                                <div key={label} className="grid grid-cols-3 items-center">
-                                                    <Label className="font-medium">{label}</Label>
-                                                    <div className="col-span-2 text-sm text-gray-600">{value}</div>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </DialogContent>
-                                </Dialog>
-                            </TableCell>
-                        </TableRow>
-                    ))} */}
-              {renderTableBody()}
-            </TableBody>
+            <TableBody>{renderTableBody()}</TableBody>
           </Table>
         </div>
       </div>

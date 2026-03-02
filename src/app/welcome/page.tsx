@@ -11,13 +11,22 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
-import { createStaff } from "./action";
-import { useState, useRef } from "react";
+import { checkUser, createStaff } from "./action";
+import { useState, useRef, useEffect } from "react";
 import { Textarea } from "@/components/ui/textarea";
 
 export default function Page() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
+  const [isUserExist, setIsUserExist] = useState(false);
+
+  useEffect(() => {
+    const isUserExist = async () => {
+      const result = await checkUser();
+      setIsUserExist(!result ? true : false);
+    };
+    isUserExist();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -33,7 +42,7 @@ export default function Page() {
         formRef.current?.reset();
       } else {
         toast.error(
-          result.error || "ဝန်ထမ်းထည့်သွင်းရာတွင်အမှားတစ်ခုဖြစ်ပေါ်ခဲ့သည်"
+          result.error || "ဝန်ထမ်းထည့်သွင်းရာတွင်အမှားတစ်ခုဖြစ်ပေါ်ခဲ့သည်",
         );
       }
     } catch (error) {

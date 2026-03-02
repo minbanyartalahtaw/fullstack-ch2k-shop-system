@@ -291,7 +291,7 @@ async function DashboardContent() {
       <div className="grid gap-4 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Product Type Graph</CardTitle>
+            <CardTitle>ပစ္စည်းအမျိုးအစား</CardTitle>
           </CardHeader>
           <CardContent className="flex justify-center">
             <div className="w-full max-w-md h-[300px]">

@@ -25,16 +25,18 @@ export default async function Layout({
   if (!token) return null;
   const payload = await verifyJwt(token);
   if (!payload) return null;
+  const name = payload.name as string;
   const role = payload.role as string;
   return (
     <ThemeProvider>
       <SidebarProvider className="overflow-hidden">
-        <AppSidebar role={role} />
+        <AppSidebar role={role} name={name} />
         <SidebarInset>
           <div
             className="h-9 w-full bg-muted/10 backdrop-blur-sm fixed top-0 left-0 right-0 z-40 shadow-sm flex
                 items-center justify-between flex-row p-2">
             <SidebarTrigger />
+
             <ThemeToggle />
           </div>
           <div className="flex justify-end p-4 "></div>

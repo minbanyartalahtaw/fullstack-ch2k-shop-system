@@ -16,32 +16,36 @@ interface Message {
 
 const SUGGESTIONS = [
   "Invoice ရှာပေးပါ",
-  "ပစ္စည်းအမျိုးအစားတွေကို ပြပေးပါ",
-  "နောက်ဆုံး အော်ဒါ ၁၀ ခုကိုပြပေးပါ",
+  "ရက်စွဲဖြင့်ရှာမယ်",
+  "အော်ဒါစာရင်းပြပေးပါ",
+  "ပစ္စည်းအမျိုးအစားများပြပေးပါ",
+  "ဘယ်ပစ္စည်းအမျိုးအစားက အများဆုံး/အနည်းဆုံး/သာမန် ရောင်းရလည်း ?",
+  "ဒီနေ့ဘယ်လောက်ရောင်းရလည်း ?",
+  "ဘာတွေကူညီပေးနိုင်လဲ ?",
 ];
 
 export default function ChatbotPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isAssistantThinking, setIsAssistantThinking] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
-
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+  console.log(messages);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     const content = input.trim();
     if (!content || isLoading) return;
-
     const userMsg: Message = { role: "user", content };
     const updated = [...messages, userMsg];
     setMessages(updated);
     setInput("");
     setIsLoading(true);
-
+    setIsAssistantThinking(true);
     try {
       const res = await fetch("/api/chat", {
         method: "POST",
@@ -61,6 +65,7 @@ export default function ChatbotPage() {
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
+        setIsAssistantThinking(false);
         text += decoder.decode(value, { stream: true });
         const current = text;
         setMessages((prev) => {
@@ -79,6 +84,7 @@ export default function ChatbotPage() {
         },
       ]);
     } finally {
+      setIsAssistantThinking(false);
       setIsLoading(false);
       inputRef.current?.focus();
     }
@@ -91,6 +97,14 @@ export default function ChatbotPage() {
     }, 0);
   }
 
+  function handleSuggestionWheel(e: React.WheelEvent<HTMLDivElement>) {
+    const el = e.currentTarget;
+    if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+      el.scrollLeft += e.deltaY;
+      e.preventDefault();
+    }
+  }
+
   function handleKeyDown(e: React.KeyboardEvent) {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
@@ -99,7 +113,7 @@ export default function ChatbotPage() {
   }
 
   return (
-    <div className="flex flex-col h-[calc(100dvh-3rem)] max-w-3xl mx-auto w-full rounded-xl overflow-hidden">
+    <div className="flex flex-col h-[calc(100dvh-2rem)] max-w-3xl mx-auto w-full rounded-xl overflow-hidden">
       {/* Messages - scrollable, scrollbar hidden */}
       <div className="flex-1 overflow-y-auto overflow-x-hidden px-4 sm:px-6 py-6 space-y-6 min-h-0 [scrollbar-width:none] [&::-webkit-scrollbar]:size-0">
         {messages.length === 0 && (
@@ -133,9 +147,9 @@ export default function ChatbotPage() {
             )}
 
             <div
-              className={`max-w-[85%] text-sm leading-relaxed whitespace-pre-wrap break-words ${
+              className={`max-w-[85%] text-sm leading-relaxed break-words ${
                 msg.role === "user"
-                  ? "bg-primary text-primary-foreground rounded-2xl rounded-br-md px-5 py-3 shadow-sm"
+                  ? "bg-primary text-primary-foreground rounded-2xl rounded-br-md px-5 py-3 shadow-sm whitespace-pre-wrap"
                   : "bg-muted/50 text-foreground rounded-2xl rounded-bl-md px-5 py-4 border border-border/30"
               }`}>
               {msg.role === "assistant" ? (
@@ -229,20 +243,38 @@ export default function ChatbotPage() {
             </div>
           </div>
         ))}
+        {isAssistantThinking && (
+          <div className="flex gap-3 justify-start">
+            <div className="shrink-0 mt-1.5">
+              <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center ring-1 ring-primary/5">
+                <AppIcon name="bot" className="h-4 w-4 text-primary" />
+              </div>
+            </div>
+            <div className="bg-muted/50 text-foreground rounded-2xl rounded-bl-md px-5 py-4 border border-border/30">
+              <div className="flex items-center gap-1.5">
+                <span className="h-2 w-2 rounded-full bg-muted-foreground/60 animate-bounce [animation-delay:-0.2s]" />
+                <span className="h-2 w-2 rounded-full bg-muted-foreground/60 animate-bounce [animation-delay:-0.1s]" />
+                <span className="h-2 w-2 rounded-full bg-muted-foreground/60 animate-bounce" />
+              </div>
+            </div>
+          </div>
+        )}
         <div ref={scrollRef} />
       </div>
 
       {/* Input - fixed at bottom */}
       <div className="shrink-0 p-4 pt-0 bg-background/50 border-t border-border/50">
-        {/* Suggestions - scrollable vertically above input */}
-        <div className="overflow-x-auto overflow-y-hidden mb-3 py-1 [scrollbar-width:thin] [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border">
-          <div className="flex gap-2 justify-start py-0.5 min-w-max">
+        {/* Suggestions - horizontal chips, scrollbar hidden */}
+        <div
+          onWheel={handleSuggestionWheel}
+          className="overflow-x-auto overflow-y-hidden mb-3 py-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden touch-pan-x">
+          <div className="flex gap-2 justify-start py-0.5 min-w-max snap-x snap-mandatory scroll-px-1">
             {SUGGESTIONS.map((s) => (
               <button
                 key={s}
                 type="button"
                 onClick={() => sendSuggestion(s)}
-                className="px-3.5 py-2 text-xs font-medium rounded-full border border-border/80 bg-background/80 text-muted-foreground hover:bg-accent/50 hover:text-foreground hover:border-accent-foreground/20 transition-colors cursor-pointer shrink-0">
+                className="px-3.5 py-2 text-xs font-medium rounded-full border border-border/80 bg-background text-muted-foreground hover:bg-accent/60 hover:text-foreground hover:border-accent-foreground/20 transition-colors cursor-pointer shrink-0 snap-start whitespace-nowrap">
                 {s}
               </button>
             ))}
@@ -272,7 +304,7 @@ export default function ChatbotPage() {
           </div>
         </form>
         <p className="text-[11px] text-muted-foreground/50 text-center mt-2 select-none">
-          AI ၏ အဖြေများသည် မှားယွင်းနိုင်ပါသည်
+          AI can make mistakes, please check the information carefully.
         </p>
       </div>
     </div>

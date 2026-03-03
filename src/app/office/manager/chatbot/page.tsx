@@ -249,7 +249,7 @@ export default function ChatbotPage() {
           </div>
         </div>
         <form onSubmit={handleSubmit} className="flex gap-2 items-end w-full">
-          <div className="flex-1 flex items-end rounded-2xl border border-input bg-background shadow-sm focus-within:ring-2 focus-within:ring-ring/50 focus-within:border-ring transition-all">
+          <div className="flex-1 flex items-end rounded-lg border border-input bg-background shadow-sm focus-within:ring-2 focus-within:ring-ring/50 focus-within:border-ring transition-all">
             <textarea
               ref={inputRef}
               value={input}

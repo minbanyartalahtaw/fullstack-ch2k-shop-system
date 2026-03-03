@@ -57,45 +57,7 @@ Be concise, clear, factual, and focused on assisting with office tasks.`,
           }
         },
       }),
-      /* getProductDetails: tool({
-        description:
-          "Retrieve product details (e.g., purity, weight, status) by ID or name for internal review or inventory checks. This is not for customer sales.",
-        inputSchema: z.object({
-          id: z.number().optional().describe("The numeric ID of the product"),
-          name: z
-            .string()
-            .optional()
-            .describe("The name of the product to search for"),
-        }),
-        execute: async ({ id, name }) => {
-          try {
-            if (id) {
-              const product = await prisma.productDetails.findUnique({
-                where: { id },
-              });
-              return product || { error: "Product not found" };
-            }
-            if (name) {
-              const products = await prisma.productDetails.findMany({
-                where: {
-                  productName: {
-                    contains: name,
-                    mode: "insensitive",
-                  },
-                },
-                take: 5,
-              });
-              return products.length > 0
-                ? products
-                : { error: "No products found matching that name" };
-            }
-            return { error: "Please provide either an ID or a name" };
-          } catch (error) {
-            console.error("Error fetching product details:", error);
-            return { error: "Failed to fetch product details from database" };
-          }
-        },
-      }), */
+
       // Search the invoice details by invoice id
       getInvoiceDetails: tool({
         description: `
@@ -223,6 +185,152 @@ Present as a simple 2-column HTML table and top show with h3 tag:
           } catch (error) {
             console.error("Error fetching product types:", error);
             return { error: "Failed to fetch product types from database" };
+          }
+        },
+      }),
+
+      // Get Invoice Details with Date Range
+      getInvoiceDetailsWithDateRange: tool({
+        description: `Fetch invoices by purchase date range. Use when the user asks for invoices within a date range (e.g. "ရက်စွဲ ... မှ ... အထိ ဘောက်ချာများ").
+        Reply in Burmese. First show: <h3>ဘောက်ချာများ</h3>
+        Then one HTML table: header row <tr><th>ဘောက်ချာ</th><th>အမည်</th><th>ဖုန်း</th><th>တန်ဖိုး</th><th>အမျိုးအစား</th><th>ပစ္စည်းအမည်</th><th>ရက်စွဲ</th></tr>, then one <tr> per invoice with <td> for each column. Format dates DD-MM-YYYY.`,
+        inputSchema: z.object({
+          startDate: z
+            .string()
+            .optional()
+            .describe("Start of date range (DD-MM-YYYY)"),
+          endDate: z
+            .string()
+            .optional()
+            .describe("End of date range (DD-MM-YYYY)"),
+        }),
+        execute: async ({ startDate, endDate }) => {
+          function parseDate(s: string): Date | null {
+            const raw = s.trim();
+            const parts = raw.split("-");
+            if (parts.length !== 3) return null;
+            let day: number, month: number, year: number;
+            const a = parseInt(parts[0], 10);
+            const b = parseInt(parts[1], 10);
+            const c = parseInt(parts[2], 10);
+            if (parts[0].length === 4) {
+              year = a;
+              month = b - 1;
+              day = c;
+            } else {
+              day = a;
+              month = b - 1;
+              year = c;
+            }
+            if (
+              day < 1 ||
+              day > 31 ||
+              month < 0 ||
+              month > 11 ||
+              year < 2000 ||
+              year > 2100
+            )
+              return null;
+            const d = new Date(year, month, day);
+            if (isNaN(d.getTime())) return null;
+            if (
+              d.getFullYear() !== year ||
+              d.getMonth() !== month ||
+              d.getDate() !== day
+            )
+              return null;
+            return d;
+          }
+          try {
+            if (!startDate && !endDate) {
+              return {
+                error:
+                  "ရက်စွဲ စမှတ် သို့မဟုတ် ဆုံးမှတ် ထည့်ပေးပါ။ (Provide start date and/or end date, e.g. DD-MM-YYYY)",
+              };
+            }
+            const start = startDate ? parseDate(startDate) : undefined;
+            const end = endDate ? parseDate(endDate) : undefined;
+            if (startDate && !start) {
+              return {
+                error:
+                  "စမှတ် ရက်စွဲ မမှန်ပါ။ (Invalid start date, use DD-MM-YYYY)",
+              };
+            }
+            if (endDate && !end) {
+              return {
+                error:
+                  "ဆုံးမှတ် ရက်စွဲ မမှန်ပါ။ (Invalid end date, use DD-MM-YYYY)",
+              };
+            }
+            const startUTC = start
+              ? new Date(
+                  Date.UTC(
+                    start.getFullYear(),
+                    start.getMonth(),
+                    start.getDate(),
+                    0,
+                    0,
+                    0,
+                    0,
+                  ),
+                )
+              : undefined;
+            const endUTC = end
+              ? new Date(
+                  Date.UTC(
+                    end.getFullYear(),
+                    end.getMonth(),
+                    end.getDate(),
+                    23,
+                    59,
+                    59,
+                    999,
+                  ),
+                )
+              : undefined;
+            if (startUTC && isNaN(startUTC.getTime())) {
+              return { error: "စမှတ် ရက်စွဲ မမှန်ပါ။ (Invalid start date)" };
+            }
+            if (endUTC && isNaN(endUTC.getTime())) {
+              return { error: "ဆုံးမှတ် ရက်စွဲ မမှန်ပါ။ (Invalid end date)" };
+            }
+            const invoices = await prisma.invoice.findMany({
+              where: {
+                purchase_date: {
+                  ...(startUTC && { gte: startUTC }),
+                  ...(endUTC && { lte: endUTC }),
+                },
+              },
+              select: {
+                invoiceId: true,
+                customer_Name: true,
+                mobile_Number: true,
+                purchase_date: true,
+                total_Amount: true,
+                seller: true,
+                productDetails: {
+                  select: {
+                    productName: true,
+                    productType: true,
+                  },
+                },
+              },
+              orderBy: { purchase_date: "desc" },
+              take: 50,
+            });
+            if (invoices.length === 0) {
+              return {
+                message: "ထို ရက်စွဲအတွင်း ဘောက်ချာ မရှိပါ။",
+                invoices: [],
+              };
+            }
+            return {
+              message: `ရက်စွဲအတွင်း ဘောက်ချာ ${invoices.length} ခု ရှိပါသည်။`,
+              invoices,
+            };
+          } catch (error) {
+            console.error("Error fetching invoices by date range:", error);
+            return { error: "Failed to fetch invoices by date range" };
           }
         },
       }),

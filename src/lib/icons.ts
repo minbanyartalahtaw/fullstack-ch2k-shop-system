@@ -30,6 +30,8 @@ import {
   Sun,
   Moon,
   LogOut,
+  Bot,
+  SendHorizontal,
 } from "lucide-react";
 
 // Pick ONLY the icons your app should use.
@@ -65,6 +67,8 @@ export const ICONS = {
   sun: Sun,
   moon: Moon,
   logout: LogOut,
+  bot: Bot,
+  send: SendHorizontal,
 } satisfies Record<string, LucideIcon>;
 
 export type IconName = keyof typeof ICONS;

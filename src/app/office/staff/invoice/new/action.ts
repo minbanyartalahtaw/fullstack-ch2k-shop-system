@@ -8,6 +8,7 @@ export interface ProductType {
 }
 
 interface ProductDetailsInput {
+  productTypeId: number;
   productType: string;
   productName: string;
   purity_16?: number | null;
@@ -68,10 +69,10 @@ export async function createInvoice(formData: InvoiceDataInput) {
     if (!formData.product_Details.productType) {
       return { success: false, error: "ပစ္စည်းအမျိုးအစားရွေးရန်" };
     }
-
     const productDetails = await prisma.productDetails.create({
       data: {
         productName: formData.product_Details.productName,
+        productTypeId: formData.product_Details.productTypeId,
         productType: formData.product_Details.productType,
         // Ensure null for optional fields if they are undefined
         purity_16: formData.product_Details.purity_16 ?? null,

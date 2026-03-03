@@ -5,6 +5,9 @@ import { Button } from "@/components/ui/button";
 import { AppIcon } from "@/components/app-icons";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import rehypeRaw from "rehype-raw";
+import rehypeSanitize from "rehype-sanitize";
+import { Badge } from "@/components/ui/badge";
 
 interface Message {
   role: "user" | "assistant";
@@ -12,9 +15,9 @@ interface Message {
 }
 
 const SUGGESTIONS = [
-  "ယနေ့ရက်စွဲက ဘာလဲ?",
   "Invoice ရှာပေးပါ",
-  "ပစ္စည်းအသေးစိတ်ကြည့်ရန်",
+  "ပစ္စည်းအမျိုးအစားတွေကို ပြပေးပါ",
+  "နောက်ဆုံး အော်ဒါ ၁၀ ခုကိုပြပေးပါ",
 ];
 
 export default function ChatbotPage() {
@@ -98,33 +101,21 @@ export default function ChatbotPage() {
   return (
     <div className="flex flex-col h-[calc(100dvh-3rem)] max-w-3xl mx-auto w-full rounded-xl overflow-hidden">
       {/* Messages - scrollable, scrollbar hidden */}
-      <div className="flex-1 overflow-y-auto overflow-x-hidden px-5 py-6 space-y-5 min-h-0 [scrollbar-width:none] [&::-webkit-scrollbar]:size-0">
+      <div className="flex-1 overflow-y-auto overflow-x-hidden px-4 sm:px-6 py-6 space-y-6 min-h-0 [scrollbar-width:none] [&::-webkit-scrollbar]:size-0">
         {messages.length === 0 && (
-          <div className="flex flex-col items-center justify-center min-h-[280px] gap-8 select-none">
-            <div className="flex flex-col items-center gap-4">
-              <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center ring-1 ring-primary/5">
-                <AppIcon name="bot" className="h-8 w-8 text-primary/80" />
+          <div className="flex flex-1 min-h-0 flex-col items-center justify-center px-4 select-none">
+            <div className="flex flex-col items-center gap-6 text-center max-w-sm">
+              <div className="h-14 w-14 rounded-2xl bg-primary/5 flex items-center justify-center border border-primary/10">
+                <AppIcon name="bot" className="h-7 w-7 text-primary/70" />
               </div>
-              <div className="text-center space-y-1">
-                <p className="text-lg font-semibold text-foreground tracking-tight">
+              <div className="space-y-1.5">
+                <h2 className="text-base font-semibold text-foreground tracking-tight">
                   AI Assistant
-                </p>
-                <p className="text-sm text-muted-foreground">
+                </h2>
+                <p className="text-sm text-muted-foreground/90 leading-relaxed">
                   ချမ်းထော Office Management System
                 </p>
               </div>
-            </div>
-
-            <div className="flex flex-wrap justify-center gap-2 max-w-sm">
-              {SUGGESTIONS.map((s) => (
-                <button
-                  key={s}
-                  type="button"
-                  onClick={() => sendSuggestion(s)}
-                  className="px-4 py-2.5 text-xs font-medium rounded-full border border-border/80 bg-background/80 text-muted-foreground hover:bg-accent/50 hover:text-foreground hover:border-accent-foreground/20 transition-colors cursor-pointer">
-                  {s}
-                </button>
-              ))}
             </div>
           </div>
         )}
@@ -134,7 +125,7 @@ export default function ChatbotPage() {
             key={i}
             className={`flex gap-3 ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
             {msg.role === "assistant" && (
-              <div className="shrink-0 mt-1">
+              <div className="shrink-0 mt-1.5">
                 <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center ring-1 ring-primary/5">
                   <AppIcon name="bot" className="h-4 w-4 text-primary" />
                 </div>
@@ -142,19 +133,98 @@ export default function ChatbotPage() {
             )}
 
             <div
-              className={`max-w-[82%] text-sm leading-relaxed whitespace-pre-wrap break-words ${
+              className={`max-w-[85%] text-sm leading-relaxed whitespace-pre-wrap break-words ${
                 msg.role === "user"
-                  ? "bg-primary text-primary-foreground rounded-2xl rounded-br-md px-4 py-2.5 shadow-sm"
-                  : "bg-muted/50 text-foreground rounded-2xl rounded-bl-md px-4 py-2.5 border border-border/30"
+                  ? "bg-primary text-primary-foreground rounded-2xl rounded-br-md px-5 py-3 shadow-sm"
+                  : "bg-muted/50 text-foreground rounded-2xl rounded-bl-md px-5 py-4 border border-border/30"
               }`}>
               {msg.role === "assistant" ? (
-                <div className="prose prose-sm dark:prose-invert max-w-none prose-p:my-1 prose-ul:my-2 prose-li:my-0.5">
-                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                <div className="markdown-body text-foreground [&>*:first-child]:mt-0 [&>*:last-child]:mb-0">
+                  <ReactMarkdown
+                    remarkPlugins={[remarkGfm]}
+                    rehypePlugins={[rehypeRaw, rehypeSanitize]}
+                    components={{
+                      p: ({ children }) => (
+                        <p className="mb-4 last:mb-0 text-foreground/90 leading-6">
+                          {children}
+                        </p>
+                      ),
+                      h1: ({ children }) => (
+                        <h1 className="text-lg font-semibold text-foreground mt-6 mb-3 first:mt-0">
+                          {children}
+                        </h1>
+                      ),
+                      h2: ({ children }) => (
+                        <h2 className="text-base font-semibold text-foreground mt-5 mb-2">
+                          {children}
+                        </h2>
+                      ),
+                      h3: ({ children }) => (
+                        <h3 className="text-sm font-medium text-foreground mt-4 mb-1.5">
+                          {children}
+                        </h3>
+                      ),
+                      ul: ({ children }) => (
+                        <ul className="list-disc list-outside pl-5 mb-4 space-y-1 text-foreground/90">
+                          {children}
+                        </ul>
+                      ),
+                      ol: ({ children }) => (
+                        <ol className="list-decimal list-outside pl-5 mb-4 space-y-1 text-foreground/90">
+                          {children}
+                        </ol>
+                      ),
+                      li: ({ children }) => (
+                        <li className="leading-6">{children}</li>
+                      ),
+                      blockquote: ({ children }) => (
+                        <blockquote className="border-l-2 border-primary/50 pl-4 my-4 text-muted-foreground text-sm italic leading-6">
+                          {children}
+                        </blockquote>
+                      ),
+                      a: ({ href, children }) => (
+                        <a
+                          href={href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-primary underline underline-offset-2 hover:no-underline">
+                          {children}
+                        </a>
+                      ),
+                      table: ({ children }) => (
+                        <div className="my-4 overflow-x-auto overflow-y-hidden rounded-lg border border-border w-full [scrollbar-width:thin]">
+                          <table className="w-max min-w-full border-collapse text-sm">
+                            {children}
+                          </table>
+                        </div>
+                      ),
+                      thead: ({ children }) => (
+                        <thead className="bg-muted/60">{children}</thead>
+                      ),
+                      tbody: ({ children }) => (
+                        <tbody className="divide-y divide-border">
+                          {children}
+                        </tbody>
+                      ),
+                      tr: ({ children }) => (
+                        <tr className="border-border">{children}</tr>
+                      ),
+                      th: ({ children }) => (
+                        <th className="px-4 py-2.5 text-left font-medium text-foreground border-b border-border whitespace-nowrap">
+                          {children}
+                        </th>
+                      ),
+                      td: ({ children }) => (
+                        <td className="px-4 py-2.5 text-foreground/90 leading-5 whitespace-nowrap">
+                          {children}
+                        </td>
+                      ),
+                    }}>
                     {msg.content}
                   </ReactMarkdown>
                 </div>
               ) : (
-                msg.content
+                <span className="block py-0.5">{msg.content}</span>
               )}
             </div>
           </div>
@@ -163,7 +233,21 @@ export default function ChatbotPage() {
       </div>
 
       {/* Input - fixed at bottom */}
-      <div className="shrink-0 p-4 pt-0 bg-background/50">
+      <div className="shrink-0 p-4 pt-0 bg-background/50 border-t border-border/50">
+        {/* Suggestions - scrollable vertically above input */}
+        <div className="overflow-x-auto overflow-y-hidden mb-3 py-1 [scrollbar-width:thin] [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border">
+          <div className="flex gap-2 justify-start py-0.5 min-w-max">
+            {SUGGESTIONS.map((s) => (
+              <button
+                key={s}
+                type="button"
+                onClick={() => sendSuggestion(s)}
+                className="px-3.5 py-2 text-xs font-medium rounded-full border border-border/80 bg-background/80 text-muted-foreground hover:bg-accent/50 hover:text-foreground hover:border-accent-foreground/20 transition-colors cursor-pointer shrink-0">
+                {s}
+              </button>
+            ))}
+          </div>
+        </div>
         <form onSubmit={handleSubmit} className="flex gap-2 items-end w-full">
           <div className="flex-1 flex items-end rounded-2xl border border-input bg-background shadow-sm focus-within:ring-2 focus-within:ring-ring/50 focus-within:border-ring transition-all">
             <textarea

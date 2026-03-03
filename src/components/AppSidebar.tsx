@@ -214,6 +214,7 @@ export function AppSidebar({ role, name }: Prop) {
                         <AppIcon name="bot" className="h-4 w-4" />
                       </div>
                       <span>AI Assistant</span>
+                      <Badge variant="outline">beta</Badge>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>

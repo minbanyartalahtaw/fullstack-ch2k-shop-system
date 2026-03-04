@@ -3,11 +3,12 @@ import { z } from "zod";
 import prisma from "@/lib/prisma";
 import { parseDate, toUTCEndOfDay, toUTCStartOfDay } from "./utils/date";
 
-export const getTotalPriceWithDate = tool({
+export const getTotalPriceAndInvoiceCountWithDate = tool({
   description: `Get total sales amount for an exact date. Use when user asks daily total sales amount (e.g.
      'ဒီနေ့ဘယ်လောက်ရောင်းရလဲ', '01-03-2026 (DD-MM-YYYY) ရဲ့စုစုပေါင်းတန်ဖိုး' ). Reply in Burmese and show date with total amount.
      Reply with this format :
-     ဒီနေ့ {currentDate DD-MM-YYYY MyanmarNumber} စုစုပေါင်းတန်ဖိုး {totalAmount MyanmarNumber with comma} ကျပ်ရောင်းရပါသည်။
+     if there is no invoice, reply with "{currentDate DD-MM-YYYY MyanmarNumber} တွင် ဘောက်ချာများ မရှိပါ။"
+     {currentDate DD-MM-YYYY MyanmarNumber} တွင် ဘောက်ချာ {invoiceCount MyanmarNumber} ခု ရောင်းရပါသည်။ စုစုပေါင်းတန်ဖိုးမှာ {totalAmount MyanmarNumber with comma} ကျပ်ဖစ်ပါတယ်။
      `,
   inputSchema: z.object({
     date: z
@@ -48,8 +49,8 @@ export const getTotalPriceWithDate = tool({
 
       return {
         date,
-        invoiceCount: count,
-        totalAmount: result._sum.total_Amount ?? 0,
+        count: count,
+        total: result._sum.total_Amount ?? 0,
       };
     } catch (error) {
       console.error("Error fetching total price with date:", error);

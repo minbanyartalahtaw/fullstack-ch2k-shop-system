@@ -18,7 +18,7 @@ Table format: | အမျိုးအစား | အရေအတွက် |`,
       });
       return productTypes.map((pt) => ({
         name: pt.name,
-        productDetailsCount: pt._count.productDetails,
+        count: pt._count.productDetails,
       }));
     } catch (error) {
       console.error("Error fetching product types:", error);

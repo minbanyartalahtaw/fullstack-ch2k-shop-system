@@ -34,8 +34,6 @@ export default function ChatbotPage() {
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
-  console.log(messages);
-
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     const content = input.trim();

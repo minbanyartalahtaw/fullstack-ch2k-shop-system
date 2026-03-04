@@ -7,7 +7,7 @@ import {
 } from "./invoice";
 import { getAllProductTypeDetails } from "./product";
 import { getAssistantCapabilities } from "./capabilities";
-import { getTotalPriceWithDate } from "./price";
+import { getTotalPriceAndInvoiceCountWithDate } from "./price";
 
 export const chatTools = {
   getCurrentDateTime,
@@ -17,5 +17,5 @@ export const chatTools = {
   getInvoiceDetailsWithDateRange,
   getAllProductTypeDetails,
   getAssistantCapabilities,
-  getTotalPriceWithDate,
+  getTotalPriceAndInvoiceCountWithDate,
 };

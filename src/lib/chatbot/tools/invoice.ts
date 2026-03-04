@@ -3,173 +3,169 @@ import { z } from "zod";
 import prisma from "@/lib/prisma";
 import { parseDate, toUTCStartOfDay, toUTCEndOfDay } from "./utils/date";
 
-const invoiceSelect = {
-  invoiceId: true,
-  customer_Name: true,
-  mobile_Number: true,
-  purchase_date: true,
-  total_Amount: true,
-  seller: true,
-  productDetails: {
-    select: {
-      productName: true,
-      productType: true,
-      isOrder: true,
-      isOrderTaken: true,
-    },
-  },
-} as const;
+const fmt = (d: Date) => {
+  const dd = String(d.getUTCDate()).padStart(2, "0");
+  const mm = String(d.getUTCMonth() + 1).padStart(2, "0");
+  return `${dd}-${mm}-${d.getUTCFullYear()}`;
+};
 
-const invoiceSelectWithAppointment = {
-  ...invoiceSelect,
-  appointment_Date: true,
-} as const;
-
-const invoiceSelectForDateRange = {
-  invoiceId: true,
-  customer_Name: true,
-  mobile_Number: true,
-  purchase_date: true,
-  total_Amount: true,
-  seller: true,
-  productDetails: {
-    select: {
-      productName: true,
-      productType: true,
-    },
-  },
-} as const;
-
+// Single invoice by ID — compact JSON output
 export const getInvoiceDetails = tool({
-  description: `
-Fetch invoice (ဘောက်ချာ) by Invoice ID (e.g. INV-123). Reply in the Burmese language.
-
-Present as a simple 2-column Markdown table and top show with h3 tag:
-- Tag : ဘောက်ချာအသေးစိတ်
-- Table columns: | အကြောင်းအရာ | အသေးစိတ် |
-- Row order: ဘောက်ချာ, အမည်, ဖုန်း, ရက်စွဲ (purchase_date), တန်ဖိုး, ရောင်းသူ. Use DD-MM-YYYY for dates.
-- For productDetails: add one row per product: ပစ္စည်းအမည်, အမျိုးအစား; if that product has isOrder true, add a row Status with value ပေးပြီး or မပေးရသေး from isOrderTaken.
-  `,
+  description: `Fetch one invoice by ID.
+Return compact JSON:
+- Success: { d: { i,n,p,dt,a,s,it:{n,t,o,k} } }
+- Error: { e: "not_found" | "error" }
+Keys: i=invoiceId, n=name, p=phone, dt=date, a=amount, s=seller, it=item, t=type, o=isOrder, k=isOrderTaken.
+Reply in Burmese and present as 2-column Markdown table.`,
   inputSchema: z.object({
-    invoiceId: z
-      .string()
-      .optional()
-      .describe("The unique Invoice ID (ဘောက်ချာ ID) (e.g., INV-123)"),
+    invoiceId: z.string().describe("Invoice ID (e.g. INV-123)"),
   }),
   execute: async ({ invoiceId }) => {
     try {
-      if (invoiceId) {
-        const invoice = await prisma.invoice.findUnique({
-          where: { invoiceId },
-          select: invoiceSelect,
-        });
-        return invoice || { error: "Invoice not found" };
-      }
+      const inv = await prisma.invoice.findUnique({
+        where: { invoiceId },
+        select: {
+          invoiceId: true,
+          customer_Name: true,
+          mobile_Number: true,
+          purchase_date: true,
+          total_Amount: true,
+          seller: true,
+          productDetails: {
+            select: {
+              productName: true,
+              productType: true,
+              isOrder: true,
+              isOrderTaken: true,
+            },
+          },
+        },
+      });
+      if (!inv) return { e: "not_found" };
+      const p = inv.productDetails;
       return {
-        error:
-          "ဘောက်ချာနံပါတ် (Invoice ID) မှန်ကန်မှသာ ရရှိလိမ့်မည်။ ကျေးဇူးပြု၍ သေချာပြန်စစ်ပါ။",
+        d: {
+          i: inv.invoiceId,
+          n: inv.customer_Name,
+          p: inv.mobile_Number ?? "",
+          dt: fmt(inv.purchase_date),
+          a: inv.total_Amount ?? 0,
+          s: inv.seller,
+          it: {
+            n: p.productName,
+            t: p.productType,
+            o: p.isOrder,
+            k: p.isOrderTaken,
+          },
+        },
       };
-    } catch (error) {
-      console.error("Error fetching invoice details:", error);
-      return { error: "Failed to fetch invoice details from database" };
+    } catch {
+      return { e: "error" };
     }
   },
 });
 
+// Latest 10 orders — compact JSON output
 export const getOrderInvoice = tool({
-  description: `Fetch up to 10 latest invoices where product is an order (isOrder = true). Use for 
-အော်ဒါဘောက်ချာ or order list; do NOT use for single invoice lookup by ID. Reply in the user's language.
-at first show with3 tag:  နောက်ဆုံး အော်ဒါ {number of invoices} ခု
-Present as a Markdown table. Columns: ဘောက်ချာ, အမည်, ဖုန်း, တန်ဖိုး, အမျိုးအစား, ပစ္စည်းအမည်, Status (ပေးပြီး/မပေးရသေး from isOrderTaken). Format dates YYYY-MM-DD.`,
+  description: `Fetch latest 10 order invoices (isOrder=true).
+Return compact JSON:
+- Success: { d: [{ i,n,p,a,it:{n,t,k} }] }
+- Error: { e: "no_orders" | "error" }
+Keys: i=invoiceId, n=name, p=phone, a=amount, it=item, t=type, k=isOrderTaken.
+Reply in Burmese and present as Markdown table.`,
   inputSchema: z.object({}),
   execute: async () => {
     try {
-      const invoices = await prisma.invoice.findMany({
-        where: {
+      const rows = await prisma.invoice.findMany({
+        where: { productDetails: { isOrder: true } },
+        select: {
+          invoiceId: true,
+          customer_Name: true,
+          mobile_Number: true,
+          total_Amount: true,
           productDetails: {
-            isOrder: true,
+            select: {
+              productName: true,
+              productType: true,
+              isOrderTaken: true,
+            },
           },
         },
-        select: invoiceSelectWithAppointment,
         orderBy: { createdAt: "desc" },
         take: 10,
       });
-      return invoices.length > 0
-        ? invoices
-        : {
-            message: "အော်ဒါ ဘောက်ချာတွေ မရှိသေးပါဘူး။",
-            invoices: [],
-          };
-    } catch (error) {
-      console.error("Error fetching order invoices:", error);
-      return { error: "Failed to fetch order invoices from database" };
+      if (!rows.length) return { e: "no_orders" };
+      return {
+        d: rows.map((r) => ({
+          i: r.invoiceId,
+          n: r.customer_Name,
+          p: r.mobile_Number ?? "",
+          a: r.total_Amount ?? 0,
+          it: {
+            n: r.productDetails.productName,
+            t: r.productDetails.productType,
+            k: r.productDetails.isOrderTaken,
+          },
+        })),
+      };
+    } catch {
+      return { e: "error" };
     }
   },
 });
 
+// Invoices by date range — compact JSON output
 export const getInvoiceDetailsWithDateRange = tool({
-  description: `Fetch invoices by purchase date range. Use when the user asks for invoices within a date range (e.g. "ရက်စွဲ ... မှ ... အထိ ဘောက်ချာများ").
-Reply in Burmese. First show: ဘောက်ချာများ
-Then one Markdown table with columns: ဘောက်ချာ, အမည်, ဖုန်း, တန်ဖိုး, အမျိုးအစား, ပစ္စည်းအမည်, ရက်စွဲ. Format dates DD-MM-YYYY.`,
+  description: `Fetch invoices in date range.
+Return compact JSON:
+- Success: { d: [{ i,n,p,a,dt,s }] }
+- Error: { e: "need_date" | "bad_start" | "bad_end" | "no_invoices" | "error" }
+Keys: i=invoiceId, n=name, p=phone, a=amount, dt=date, s=seller.
+Reply in Burmese and present as Markdown table (DD-MM-YYYY).`,
   inputSchema: z.object({
-    startDate: z
-      .string()
-      .optional()
-      .describe("Start of date range (DD-MM-YYYY)"),
-    endDate: z.string().optional().describe("End of date range (DD-MM-YYYY)"),
+    startDate: z.string().optional().describe("DD-MM-YYYY"),
+    endDate: z.string().optional().describe("DD-MM-YYYY"),
   }),
   execute: async ({ startDate, endDate }) => {
     try {
-      if (!startDate && !endDate) {
-        return {
-          error:
-            "ရက်စွဲ စမှတ် သို့မဟုတ် ဆုံးမှတ် ထည့်ပေးပါ။ (Provide start date and/or end date, e.g. DD-MM-YYYY)",
-        };
-      }
+      if (!startDate && !endDate) return { e: "need_date" };
       const start = startDate ? parseDate(startDate) : undefined;
       const end = endDate ? parseDate(endDate) : undefined;
-      if (startDate && !start) {
-        return {
-          error: "စမှတ် ရက်စွဲ မမှန်ပါ။ (Invalid start date, use DD-MM-YYYY)",
-        };
-      }
-      if (endDate && !end) {
-        return {
-          error: "ဆုံးမှတ် ရက်စွဲ မမှန်ပါ။ (Invalid end date, use DD-MM-YYYY)",
-        };
-      }
+      if (startDate && !start) return { e: "bad_start" };
+      if (endDate && !end) return { e: "bad_end" };
       const startUTC = start ? toUTCStartOfDay(start) : undefined;
       const endUTC = end ? toUTCEndOfDay(end) : undefined;
-      if (startUTC && isNaN(startUTC.getTime())) {
-        return { error: "စမှတ် ရက်စွဲ မမှန်ပါ။ (Invalid start date)" };
-      }
-      if (endUTC && isNaN(endUTC.getTime())) {
-        return { error: "ဆုံးမှတ် ရက်စွဲ မမှန်ပါ။ (Invalid end date)" };
-      }
-      const invoices = await prisma.invoice.findMany({
+      const rows = await prisma.invoice.findMany({
         where: {
           purchase_date: {
             ...(startUTC && { gte: startUTC }),
             ...(endUTC && { lte: endUTC }),
           },
         },
-        select: invoiceSelectForDateRange,
+        select: {
+          invoiceId: true,
+          customer_Name: true,
+          mobile_Number: true,
+          total_Amount: true,
+          purchase_date: true,
+          seller: true,
+        },
         orderBy: { purchase_date: "desc" },
         take: 50,
       });
-      if (invoices.length === 0) {
-        return {
-          message: "ထို ရက်စွဲအတွင်း ဘောက်ချာ မရှိပါ။",
-          invoices: [],
-        };
-      }
+      if (!rows.length) return { e: "no_invoices" };
       return {
-        message: `ရက်စွဲအတွင်း ဘောက်ချာ ${invoices.length} ခု ရှိပါသည်။`,
-        invoices,
+        d: rows.map((r) => ({
+          i: r.invoiceId,
+          n: r.customer_Name,
+          p: r.mobile_Number ?? "",
+          a: r.total_Amount ?? 0,
+          dt: fmt(r.purchase_date),
+          s: r.seller,
+        })),
       };
-    } catch (error) {
-      console.error("Error fetching invoices by date range:", error);
-      return { error: "Failed to fetch invoices by date range" };
+    } catch {
+      return { e: "error" };
     }
   },
 });

@@ -261,11 +261,11 @@ export default function ChatbotPage() {
       </div>
 
       {/* Input - fixed at bottom */}
-      <div className="shrink-0 p-4 pt-0 bg-background/50 border-t border-border/50">
+      <div className="shrink-0 px-2 pb-2 pt-0 bg-background/50 border-t border-border/50">
         {/* Suggestions - horizontal chips, scrollbar hidden */}
         <div
           onWheel={handleSuggestionWheel}
-          className="overflow-x-auto overflow-y-hidden mb-3 py-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden touch-pan-x">
+          className="overflow-x-auto overflow-y-hidden py-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden touch-pan-x">
           <div className="flex gap-2 justify-start py-0.5 min-w-max snap-x snap-mandatory scroll-px-1">
             {SUGGESTIONS.map((s) => (
               <button

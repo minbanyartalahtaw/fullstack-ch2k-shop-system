@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { AppIcon } from "@/components/app-icons";
 import { getInvoices, type InvoiceWithDetails } from "../action";
 import { InvoiceHistorySkeleton } from "./invoice-history-skeleton";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   Popover,
   PopoverContent,
@@ -21,6 +22,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import Link from "next/link";
 
 // Types
 interface ColumnConfig {
@@ -49,13 +51,19 @@ const formatCurrency = (amount: number | null) =>
   amount === null ? "-" : amount.toLocaleString();
 
 export function InvoiceHistoryTable() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const pageFromUrl = Number(searchParams.get("page") || "1");
+  const initialPage =
+    Number.isFinite(pageFromUrl) && pageFromUrl > 0 ? pageFromUrl : 1;
+
   // State
   const [invoices, setInvoices] = useState<InvoiceWithDetails[]>([]);
   const [loading, setLoading] = useState(true);
   const [pagination, setPagination] = useState({
     total: 0,
-    page: 1,
-    limit: 10,
+    page: initialPage,
+    limit: 8,
     totalPages: 0,
   });
 
@@ -67,6 +75,13 @@ export function InvoiceHistoryTable() {
 
   const toggleColumnVisibility = (columnId: string) => {
     setColumnVisibility((prev) => ({ ...prev, [columnId]: !prev[columnId] }));
+  };
+
+  const setPage = (page: number) => {
+    setPagination((prev) => ({ ...prev, page }));
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("page", String(page));
+    router.replace(`?${params.toString()}`, { scroll: false });
   };
 
   const fetchInvoices = async () => {
@@ -87,6 +102,15 @@ export function InvoiceHistoryTable() {
   };
 
   // Effects
+  useEffect(() => {
+    const current = Number(searchParams.get("page") || "1");
+    const nextPage = Number.isFinite(current) && current > 0 ? current : 1;
+    if (nextPage !== pagination.page) {
+      setPagination((prev) => ({ ...prev, page: nextPage }));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
+
   useEffect(() => {
     fetchInvoices();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -173,10 +197,10 @@ export function InvoiceHistoryTable() {
         )}
         {columnVisibility.actions && (
           <TableCell>
-            <a href={`/office/staff/invoice/${invoice.invoiceId}`}>
+            <Link href={`/office/staff/invoice/${invoice.invoiceId}`}>
               <AppIcon name="squareArrow" className="h-4 w-4" />
               <span className="sr-only">View</span>
-            </a>
+            </Link>
           </TableCell>
         )}
       </TableRow>
@@ -237,9 +261,7 @@ export function InvoiceHistoryTable() {
           <Button
             variant="outline"
             size="sm"
-            onClick={() =>
-              setPagination((prev) => ({ ...prev, page: prev.page - 1 }))
-            }
+            onClick={() => setPage(pagination.page - 1)}
             disabled={pagination.page === 1}>
             <AppIcon name="arrowLeft" className="h-4 w-4" />
           </Button>
@@ -249,9 +271,7 @@ export function InvoiceHistoryTable() {
               key={i + 1}
               variant={pagination.page === i + 1 ? "default" : "outline"}
               size="sm"
-              onClick={() =>
-                setPagination((prev) => ({ ...prev, page: i + 1 }))
-              }>
+              onClick={() => setPage(i + 1)}>
               {i + 1}
             </Button>
           ))}
@@ -259,9 +279,7 @@ export function InvoiceHistoryTable() {
           <Button
             variant="outline"
             size="sm"
-            onClick={() =>
-              setPagination((prev) => ({ ...prev, page: prev.page + 1 }))
-            }
+            onClick={() => setPage(pagination.page + 1)}
             disabled={pagination.page === pagination.totalPages}>
             <AppIcon name="arrowRight" className="h-4 w-4" />
           </Button>

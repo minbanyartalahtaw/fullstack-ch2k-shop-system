@@ -71,7 +71,8 @@ export const getOrderInvoice = tool({
 Return compact JSON:
 - Success: { d: [{ i,n,p,a,it:{n,t,k} }] }
 - Error: { e: "no_orders" | "error" }
-Keys: i=invoiceId, n=name, p=phone, a=amount, it=item, t=type, k=isOrderTaken.
+Keys: i=invoiceId, n=name, p=phone, a=amount, it=item, t=type, k=*Leave blank for table header,
+ fill with "ပစ္စည်းပေးပြီး" if isOrderTaken is true, "ပစ္စည်းမပေးရသေးပါ" if isOrderTaken is false.
 Reply in Burmese and present as Markdown table.`,
   inputSchema: z.object({}),
   execute: async () => {

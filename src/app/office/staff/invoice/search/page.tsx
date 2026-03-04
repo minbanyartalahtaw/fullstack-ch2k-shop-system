@@ -21,7 +21,7 @@ export default function InvoiceHistory() {
 
   return (
     <div className="w-full h-full overflow-auto px-1 pt-4">
-      <Card className="w-full">
+      <Card className="w-full" variant={"noborder"}>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <AppIcon name="searchInvoice" className="h-5 w-5" />

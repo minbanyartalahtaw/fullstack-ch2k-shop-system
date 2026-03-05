@@ -1,155 +1,141 @@
 "use client";
+
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { toast } from "sonner";
-import { checkUser, createStaff } from "./action";
+import { hasUsers, createFirstUser } from "./action";
 import { useState, useRef, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Textarea } from "@/components/ui/textarea";
 
-export default function Page() {
+export default function WelcomePage() {
+  const router = useRouter();
+  const [ready, setReady] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
-  const [isUserExist, setIsUserExist] = useState(false);
 
   useEffect(() => {
-    const isUserExist = async () => {
-      const result = await checkUser();
-      setIsUserExist(!result ? true : false);
-    };
-    isUserExist();
-  }, []);
+    hasUsers().then((exists) => {
+      if (exists) {
+        router.replace("/");
+      } else {
+        setReady(true);
+      }
+    });
+  }, [router]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
-
     try {
       const formData = new FormData(e.currentTarget);
-
-      const result = await createStaff(formData);
-
+      const result = await createFirstUser(formData);
       if (result.success) {
         toast.success(`${result.staff?.name} အကောင့်ဖွင့်ပြီးပါပြီ`);
-        formRef.current?.reset();
+        router.replace("/");
       } else {
-        toast.error(
-          result.error || "ဝန်ထမ်းထည့်သွင်းရာတွင်အမှားတစ်ခုဖြစ်ပေါ်ခဲ့သည်",
-        );
+        toast.error(result.error || "အမှားတစ်ခုဖြစ်ပေါ်ခဲ့သည်");
       }
-    } catch (error) {
-      console.error("Staff creation error:", error);
+    } catch {
       toast.error("မမျှော်လင့်ထားသောအမှားတစ်ခုဖြစ်ပေါ်ခဲ့သည်");
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  if (!ready) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-white">
+        <div className="h-7 w-7 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+      </div>
+    );
+  }
+
   return (
-    <div className="mt-10">
-      <Card className="max-w-xl mx-auto">
-        <CardTitle className="text-center">Hello a First User </CardTitle>
-        <CardContent>
-          <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-3">
-              <div>
-                <Label htmlFor="name" className="text-sm">
-                  ဝန်ထမ်းအမည်
-                </Label>
-                <Input
-                  id="name"
-                  name="name"
-                  placeholder="Enter staff name"
-                  className="mt-1.5"
-                  required
-                />
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-white to-primary/5 px-3 py-6 sm:px-6 sm:py-10">
+      <div className="mx-auto flex w-full max-w-xl items-center justify-center">
+        <Card className="w-full border-primary/20 bg-white shadow-xl">
+          <CardContent className="p-4 sm:p-7">
+            <div className="mb-5 space-y-2">
+              <h2 className="text-md font-semibold tracking-tight text-foreground sm:text-xl">
+                ပထမဦးဆုံး Manager အကောင့်တစ်ခု ဖွင့်ပါ။
+              </h2>
+
+              <p className="rounded-md mt-5 border border-primary/25 bg-primary/10 px-3 py-2 text-xs text-primary leading-relaxed">
+                မှတ်ချက် - ဤစာမျက်နှာသည် ပထမဆုံးအကြိမ် အကောင့်ဖွင့်ရန်အတွက်သာ
+                ဖြစ်ပါသည်။
+              </p>
+            </div>
+
+            <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div className="space-y-1.5">
+                  <Label htmlFor="name" className="text-xs">
+                    အမည်
+                  </Label>
+                  <Input
+                    id="name"
+                    name="name"
+                    placeholder="Manager အမည်"
+                    className="h-10"
+                    required
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label htmlFor="phone" className="text-xs">
+                    ဖုန်းနံပါတ်
+                  </Label>
+                  <Input
+                    id="phone"
+                    name="phone"
+                    type="tel"
+                    placeholder="09-XXX-XXX-XXX"
+                    className="h-10"
+                    required
+                  />
+                </div>
               </div>
 
-              <div>
-                <Label htmlFor="email" className="text-sm">
-                  Email (Optional)
-                </Label>
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  placeholder="Enter email address"
-                  className="mt-1.5"
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="phone" className="text-sm">
-                  ဖုန်းနံပါတ်
-                </Label>
-                <Input
-                  id="phone"
-                  name="phone"
-                  placeholder="Enter phone number"
-                  className="mt-1.5"
-                  required
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="address" className="text-sm">
+              <div className="space-y-1.5">
+                <Label htmlFor="address" className="text-xs">
                   လိပ်စာ
                 </Label>
                 <Textarea
                   id="address"
                   name="address"
-                  placeholder="Enter address"
-                  className="mt-1.5 resize-none"
-                  rows={3}
+                  placeholder="လိပ်စာ"
+                  className="min-h-20 resize-none"
                   required
                 />
               </div>
 
-              <div>
-                <Label htmlFor="password" className="text-sm">
-                  Password
+              <div className="space-y-1.5">
+                <Label htmlFor="password" className="text-xs">
+                  စကားဝှက်
                 </Label>
                 <Input
                   id="password"
                   name="password"
                   type="password"
-                  placeholder="Enter password"
-                  className="mt-1.5"
+                  placeholder="အနည်းဆုံး ၆ လုံး"
+                  className="h-10"
                   required
                 />
               </div>
 
-              <div>
-                <Label htmlFor="role" className="text-sm">
-                  Role
-                </Label>
-                <Select name="role" defaultValue="MANAGER">
-                  <SelectTrigger id="role" className="mt-1.5">
-                    <SelectValue placeholder="Select role" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="MANAGER">Manager</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            <div className="pt-4">
-              <Button type="submit" className="w-full" disabled={isSubmitting}>
-                {isSubmitting ? "Adding..." : "Add Staff"}
+              <Button
+                type="submit"
+                className="mt-1 h-10 w-full"
+                disabled={isSubmitting}>
+                {isSubmitting ? "ခနစောင့်ပါ..." : "အကောင့်ဖွင့်ရန်"}
               </Button>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }

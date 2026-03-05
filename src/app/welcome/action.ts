@@ -2,102 +2,42 @@
 
 import prisma from "@/lib/prisma";
 
-export interface StaffFormData {
-  name: string;
-  email?: string | null;
-  phone: string;
-  address: string;
-  password: string;
-  role: "STAFF" | "MANAGER";
+export async function hasUsers(): Promise<boolean> {
+  const count = await prisma.staff.count({ take: 1 });
+  return count > 0;
 }
 
-export async function checkUser() {
-  const user = await prisma.staff.findFirst();
-  return !!user;
-}
-
-function validateStaffData(data: StaffFormData): {
-  success: boolean;
-  message: string;
-} {
-  if (!data.name) {
-    return { success: false, message: "ဝန်ထမ်းအမည်ထည့်ပါ" };
+export async function createFirstUser(formData: FormData) {
+  const existing = await prisma.staff.count({ take: 1 });
+  if (existing > 0) {
+    return { success: false, error: "ဝန်ထမ်းရှိပြီးသားဖြစ်ပါသည်" };
   }
 
-  if (data.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
-    return { success: false, message: "Invalid email format" };
-  }
+  const name = (formData.get("name") as string)?.trim();
+  const phone = (formData.get("phone") as string)?.trim();
+  const address = (formData.get("address") as string)?.trim();
+  const password = formData.get("password") as string;
 
-  if (!data.phone) {
-    return { success: false, message: "ဖုန်းနံပါတ်ထည့်ပါ" };
-  }
+  if (!name) return { success: false, error: "အမည်ထည့်ပါ" };
+  if (!phone) return { success: false, error: "ဖုန်းနံပါတ်ထည့်ပါ" };
+  if (!address) return { success: false, error: "လိပ်စာထည့်ပါ" };
+  if (!password || password.length < 6)
+    return { success: false, error: "စကားဝှက် အနည်းဆုံး ၆ လုံးထည့်ပါ" };
 
-  if (!data.address) {
-    return { success: false, message: "လိပ်စာထည့်ပါ" };
-  }
-
-  if (!data.password || data.password.length < 6) {
-    return {
-      success: false,
-      message: "Password must be at least 6 characters",
-    };
-  }
-
-  if (data.role !== "STAFF" && data.role !== "MANAGER") {
-    return { success: false, message: "Invalid role" };
-  }
-
-  return { success: true, message: "Validation successful" };
-}
-
-export async function createStaff(formData: FormData) {
   try {
-    const isUserExit = await prisma.staff.findFirst();
-    if (isUserExit) {
-      return { success: false, error: "You Can't Create User From This" };
-    }
-
-    // Extract and validate input data
-    const name = formData.get("name") as string;
-    const email = formData.get("email") as string;
-    const phone = formData.get("phone") as string;
-    const address = formData.get("address") as string;
-    const password = formData.get("password") as string;
-    const role = formData.get("role") as "STAFF" | "MANAGER";
-
-    const data: StaffFormData = {
-      name,
-      email: email || null,
-      phone,
-      address,
-      password,
-      role,
-    };
-
-    const validation = validateStaffData(data);
-
-    if (!validation.success) {
-      return { success: false, error: validation.message };
-    }
-
-    // Create staff record
     const staff = await prisma.staff.create({
       data: {
-        name: data.name,
-        email: data.email || null,
-        phone: data.phone,
-        address: data.address,
-        password: data.password, // ⚠️ TODO: Hash password with bcrypt in production
-        role: data.role,
+        name,
+        phone,
+        address,
+        password,
+        role: "MANAGER",
       },
-      select: {
-        name: true,
-      },
+      select: { name: true },
     });
-
     return { success: true, staff };
   } catch (error) {
-    console.error("Failed to create staff:", error);
+    console.error("Failed to create first user:", error);
     return {
       success: false,
       error:

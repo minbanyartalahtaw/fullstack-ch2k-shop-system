@@ -27,12 +27,17 @@ import { InvoiceHistorySkeleton } from "../../staff/order/components/invoice-his
 
 export default function NewProductType() {
   const [productTypes, setProductTypes] = useState<ProductType[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [togglingIds, setTogglingIds] = useState<Set<number>>(new Set());
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const fetchProductTypes = async () => {
-    const productTypes = await getProductTypes();
-    setProductTypes(productTypes);
+    try {
+      const productTypes = await getProductTypes();
+      setProductTypes(productTypes);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -118,10 +123,18 @@ export default function NewProductType() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {productTypes.length === 0 ? (
+                  {isLoading ? (
                     <TableRow>
-                      <TableCell colSpan={10}>
+                      <TableCell colSpan={4}>
                         <InvoiceHistorySkeleton />
+                      </TableCell>
+                    </TableRow>
+                  ) : productTypes.length === 0 ? (
+                    <TableRow>
+                      <TableCell
+                        colSpan={4}
+                        className="text-center h-24 text-muted-foreground">
+                        ပစ္စည်းအမျိုးအစား မရှိသေးပါ
                       </TableCell>
                     </TableRow>
                   ) : (

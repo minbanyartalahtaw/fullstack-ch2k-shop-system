@@ -4,6 +4,11 @@ import prisma from "@/lib/prisma";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
+export async function checkHasUsers(): Promise<boolean> {
+  const count = await prisma.staff.count({ take: 1 });
+  return count > 0;
+}
+
 export async function loginAction(formData: FormData) {
   const phoneNumber = formData.get("phoneNumber");
   const password = formData.get("password");

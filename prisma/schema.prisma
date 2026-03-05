@@ -14,6 +14,12 @@ enum Role {
   MANAGER
 }
 
+enum OrderStatus {
+  NOT_ORDER
+  ORDER_PENDING
+  ORDER_COMPLETED
+}
+
 model Staff {
   id        Int      @id @default(autoincrement())
   staffId   String   @unique @default(uuid()) // Using UUID for secure, unique staff IDs
@@ -53,8 +59,6 @@ model ProductDetails {
   weight       Json      // JsonB type in PostgreSQL
   handWidth    String?   // Changed to String to match form
   length       String?   // Changed to String to match form
-  isOrder      Boolean   @default(false)
-  isOrderTaken Boolean   @default(false)
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
 
@@ -68,12 +72,14 @@ model Invoice {
   customer_Name    String
   mobile_Number    String?       // Optional
   address          String?       // Optional
-  purchase_date    DateTime
   total_Amount     Float?        // Use Float for decimal numbers, optional
   reject_Amount    Float?
   remaining_Amount Float?
+  purchase_date    DateTime
   appointment_Date DateTime?
   seller           String
+  isOrder          Boolean       @default(false)
+  orderStatus      OrderStatus   @default(NOT_ORDER)
   createdAt        DateTime      @default(now())
   updatedAt        DateTime      @updatedAt
 

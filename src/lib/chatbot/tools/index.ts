@@ -5,7 +5,7 @@ import {
   getOrderInvoice,
   getInvoiceDetailsWithDateRange,
 } from "./invoice";
-import { getAllProductTypeDetails } from "./product";
+import { analyzeProductSales, getAllProductTypeDetails } from "./product";
 import { getAssistantCapabilities } from "./capabilities";
 import { getTotalPriceAndInvoiceCountWithDate } from "./price";
 
@@ -18,4 +18,5 @@ export const chatTools = {
   getAllProductTypeDetails,
   getAssistantCapabilities,
   getTotalPriceAndInvoiceCountWithDate,
+  analyzeProductSales,
 };

@@ -33,14 +33,12 @@ interface ColumnConfig {
 
 // Constants
 const COLUMNS: ColumnConfig[] = [
-  { id: "invoiceId", label: "စဥ်", visible: true },
+  { id: "invoiceId", label: "ဘောက်ချာနံပါတ်", visible: false },
   { id: "customerName", label: "အမည်", visible: true },
   { id: "mobile", label: "ဖုန်းနံပါတ်", visible: true },
   { id: "purchaseDate", label: "ရက်စွဲ", visible: true },
   { id: "productType", label: "ပစ္စည်းအမျိုးအစား", visible: true },
   { id: "totalAmount", label: "တန်ဖိုး", visible: true },
-  { id: "receivedAmount", label: "စရံငွေ", visible: false },
-  { id: "remainingAmount", label: "ကျန်ငွေ", visible: false },
   { id: "orderType", label: "အော်ဒါ/အရောင်း", visible: true },
   { id: "actions", label: "အသေးစိတ်", visible: true },
 ];
@@ -153,7 +151,9 @@ export function InvoiceHistoryTable() {
 
     return invoices.map((invoice) => (
       <TableRow key={invoice.id}>
-        {columnVisibility.invoiceId && <TableCell>{invoice.id}</TableCell>}
+        {columnVisibility.invoiceId && (
+          <TableCell>{invoice.invoiceId}</TableCell>
+        )}
         {columnVisibility.customerName && (
           <TableCell className="border">{invoice.customer_Name}</TableCell>
         )}
@@ -175,23 +175,10 @@ export function InvoiceHistoryTable() {
             {formatCurrency(invoice.total_Amount)}
           </TableCell>
         )}
-        {columnVisibility.receivedAmount && (
-          <TableCell className="border">
-            {formatCurrency(invoice.reject_Amount)}
-          </TableCell>
-        )}
-        {columnVisibility.remainingAmount && (
-          <TableCell className="border">
-            {formatCurrency(invoice.remaining_Amount)}
-          </TableCell>
-        )}
         {columnVisibility.orderType && (
           <TableCell className="min-w-[62px] border">
-            <Badge
-              variant={
-                invoice.productDetails.isOrder ? "default" : "secondary"
-              }>
-              {invoice.productDetails.isOrder ? "အော်ဒါ" : "အရောင်း"}
+            <Badge variant={invoice.isOrder ? "default" : "secondary"}>
+              {invoice.isOrder ? "အော်ဒါ" : "အရောင်း"}
             </Badge>
           </TableCell>
         )}

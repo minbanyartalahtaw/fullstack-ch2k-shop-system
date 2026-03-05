@@ -1,6 +1,7 @@
 "use server";
 
 import prisma from "@/lib/prisma";
+import { OrderStatus } from "@prisma/client";
 
 export type InvoiceWithDetails = {
   id: number;
@@ -14,6 +15,8 @@ export type InvoiceWithDetails = {
   remaining_Amount: number | null;
   appointment_Date: Date | null;
   seller: string;
+  isOrder: boolean;
+  orderStatus: OrderStatus;
   createdAt: Date;
   updatedAt: Date;
   productDetailsId: number;
@@ -29,8 +32,6 @@ export type InvoiceWithDetails = {
     weight: any;
     handWidth: string | null;
     length: string | null;
-    isOrder: boolean;
-    isOrderTaken: boolean;
     createdAt: Date;
     updatedAt: Date;
   };
@@ -84,9 +85,7 @@ export async function getInvoices(params: GetInvoicesParams = {}) {
   }
 
   if (isOrder !== undefined) {
-    where.productDetails = {
-      isOrder,
-    };
+    where.isOrder = isOrder;
   }
   // Simulate 2 second delay
 
@@ -95,7 +94,7 @@ export async function getInvoices(params: GetInvoicesParams = {}) {
     const total = await prisma.invoice.count({ where });
 
     // Get invoices with pagination, sorting, and filtering
-    const invoices = await prisma.invoice.findMany({
+    const invoices = (await prisma.invoice.findMany({
       where,
       include: {
         productDetails: {
@@ -110,19 +109,17 @@ export async function getInvoices(params: GetInvoicesParams = {}) {
             weight: true,
             handWidth: true,
             length: true,
-            isOrder: true,
-            isOrderTaken: true,
             createdAt: true,
-            updatedAt: true
-          }
-        }
+            updatedAt: true,
+          },
+        },
       },
       orderBy: {
         createdAt: "desc",
       },
       skip,
       take: limit,
-    }) as InvoiceWithDetails[];
+    })) as InvoiceWithDetails[];
 
     return {
       invoices,

@@ -1,13 +1,28 @@
 "use server";
 
 import prisma from "@/lib/prisma";
+import { OrderStatus } from "@prisma/client";
 
-export interface ProductType {
+// --- Types (aligned with schema) ---
+
+interface ProductType {
   id: number;
   name: string;
 }
 
-interface ProductDetailsInput {
+/** Weight matrix for product (matches ProductDetails.weight Json) */
+const WEIGHT_ROW_KEYS = [
+  "row1",
+  "row2",
+  "row3",
+  "row4",
+  "row5",
+  "row6",
+] as const;
+
+export type WeightRowKey = (typeof WEIGHT_ROW_KEYS)[number];
+
+export interface ProductDetailsInput {
   productTypeId: number;
   productType: string;
   productName: string;
@@ -25,22 +40,21 @@ interface ProductDetailsInput {
   };
   handWidth: string;
   length: string;
-  isOrder: boolean;
-  isOrderTaken: boolean;
 }
 
-interface InvoiceDataInput {
-  invoiceId?: string;
+export interface InvoiceDataInput {
   customer_Name: string;
-  mobile_Number: string;
-  address: string;
+  mobile_Number?: string | null;
+  address?: string | null;
   purchase_date: Date;
   product_Details: ProductDetailsInput;
-  total_Amount?: number | null;
+  total_Amount: number;
   reject_Amount?: number | null;
   remaining_Amount?: number | null;
   appointment_Date?: Date | null;
   seller: string;
+  isOrder: boolean;
+  orderStatus: OrderStatus;
 }
 
 export async function getProductTypes() {
@@ -64,46 +78,64 @@ export async function getProductTypes() {
   }
 }
 
+function generateInvoiceId(): string {
+  const ts = Date.now().toString();
+  const rnd = Math.floor(Math.random() * 10000)
+    .toString()
+    .padStart(4, "0");
+  return `INV-${ts.slice(0, 4)}-${ts.slice(4, 8)}-${ts.slice(8, 12)}-${rnd}`;
+}
+
 export async function createInvoice(formData: InvoiceDataInput) {
   try {
     if (!formData.product_Details.productType) {
       return { success: false, error: "ပစ္စည်းအမျိုးအစားရွေးရန်" };
     }
+    if (
+      typeof formData.total_Amount !== "number" ||
+      formData.total_Amount < 0
+    ) {
+      return { success: false, error: "စုစုပေါင်းတန်ဖိုးထည့်ရန်" };
+    }
+
     const productDetails = await prisma.productDetails.create({
       data: {
         productName: formData.product_Details.productName,
         productTypeId: formData.product_Details.productTypeId,
         productType: formData.product_Details.productType,
-        // Ensure null for optional fields if they are undefined
         purity_16: formData.product_Details.purity_16 ?? null,
         purity_15: formData.product_Details.purity_15 ?? null,
         purity_14: formData.product_Details.purity_14 ?? null,
         purity_14_2: formData.product_Details.purity_14_2 ?? null,
-        // Explicitly provide the object for weight. The `as any` is typically fine.
-        weight: formData.product_Details.weight, // Prisma should handle serialization to JSONB
-        handWidth: formData.product_Details.handWidth,
-        length: formData.product_Details.length,
-        isOrder: formData.product_Details.isOrder,
-        isOrderTaken: formData.product_Details.isOrderTaken,
+        weight: formData.product_Details.weight,
+        handWidth: formData.product_Details.handWidth || null,
+        length: formData.product_Details.length || null,
       },
     });
 
+    const isOrder = formData.orderStatus !== OrderStatus.NOT_ORDER;
+    const orderAmounts =
+      formData.orderStatus === OrderStatus.ORDER_PENDING ||
+      formData.orderStatus === OrderStatus.ORDER_COMPLETED
+        ? {
+            reject_Amount: formData.reject_Amount ?? null,
+            remaining_Amount: formData.remaining_Amount ?? null,
+          }
+        : { reject_Amount: null, remaining_Amount: null };
+
     const invoice = await prisma.invoice.create({
       data: {
-        invoiceId: `INV-${Date.now().toString().slice(0, 4)}-${Date.now().toString().slice(4, 8)}-${Date.now().toString().slice(8, 12)}-${Math.floor(
-          Math.random() * 10000,
-        )
-          .toString()
-          .padStart(4, "0")}`,
+        invoiceId: generateInvoiceId(),
         customer_Name: formData.customer_Name,
-        mobile_Number: formData.mobile_Number,
-        address: formData.address,
+        mobile_Number: formData.mobile_Number ?? null,
+        address: formData.address ?? null,
         purchase_date: formData.purchase_date,
-        total_Amount: formData.total_Amount ?? null, // Ensure null for optional numbers
-        reject_Amount: formData.reject_Amount ?? null,
-        remaining_Amount: formData.remaining_Amount ?? null,
+        total_Amount: formData.total_Amount,
+        ...orderAmounts,
         appointment_Date: formData.appointment_Date ?? null,
         seller: formData.seller,
+        isOrder,
+        orderStatus: formData.orderStatus,
         productDetailsId: productDetails.id,
       },
       include: {

@@ -1,38 +1,25 @@
 "use server";
 
 import prisma from "@/lib/prisma";
+import { OrderStatus } from "@prisma/client";
 
+/** Matches columns in order invoice-history-table */
 export type InvoiceWithDetails = {
   id: number;
   invoiceId: string;
   customer_Name: string;
   mobile_Number: string | null;
-  address: string | null;
   purchase_date: Date;
+  appointment_Date: Date | null;
   total_Amount: number | null;
   reject_Amount: number | null;
   remaining_Amount: number | null;
-  appointment_Date: Date | null;
-  seller: string;
-  createdAt: Date;
-  updatedAt: Date;
-  productDetailsId: number;
+  orderStatus: OrderStatus;
   productDetails: {
-    id: number;
     productType: string;
     productName: string;
-    purity_16: number | null;
-    purity_15: number | null;
-    purity_14: number | null;
-    purity_14_2: number | null;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    weight: any;
     handWidth: string | null;
     length: string | null;
-    isOrder: boolean;
-    isOrderTaken: boolean;
-    createdAt: Date;
-    updatedAt: Date;
   };
 };
 
@@ -76,47 +63,37 @@ export async function getInvoices(params: GetInvoicesParams = {}) {
     };
   }
 
-  // Always filter only order invoices in this module
-  where.productDetails = {
-    isOrder: true,
-  };
+  where.isOrder = true;
 
   try {
-    // Get total count for pagination
     const total = await prisma.invoice.count({ where });
 
-    // Get invoices with pagination, sorting, and filtering
     const invoices = (await prisma.invoice.findMany({
       where,
-      include: {
+      select: {
+        id: true,
+        invoiceId: true,
+        customer_Name: true,
+        mobile_Number: true,
+        purchase_date: true,
+        appointment_Date: true,
+        total_Amount: true,
+        reject_Amount: true,
+        remaining_Amount: true,
+        orderStatus: true,
         productDetails: {
           select: {
-            id: true,
             productType: true,
             productName: true,
-            purity_16: true,
-            purity_15: true,
-            purity_14: true,
-            purity_14_2: true,
-            weight: true,
             handWidth: true,
             length: true,
-            isOrder: true,
-            isOrderTaken: true,
-            createdAt: true,
-            updatedAt: true,
           },
         },
       },
-      orderBy: {
-        createdAt: "desc",
-      },
+      orderBy: { createdAt: "desc" },
       skip,
       take: limit,
     })) as InvoiceWithDetails[];
-
-    // Simulate 2 second delay
-    // await new Promise(resolve => setTimeout(resolve, 500))
 
     return {
       invoices,
@@ -136,24 +113,11 @@ export async function getInvoices(params: GetInvoicesParams = {}) {
 export async function updateInvoiceIsOrderTaken(invoiceId: string) {
   try {
     const invoice = await prisma.invoice.update({
-      where: {
-        invoiceId,
-      },
-      data: {
-        productDetails: {
-          update: {
-            isOrderTaken: true,
-          },
-        },
-      },
-      include: {
-        productDetails: true,
-      },
+      where: { invoiceId },
+      data: { orderStatus: OrderStatus.ORDER_COMPLETED },
+      include: { productDetails: true },
     });
-    return {
-      success: true,
-      invoice: invoice.invoiceId,
-    };
+    return { success: true, invoice: invoice.invoiceId };
   } catch (error) {
     console.error("Failed to update invoice:", error);
     throw new Error("Failed to update invoice");
@@ -163,24 +127,11 @@ export async function updateInvoiceIsOrderTaken(invoiceId: string) {
 export async function undoUpdateOrderTaken(invoiceId: string) {
   try {
     const invoice = await prisma.invoice.update({
-      where: {
-        invoiceId,
-      },
-      data: {
-        productDetails: {
-          update: {
-            isOrderTaken: false,
-          },
-        },
-      },
-      include: {
-        productDetails: true,
-      },
+      where: { invoiceId },
+      data: { orderStatus: OrderStatus.ORDER_PENDING },
+      include: { productDetails: true },
     });
-    return {
-      success: true,
-      invoice: invoice.invoiceId,
-    };
+    return { success: true, invoice: invoice.invoiceId };
   } catch (error) {
     console.error("Failed to update invoice:", error);
     throw new Error("Failed to update invoice");

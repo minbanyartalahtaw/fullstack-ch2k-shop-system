@@ -1,60 +1,120 @@
-"use server";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
-import { Label } from "@radix-ui/react-label";
-import { getSingleInvoice, InvoiceWithDetails } from "./action";
+import { Badge } from "@/components/ui/badge";
+import { getSingleInvoice, type InvoiceWithDetails } from "./action";
+import { BackButton } from "./BackButton";
+
+const WEIGHT_LABELS: Record<string, string> = {
+  row1: "ပေးရွှေချိန်",
+  row2: "စိုက်ရွှေချိန်",
+  row3: "ရွှေချိန်",
+  row4: "ကျောက်ချိန်",
+  row5: "အလျော့တွက်",
+  row6: "လက်ခ",
+};
+
+const ORDER_STATUS_LABELS: Record<string, string> = {
+  NOT_ORDER: "အရောင်း",
+  ORDER_PENDING: "ပစ္စည်းမပေးရသေးပါ",
+  ORDER_COMPLETED: "ပစ္စည်းပေးပြီး",
+};
+
+const fmt = (v: string | number | null | undefined) =>
+  v == null || v === "" ? "-" : String(v);
+const fmtDate = (d: Date | null | undefined) =>
+  d ? new Date(d).toLocaleDateString() : "-";
+const fmtCurrency = (n: number | null | undefined) =>
+  n != null ? n.toLocaleString() : "-";
 
 interface Props {
-  params: Promise<{
-    invoiceId: string;
-  }>;
+  params: Promise<{ invoiceId: string }>;
 }
 
 export default async function InvoicePage({ params }: Props) {
   const { invoiceId } = await params;
   const invoice: InvoiceWithDetails | null = await getSingleInvoice(invoiceId);
+
   if (!invoice) {
     return (
-      <div className="flex h-[50vh] items-center justify-center text-gray-500">
-        No invoice found
+      <div className="flex h-[50vh] items-center justify-center text-muted-foreground">
+        ဘောက်ချာမတွေ့ပါ
       </div>
     );
   }
+
   return (
-    <div className="w-full max-w-3xl mx-auto px-4 space-y-2 pb-5 pt-4">
-      <Card className="">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            {invoice.invoiceId}
-          </CardTitle>
+    <div className="w-full max-w-3xl mx-auto px-4 space-y-4 pb-8 pt-4">
+      <div className="flex items-center justify-between">
+        <BackButton />
+      </div>
+
+      {/* Header */}
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle>{invoice.invoiceId}</CardTitle>
+          <Badge variant={invoice.isOrder ? "default" : "secondary"}>
+            {invoice.isOrder ? "အော်ဒါ" : "အရောင်း"}
+          </Badge>
         </CardHeader>
       </Card>
-      <Card className="px-1">
+
+      {/* Customer */}
+      <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            ဝယ်သူအကြောင်းအရာ
-          </CardTitle>
+          <CardTitle>ဝယ်သူအကြောင်းအရာ</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent>
           <Table>
             <TableBody>
               <TableRow>
-                <TableCell className="font-medium">အမည်</TableCell>
+                <TableCell className="font-medium w-1/3">အမည်</TableCell>
                 <TableCell>{invoice.customer_Name}</TableCell>
               </TableRow>
               <TableRow>
                 <TableCell className="font-medium">ဖုန်းနံပါတ်</TableCell>
-                <TableCell>{invoice.mobile_Number}</TableCell>
+                <TableCell>{fmt(invoice.mobile_Number)}</TableCell>
               </TableRow>
               <TableRow>
                 <TableCell className="font-medium">လိပ်စာ</TableCell>
-                <TableCell>{invoice.address}</TableCell>
+                <TableCell>{fmt(invoice.address)}</TableCell>
               </TableRow>
               <TableRow>
                 <TableCell className="font-medium">ရက်စွဲ</TableCell>
-                <TableCell>
-                  {invoice.purchase_date?.toLocaleDateString()}
+                <TableCell>{fmtDate(invoice.purchase_date)}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell className="font-medium">အရောင်းဝန်ထမ်း</TableCell>
+                <TableCell>{invoice.seller}</TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+
+      {/* Amounts */}
+      <Card>
+        <CardHeader>
+          <CardTitle>ငွေကြေးအသေးစိတ်</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableBody>
+              <TableRow>
+                <TableCell className="font-medium w-1/3">
+                  စုစုပေါင်းတန်ဖိုး
                 </TableCell>
+                <TableCell>{fmtCurrency(invoice.total_Amount)}</TableCell>
+                <TableCell className="w-16">ကျပ်</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell className="font-medium">စရံငွေ</TableCell>
+                <TableCell>{fmtCurrency(invoice.reject_Amount)}</TableCell>
+                <TableCell>ကျပ်</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell className="font-medium">ကျန်ငွေ</TableCell>
+                <TableCell>{fmtCurrency(invoice.remaining_Amount)}</TableCell>
+                <TableCell>ကျပ်</TableCell>
               </TableRow>
             </TableBody>
           </Table>
@@ -64,67 +124,66 @@ export default async function InvoicePage({ params }: Props) {
       {/* Product Details */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            ပစ္စည်းအသေးစိတ်
-          </CardTitle>
+          <CardTitle>ပစ္စည်းအသေးစိတ်</CardTitle>
         </CardHeader>
-
-        <CardContent className="space-y-4">
-          <Table className="mt-0 table-fixed">
+        <CardContent className="space-y-6">
+          <Table>
             <TableBody>
               <TableRow>
                 <TableCell className="font-medium w-1/3">ပစ္စည်းအမည်</TableCell>
                 <TableCell>{invoice.productDetails.productName}</TableCell>
-                <TableCell className="w-16"></TableCell>
               </TableRow>
               <TableRow>
                 <TableCell className="font-medium">ပစ္စည်းအမျိုးအစား</TableCell>
                 <TableCell>{invoice.productDetails.productType}</TableCell>
-                <TableCell></TableCell>
               </TableRow>
               <TableRow>
-                <TableCell className="font-medium">စုစုပေါင်းတန်ဖိုး</TableCell>
-                <TableCell>{invoice.total_Amount}</TableCell>
-                <TableCell className="font-medium">ကျပ်</TableCell>
+                <TableCell className="font-medium">လက်တိုင်း</TableCell>
+                <TableCell>{fmt(invoice.productDetails.handWidth)}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell className="font-medium">ကြိုးအရှည်</TableCell>
+                <TableCell>{fmt(invoice.productDetails.length)}</TableCell>
               </TableRow>
             </TableBody>
           </Table>
 
-          <CardTitle className="flex items-center gap-2">ရွှေစျေး</CardTitle>
-          <Table className="table-fixed">
-            <TableBody>
-              <TableRow>
-                <TableCell className="font-medium w-1/3">၁၆ ပဲရည်</TableCell>
-                <TableCell>{invoice.productDetails.purity_16 || "-"}</TableCell>
-                <TableCell className="w-16">ကျပ်</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="font-medium">၁၅ ပဲရည်</TableCell>
-                <TableCell>{invoice.productDetails.purity_15 || "-"}</TableCell>
-                <TableCell>ကျပ်</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="font-medium">၁၄ ပဲရည်</TableCell>
-                <TableCell>{invoice.productDetails.purity_14 || "-"}</TableCell>
-                <TableCell>ကျပ်</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="font-medium">၁၄ ပဲ ၂ ပြား</TableCell>
-                <TableCell>
-                  {invoice.productDetails.purity_14_2 || "-"}
-                </TableCell>
-                <TableCell>ကျပ်</TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
+          <div>
+            <CardTitle className="text-base mb-2">ရွှေစျေး</CardTitle>
+            <Table>
+              <TableBody>
+                <TableRow>
+                  <TableCell className="font-medium w-1/3">၁၆ ပဲရည်</TableCell>
+                  <TableCell>{fmt(invoice.productDetails.purity_16)}</TableCell>
+                  <TableCell className="w-16">ကျပ်</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell className="font-medium">၁၅ ပဲရည်</TableCell>
+                  <TableCell>{fmt(invoice.productDetails.purity_15)}</TableCell>
+                  <TableCell>ကျပ်</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell className="font-medium">၁၄ ပဲရည်</TableCell>
+                  <TableCell>{fmt(invoice.productDetails.purity_14)}</TableCell>
+                  <TableCell>ကျပ်</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell className="font-medium">၁၄ ပဲ ၂ ပြား</TableCell>
+                  <TableCell>
+                    {fmt(invoice.productDetails.purity_14_2)}
+                  </TableCell>
+                  <TableCell>ကျပ်</TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </div>
 
-          {/* Weight Matrix */}
-          <div className="space-y-4">
-            <CardTitle className="flex items-center gap-2">အလေးချိန်</CardTitle>
+          <div>
+            <CardTitle className="text-base mb-2">အလေးချိန်</CardTitle>
             <Table>
               <thead>
                 <tr>
-                  <TableCell className="bg-muted"></TableCell>
+                  <TableCell className="bg-muted font-medium"></TableCell>
                   <TableCell className="bg-muted">ကျပ်</TableCell>
                   <TableCell className="bg-muted">ပဲ</TableCell>
                   <TableCell className="bg-muted">ရွှေး</TableCell>
@@ -133,27 +192,18 @@ export default async function InvoicePage({ params }: Props) {
               </thead>
               <TableBody>
                 {Object.entries(
-                  invoice.productDetails.weight as Record<string, number[]>,
+                  (invoice.productDetails.weight || {}) as Record<
+                    string,
+                    number[]
+                  >,
                 ).map(([rowName, values]) => (
                   <TableRow key={rowName}>
-                    <TableCell className="text-xs border">
-                      {rowName === "row1"
-                        ? "ပေးရွှေချိန်"
-                        : rowName === "row2"
-                          ? "စိုက်ရွှေချိန်"
-                          : rowName === "row3"
-                            ? "ရွှေချိန်"
-                            : rowName === "row4"
-                              ? "ကျောက်ချိန်"
-                              : rowName === "row5"
-                                ? "အလျော့တွက်"
-                                : rowName === "row6"
-                                  ? "လက်ခ"
-                                  : rowName}
+                    <TableCell className="text-xs font-medium">
+                      {WEIGHT_LABELS[rowName] ?? rowName}
                     </TableCell>
-                    {values.map((value, index) => (
-                      <TableCell key={index} className="border">
-                        {value}
+                    {values.map((v, i) => (
+                      <TableCell key={i} className="border">
+                        {v}
                       </TableCell>
                     ))}
                   </TableRow>
@@ -162,51 +212,27 @@ export default async function InvoicePage({ params }: Props) {
             </Table>
           </div>
 
-          {invoice.productDetails.isOrder && (
-            <Card className="space-y-4 bg-muted p-4">
-              <div className="flex items-center">
-                <Label>အော်ဒါပစ္စည်း</Label>
-              </div>
+          {invoice.isOrder && (
+            <Card className="bg-muted/50 p-4">
+              <CardTitle className="text-base mb-4">အော်ဒါအသေးစိတ်</CardTitle>
               <Table>
                 <TableBody>
-                  <TableRow className="hover:bg-muted/50">
-                    <TableCell className="font-medium">လက်တိုင်း</TableCell>
-                    <TableCell>
-                      {invoice.productDetails.handWidth || "-"}
+                  <TableRow>
+                    <TableCell className="font-medium w-1/3">
+                      ရက်ချိန်း
                     </TableCell>
-                    <TableCell></TableCell>
+                    <TableCell>{fmtDate(invoice.appointment_Date)}</TableCell>
                   </TableRow>
-                  <TableRow className="hover:bg-muted/50">
-                    <TableCell className="font-medium">ကြိုးအရှည်</TableCell>
-                    <TableCell>
-                      {invoice.productDetails.length || "-"}
-                    </TableCell>
-                    <TableCell></TableCell>
-                  </TableRow>
-                  <TableRow className="hover:bg-muted/50">
-                    <TableCell className="font-medium">စရံငွေ</TableCell>
-                    <TableCell>{invoice.reject_Amount}</TableCell>
-                    <TableCell>ကျပ်</TableCell>
-                  </TableRow>
-                  <TableRow className="hover:bg-muted/50">
-                    <TableCell className="font-medium">ကျန်ငွေ</TableCell>
-                    <TableCell>{invoice.remaining_Amount}</TableCell>
-                    <TableCell>ကျပ်</TableCell>
-                  </TableRow>
-                  <TableRow className="hover:bg-muted/50">
-                    <TableCell className="font-medium">ရက်ချိန်း</TableCell>
-                    <TableCell>
-                      {invoice.appointment_Date?.toLocaleDateString()}
-                    </TableCell>
+                  <TableRow>
+                    <TableCell className="font-medium">အခြေအနေ</TableCell>
                     <TableCell
                       className={
-                        invoice.productDetails.isOrderTaken
-                          ? "text-green-500"
-                          : "text-red-500"
+                        invoice.orderStatus === "ORDER_COMPLETED"
+                          ? "text-green-600 font-medium"
+                          : "text-amber-600"
                       }>
-                      {invoice.productDetails.isOrderTaken
-                        ? "ပစ္စည်းပေးပြီး"
-                        : "ပစ္စည်းမပေးရသေးပါ"}
+                      {ORDER_STATUS_LABELS[invoice.orderStatus] ??
+                        invoice.orderStatus}
                     </TableCell>
                   </TableRow>
                 </TableBody>

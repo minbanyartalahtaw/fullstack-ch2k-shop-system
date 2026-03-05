@@ -9,6 +9,7 @@ import {
   updateInvoiceIsOrderTaken,
   type InvoiceWithDetails,
 } from "../action";
+import { ORDER_STATUS } from "@/lib/constants/order-status";
 import { InvoiceHistorySkeleton } from "./invoice-history-skeleton";
 import {
   Popover,
@@ -56,10 +57,10 @@ const COLUMNS: ColumnConfig[] = [
   { id: "totalAmount", label: "တန်ဖိုး", visible: true },
   { id: "receivedAmount", label: "စရံငွေ", visible: false },
   { id: "remainingAmount", label: "ကျန်ငွေ", visible: false },
-  { id: "length", label: "အရှည်", visible: true },
-  { id: "handWidth", label: "လက်တိုင်း", visible: true },
+  { id: "length", label: "အရှည်", visible: false },
+  { id: "handWidth", label: "လက်တိုင်း", visible: false },
   { id: "isOrderTaken", label: "ပစ္စည်းပေးရန်", visible: true },
-  { id: "actions", label: "အသေးစိတ်", visible: false },
+  { id: "actions", label: "အသေးစိတ်", visible: true },
 ];
 
 // Utility functions
@@ -253,22 +254,22 @@ export function InvoiceHistoryTable() {
         )}
         {columnVisibility.length && (
           <TableCell className="border">
-            {invoice.productDetails.length}
+            {invoice.productDetails.length ?? "-"}
           </TableCell>
         )}
         {columnVisibility.handWidth && (
           <TableCell className="border">
-            {invoice.productDetails.handWidth}
+            {invoice.productDetails.handWidth ?? "-"}
           </TableCell>
         )}
         {columnVisibility.isOrderTaken && (
           <TableCell className="border">
             <Dialog>
               <DialogTrigger
-                disabled={invoice.productDetails.isOrderTaken}
+                disabled={invoice.orderStatus === ORDER_STATUS.ORDER_COMPLETED}
                 asChild>
                 <Button variant="outline" className="flex items-center gap-1">
-                  {invoice.productDetails.isOrderTaken
+                  {invoice.orderStatus === ORDER_STATUS.ORDER_COMPLETED
                     ? "ပစ္စည်းပေးပြီး"
                     : "ပစ္စည်းပေးရန်"}
                 </Button>
@@ -318,8 +319,7 @@ export function InvoiceHistoryTable() {
         )}
         {columnVisibility.actions && (
           <TableCell>
-            <a
-              href={`/office/staff/invoice/${invoice.invoiceId}/?page=${pagination.page}`}>
+            <a href={`/office/staff/invoice/${invoice.invoiceId}`}>
               <AppIcon name="squareArrow" className="h-4 w-4" />
               <span className="sr-only">View</span>
             </a>

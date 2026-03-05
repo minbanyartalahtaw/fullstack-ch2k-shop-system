@@ -157,9 +157,9 @@ export function InvoiceHistoryTable({
       );
     }
 
-    return invoices.map((invoice) => (
+    return invoices.map((invoice, _index) => (
       <TableRow key={invoice.id}>
-        {columnVisibility.invoiceId && <TableCell>{invoice.id}</TableCell>}
+        {columnVisibility.invoiceId && <TableCell>{_index + 1}</TableCell>}
         {columnVisibility.invoiceNumber && (
           <TableCell className="border">{invoice.invoiceId}</TableCell>
         )}
@@ -198,17 +198,18 @@ export function InvoiceHistoryTable({
           <TableCell className="min-w-[62px] border">
             <span
               className={`inline-flex text-center items-center rounded-full px-2 py-1 text-xs font-medium ${
-                invoice.productDetails.isOrder
+                invoice.isOrder
                   ? "bg-green-50 text-green-700"
                   : "bg-yellow-50 text-yellow-700"
               }`}>
-              {invoice.productDetails.isOrder ? "အော်ဒါ" : "အရောင်း"}
+              {invoice.isOrder ? "အော်ဒါ" : "အရောင်း"}
             </span>
           </TableCell>
         )}
         {columnVisibility.actions && (
           <TableCell>
-            <a href={`/office/staff/invoice/${invoice.invoiceId}`}>
+            <a
+              href={`/office/staff/invoice/${invoice.invoiceId}/?page=${pagination.page}`}>
               <AppIcon name="squareArrow" className="h-4 w-4" />
               <span className="sr-only">View</span>
             </a>

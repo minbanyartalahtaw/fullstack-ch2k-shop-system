@@ -2,6 +2,7 @@ import { tool } from "ai";
 import { z } from "zod";
 import prisma from "@/lib/prisma";
 import { parseDate, toUTCStartOfDay, toUTCEndOfDay } from "./utils/date";
+import { OrderStatus } from "@prisma/client";
 
 const fmt = (d: Date) => {
   const dd = String(d.getUTCDate()).padStart(2, "0");
@@ -15,7 +16,7 @@ export const getInvoiceDetails = tool({
 Return compact JSON:
 - Success: { d: { i,n,p,dt,a,s,it:{n,t,o,k} } }
 - Error: { e: "not_found" | "error" }
-Keys: i=invoiceId, n=name, p=phone, dt=date, a=amount, s=seller, it=item, t=type, o=isOrder, k=isOrderTaken.
+Keys: i=invoiceId, n=name, p=phone, dt=date, a=amount, s=seller, it=item, t=type, o=isOrder, k=orderStatus.
 Reply in Burmese and present as 2-column Markdown table.`,
   inputSchema: z.object({
     invoiceId: z.string().describe("Invoice ID (e.g. INV-123)"),
@@ -31,12 +32,12 @@ Reply in Burmese and present as 2-column Markdown table.`,
           purchase_date: true,
           total_Amount: true,
           seller: true,
+          isOrder: true,
+          orderStatus: true,
           productDetails: {
             select: {
               productName: true,
               productType: true,
-              isOrder: true,
-              isOrderTaken: true,
             },
           },
         },
@@ -54,8 +55,8 @@ Reply in Burmese and present as 2-column Markdown table.`,
           it: {
             n: p.productName,
             t: p.productType,
-            o: p.isOrder,
-            k: p.isOrderTaken,
+            o: inv.isOrder,
+            k: inv.orderStatus === OrderStatus.ORDER_COMPLETED,
           },
         },
       };
@@ -69,26 +70,27 @@ Reply in Burmese and present as 2-column Markdown table.`,
 export const getOrderInvoice = tool({
   description: `Fetch latest 10 order invoices (isOrder=true).
 Return compact JSON:
-- Success: { d: [{ i,n,p,a,it:{n,t,k} }] }
+- Success: { d: [{ i,n,p,dt,ad,a,it:{n,t,k} }] }
 - Error: { e: "no_orders" | "error" }
-Keys: i=invoiceId, n=name, p=phone, a=amount, it=item, t=type, k=*Leave blank for table header,
- fill with "ပစ္စည်းပေးပြီး" if isOrderTaken is true, "ပစ္စည်းမပေးရသေးပါ" if isOrderTaken is false.
+Keys: i=invoiceId, n=name, p=phone, d=appointmentDate, a=amount, it=item, t=type, k=*Leave blank for table header,
+ fill with "ပစ္စည်းပေးပြီး" if orderStatus is ORDER_COMPLETED, "ပစ္စည်းမပေးရသေးပါ" otherwise.
 Reply in Burmese and present as Markdown table.`,
   inputSchema: z.object({}),
   execute: async () => {
     try {
       const rows = await prisma.invoice.findMany({
-        where: { productDetails: { isOrder: true } },
+        where: { isOrder: true },
         select: {
           invoiceId: true,
           customer_Name: true,
           mobile_Number: true,
+          appointment_Date: true,
           total_Amount: true,
+          orderStatus: true,
           productDetails: {
             select: {
               productName: true,
               productType: true,
-              isOrderTaken: true,
             },
           },
         },
@@ -101,11 +103,12 @@ Reply in Burmese and present as Markdown table.`,
           i: r.invoiceId,
           n: r.customer_Name,
           p: r.mobile_Number ?? "",
+          d: r.appointment_Date ? fmt(r.appointment_Date) : "",
           a: r.total_Amount ?? 0,
           it: {
             n: r.productDetails.productName,
             t: r.productDetails.productType,
-            k: r.productDetails.isOrderTaken,
+            k: r.orderStatus === OrderStatus.ORDER_COMPLETED,
           },
         })),
       };

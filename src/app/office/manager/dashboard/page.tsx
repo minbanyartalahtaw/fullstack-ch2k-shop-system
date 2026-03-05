@@ -10,6 +10,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { AppIcon } from "@/components/app-icons";
 import prisma from "@/lib/prisma";
+import { OrderStatus } from "@prisma/client";
 import ChartContainer from "./components/ChartContainer";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
@@ -76,13 +77,8 @@ async function getInvoiceStats() {
     monthData.map(async ({ startDate, endDate }) => {
       return await prisma.invoice.count({
         where: {
-          purchase_date: {
-            gte: startDate,
-            lte: endDate,
-          },
-          productDetails: {
-            isOrder: true,
-          },
+          purchase_date: { gte: startDate, lte: endDate },
+          isOrder: true,
         },
       });
     }),
@@ -92,13 +88,8 @@ async function getInvoiceStats() {
     monthData.map(async ({ startDate, endDate }) => {
       return await prisma.invoice.count({
         where: {
-          purchase_date: {
-            gte: startDate,
-            lte: endDate,
-          },
-          productDetails: {
-            isOrder: false,
-          },
+          purchase_date: { gte: startDate, lte: endDate },
+          isOrder: false,
         },
       });
     }),
@@ -142,15 +133,11 @@ async function getInvoiceStats() {
 
 async function getProductStats() {
   const totalProducts = await prisma.productDetails.count();
-  const orderedProducts = await prisma.productDetails.count({
-    where: {
-      isOrder: true,
-    },
+  const orderedProducts = await prisma.invoice.count({
+    where: { isOrder: true },
   });
-  const takenProducts = await prisma.productDetails.count({
-    where: {
-      isOrderTaken: true,
-    },
+  const takenProducts = await prisma.invoice.count({
+    where: { orderStatus: OrderStatus.ORDER_COMPLETED },
   });
 
   // Get product type distribution for chart

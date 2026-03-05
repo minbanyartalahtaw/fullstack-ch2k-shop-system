@@ -34,12 +34,12 @@ export const analyzeProductSales = tool({
   inputSchema: z.object({}),
   execute: async () => {
     try {
-      const productSales = await prisma.productDetails.findMany({
-        select: { productName: true, _count: { select: { invoices: true } } },
+      const productSales = await prisma.productType.findMany({
+        select: { name: true, _count: { select: { productDetails: true } } },
       });
       return productSales.map((ps) => ({
-        productName: ps.productName,
-        count: ps._count.invoices,
+        name: ps.name,
+        count: ps._count.productDetails,
       }));
     } catch (error) {
       console.error("Error analyzing product sales:", error);

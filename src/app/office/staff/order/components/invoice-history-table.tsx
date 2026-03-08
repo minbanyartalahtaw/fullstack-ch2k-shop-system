@@ -9,6 +9,15 @@ import {
   updateInvoiceIsOrderTaken,
   type InvoiceWithDetails,
 } from "../action";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationPrevious,
+  PaginationNext,
+  PaginationEllipsis,
+} from "@/components/ui/pagination";
 import { ORDER_STATUS } from "@/lib/constants/order-status";
 import { InvoiceHistorySkeleton } from "./invoice-history-skeleton";
 import {
@@ -36,6 +45,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
+import { formatDate } from "@/lib/constants/date_format";
 
 // Types
 interface ColumnConfig {
@@ -64,7 +74,7 @@ const COLUMNS: ColumnConfig[] = [
 ];
 
 // Utility functions
-const formatDate = (date: Date) => new Date(date).toLocaleDateString();
+
 const formatCurrency = (amount: number | null) =>
   amount === null ? "-" : amount.toLocaleString();
 
@@ -81,7 +91,7 @@ export function InvoiceHistoryTable() {
   const [pagination, setPagination] = useState({
     total: 0,
     page: initialPage,
-    limit: 8,
+    limit: 10,
     totalPages: 0,
   });
 
@@ -379,33 +389,63 @@ export function InvoiceHistoryTable() {
       </div>
 
       {pagination.totalPages > 1 && (
-        <div className="flex items-center justify-end px-3 space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setPage(pagination.page - 1)}
-            disabled={pagination.page === 1}>
-            <AppIcon name="arrowLeft" className="h-4 w-4" />
-          </Button>
+        <Pagination className="flex items-center justify-end  space-x-2">
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious
+                onClick={() => setPage(pagination.page - 1)}
+                className={
+                  pagination.page === 1
+                    ? "pointer-events-none opacity-50"
+                    : "cursor-pointer"
+                }
+              />
+            </PaginationItem>
 
-          {Array.from({ length: pagination.totalPages }, (_, i) => (
-            <Button
-              key={i + 1}
-              variant={pagination.page === i + 1 ? "default" : "outline"}
-              size="sm"
-              onClick={() => setPage(i + 1)}>
-              {i + 1}
-            </Button>
-          ))}
+            {(() => {
+              const { page, totalPages } = pagination;
+              const pages: (number | "...")[] = [];
+              if (totalPages <= 5) {
+                for (let i = 1; i <= totalPages; i++) pages.push(i);
+              } else {
+                pages.push(1);
+                if (page > 3) pages.push("...");
+                const start = Math.max(2, page - 1);
+                const end = Math.min(totalPages - 1, page + 1);
+                for (let i = start; i <= end; i++) pages.push(i);
+                if (page < totalPages - 2) pages.push("...");
+                pages.push(totalPages);
+              }
+              return pages.map((p, idx) =>
+                p === "..." ? (
+                  <PaginationItem key={`ellipsis-${idx}`}>
+                    <PaginationEllipsis />
+                  </PaginationItem>
+                ) : (
+                  <PaginationItem key={p}>
+                    <PaginationLink
+                      isActive={page === p}
+                      onClick={() => setPage(p)}
+                      className="cursor-pointer">
+                      {p}
+                    </PaginationLink>
+                  </PaginationItem>
+                ),
+              );
+            })()}
 
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setPage(pagination.page + 1)}
-            disabled={pagination.page === pagination.totalPages}>
-            <AppIcon name="arrowRight" className="h-4 w-4" />
-          </Button>
-        </div>
+            <PaginationItem>
+              <PaginationNext
+                onClick={() => setPage(pagination.page + 1)}
+                className={
+                  pagination.page === pagination.totalPages
+                    ? "pointer-events-none opacity-50"
+                    : "cursor-pointer"
+                }
+              />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
       )}
     </div>
   );

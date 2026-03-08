@@ -79,11 +79,16 @@ export async function getProductTypes() {
 }
 
 function generateInvoiceId(): string {
-  const ts = Date.now().toString();
-  const rnd = Math.floor(Math.random() * 10000)
-    .toString()
-    .padStart(4, "0");
-  return `INV-${ts.slice(0, 4)}-${ts.slice(4, 8)}-${ts.slice(8, 12)}-${rnd}`;
+  const now = new Date();
+  const yy = String(now.getFullYear()).slice(-2);
+  const mm = String(now.getMonth() + 1).padStart(2, "0");
+  const HH = String(now.getHours()).padStart(2, "0");
+  const mi = String(now.getMinutes()).padStart(2, "0");
+  const ss = String(now.getSeconds()).padStart(2, "0");
+  const ms = String(now.getMilliseconds()).padStart(3, "0");
+  const rnd = Math.random().toString(16).slice(2, 6).toUpperCase();
+
+  return `INV-${yy}${mm}-${rnd}-${HH}${mi}${ss}${ms}`;
 }
 
 export async function createInvoice(formData: InvoiceDataInput) {

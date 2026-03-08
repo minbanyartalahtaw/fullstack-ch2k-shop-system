@@ -15,6 +15,7 @@ export type InvoiceWithDetails = {
   orderStatus: OrderStatus;
   productDetails: {
     productType: string;
+    productName: string;
   };
 };
 
@@ -22,14 +23,20 @@ type GetInvoicesParams = {
   page?: number;
   limit?: number;
   search?: string;
-
   startDate?: Date;
   endDate?: Date;
   isOrder?: boolean;
 };
 
 export async function getInvoices(params: GetInvoicesParams = {}) {
-  const { page = 1, limit = 10, search = "", startDate, endDate } = params;
+  const {
+    page = 1,
+    limit = 10,
+    search = "",
+    startDate,
+    endDate,
+    isOrder,
+  } = params;
 
   const skip = (page - 1) * limit;
 
@@ -42,6 +49,10 @@ export async function getInvoices(params: GetInvoicesParams = {}) {
       { customer_Name: { contains: search, mode: "insensitive" } },
       { mobile_Number: { contains: search, mode: "insensitive" } },
     ];
+  }
+
+  if (isOrder !== undefined) {
+    where.isOrder = isOrder;
   }
 
   if (startDate && endDate) {
@@ -74,7 +85,7 @@ export async function getInvoices(params: GetInvoicesParams = {}) {
         isOrder: true,
         orderStatus: true,
         productDetails: {
-          select: { productType: true },
+          select: { productType: true, productName: true },
         },
       },
       orderBy: { createdAt: "desc" },

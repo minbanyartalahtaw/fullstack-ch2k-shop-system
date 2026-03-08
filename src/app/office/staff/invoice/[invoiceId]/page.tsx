@@ -3,6 +3,7 @@ import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { getSingleInvoice, type InvoiceWithDetails } from "./action";
 import { BackButton } from "./BackButton";
+import { formatDate } from "@/lib/constants/date_format";
 
 const WEIGHT_LABELS: Record<string, string> = {
   row1: "ပေးရွှေချိန်",
@@ -21,8 +22,7 @@ const ORDER_STATUS_LABELS: Record<string, string> = {
 
 const fmt = (v: string | number | null | undefined) =>
   v == null || v === "" ? "-" : String(v);
-const fmtDate = (d: Date | null | undefined) =>
-  d ? new Date(d).toLocaleDateString() : "-";
+
 const fmtCurrency = (n: number | null | undefined) =>
   n != null ? n.toLocaleString() : "-";
 
@@ -80,7 +80,7 @@ export default async function InvoicePage({ params }: Props) {
               </TableRow>
               <TableRow>
                 <TableCell className="font-medium">ရက်စွဲ</TableCell>
-                <TableCell>{fmtDate(invoice.purchase_date)}</TableCell>
+                <TableCell>{formatDate(invoice.purchase_date)}</TableCell>
               </TableRow>
               <TableRow>
                 <TableCell className="font-medium">အရောင်းဝန်ထမ်း</TableCell>
@@ -221,7 +221,11 @@ export default async function InvoicePage({ params }: Props) {
                     <TableCell className="font-medium w-1/3">
                       ရက်ချိန်း
                     </TableCell>
-                    <TableCell>{fmtDate(invoice.appointment_Date)}</TableCell>
+                    <TableCell>
+                      {invoice.appointment_Date
+                        ? formatDate(invoice.appointment_Date)
+                        : "-"}
+                    </TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell className="font-medium">အခြေအနေ</TableCell>

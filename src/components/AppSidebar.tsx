@@ -98,25 +98,6 @@ export function AppSidebar({ role, name }: Prop) {
                           </Link>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
-
-                      <SidebarMenuItem>
-                        <SidebarMenuButton
-                          asChild
-                          isActive={isActivePath(
-                            pathname,
-                            "/office/staff/invoice/search",
-                          )}>
-                          <Link href="/office/staff/invoice/search">
-                            <div>
-                              <AppIcon
-                                name="searchInvoice"
-                                className="h-4 w-4"
-                              />
-                            </div>
-                            <span>ရှာဖွေရန်</span>
-                          </Link>
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
                     </SidebarMenuSub>
                   </CollapsibleContent>
                 </SidebarMenuItem>

@@ -281,7 +281,7 @@ export function NewInvoiceForm() {
                   updateFormData("customer_Name", e.target.value)
                 }
                 onClick={(e) => (e.target as HTMLInputElement).select()}
-                placeholder="customer အမည်"
+                placeholder="အမည်"
                 required
               />
             </div>
@@ -293,7 +293,7 @@ export function NewInvoiceForm() {
                   updateFormData("mobile_Number", e.target.value)
                 }
                 onClick={(e) => (e.target as HTMLInputElement).select()}
-                placeholder="Customer ဖုန်းနံပါတ်"
+                placeholder="ဖုန်းနံပါတ်"
               />
             </div>
           </div>
@@ -303,7 +303,7 @@ export function NewInvoiceForm() {
               id="address"
               value={formData.address}
               onChange={(e) => updateFormData("address", e.target.value)}
-              placeholder="Customer လိပ်စာ"
+              placeholder="လိပ်စာ"
               rows={3}
             />
           </div>

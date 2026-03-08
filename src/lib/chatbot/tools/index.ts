@@ -2,8 +2,10 @@ import { getCurrentDateTime } from "./datetime";
 import { calculate } from "./calculate";
 import {
   getInvoiceDetails,
-  getOrderInvoice,
-  getInvoiceDetailsWithDateRange,
+  getAllOrderInvoice,
+  getInvoiceWithDateRange,
+  getInvoiceWithOrderPending,
+  getInvoiceWithOrderCompleted,
 } from "./invoice";
 import { analyzeProductSales, getAllProductTypeDetails } from "./product";
 import { getAssistantCapabilities } from "./capabilities";
@@ -13,10 +15,12 @@ export const chatTools = {
   getCurrentDateTime,
   calculate,
   getInvoiceDetails,
-  getOrderInvoice,
-  getInvoiceDetailsWithDateRange,
+  getAllOrderInvoice,
+  getInvoiceWithDateRange,
   getAllProductTypeDetails,
   getAssistantCapabilities,
   getTotalPriceAndInvoiceCountWithDate,
   analyzeProductSales,
+  getInvoiceWithOrderPending,
+  getInvoiceWithOrderCompleted,
 };

@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { AppIcon } from "@/components/app-icons";
 import { getInvoices, type InvoiceWithDetails } from "../action";
-import { InvoiceHistorySkeleton } from "./invoice-history-skeleton";
+
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   Popover,
@@ -34,6 +34,7 @@ import {
 } from "@/components/ui/pagination";
 import Link from "next/link";
 import { formatDate } from "@/lib/constants/date_format";
+import { TableSkeleton } from "@/components/skeleton/table-skeleton";
 
 interface ColumnConfig {
   id: string;
@@ -160,7 +161,7 @@ export function InvoiceHistoryTable() {
       return (
         <TableRow>
           <TableCell colSpan={10}>
-            <InvoiceHistorySkeleton />
+            <TableSkeleton />
           </TableCell>
         </TableRow>
       );

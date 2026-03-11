@@ -33,7 +33,7 @@ import {
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
-import { ManageStaffSkeleton } from "./manage-staff-skeleton";
+import { TableSkeleton } from "@/components/skeleton/table-skeleton";
 
 interface ColumnConfig {
   id: string;
@@ -60,6 +60,7 @@ export default function ManageStaffTable() {
     role: "STAFF",
   });
 
+  const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -106,6 +107,8 @@ export default function ManageStaffTable() {
     } catch (error) {
       console.error("Error fetching staff:", error);
       toast.error("Failed to fetch staff data");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -126,55 +129,68 @@ export default function ManageStaffTable() {
   };
 
   const renderTableBody = () => {
+    if (isLoading)
+      return (
+        <TableRow>
+          <TableCell colSpan={columns.length}>
+            <TableSkeleton />
+          </TableCell>
+        </TableRow>
+      );
+
+    if (!staffData.length)
+      return (
+        <TableRow>
+          <TableCell colSpan={columns.length} className="py-8 text-center">
+            <p className="text-lg font-medium text-muted-foreground">
+              ဝန်ထမ်းမရှိသေးပါ
+            </p>
+          </TableCell>
+        </TableRow>
+      );
+
     return (
       <>
-        {staffData.length === 0 ? (
-          <TableRow>
-            <TableCell colSpan={10}>
-              <ManageStaffSkeleton />
+        {staffData.map((data) => (
+          <TableRow key={data.id}>
+            <TableCell>{data.id}</TableCell>
+            <TableCell>{data.name}</TableCell>
+            <TableCell>{data.phone}</TableCell>
+            <TableCell>
+              <Badge variant={data.role === "STAFF" ? "staff" : "manager"}>
+                {data.role}
+              </Badge>
             </TableCell>
-          </TableRow>
-        ) : (
-          staffData.map((data) => (
-            <TableRow key={data.id}>
-              <TableCell>{data.id}</TableCell>
-              <TableCell>{data.name}</TableCell>
-              <TableCell>{data.phone}</TableCell>
-              <TableCell>
-                <Badge variant={data.role === "STAFF" ? "staff" : "manager"}>
-                  {data.role}
-                </Badge>
-              </TableCell>
 
-              <TableCell>
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button variant="outline" size="sm">
-                      <AppIcon name="edit" className="h-4 w-4" />
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="max-w-md">
-                    <DialogTitle className="text-lg font-medium mb-4">
-                      အသေးစိတ်
-                    </DialogTitle>
-                    <div className="grid gap-4">
-                      {[
-                        { label: "အမည်", value: data.name },
-                        { label: "Email", value: data.email || "-" },
-                        { label: "ဖုန်းနံပါတ်", value: data.phone },
-                        { label: "လိပ်စာ", value: data.address },
-                        {
-                          label: "ရာထူး",
-                          value: (
-                            <Badge
-                              variant={
-                                data.role === "STAFF" ? "staff" : "manager"
-                              }>
-                              {data.role}
-                            </Badge>
-                          ),
-                        },
-                        /*                         {
+            <TableCell>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button variant="outline" size="sm">
+                    <AppIcon name="edit" className="h-4 w-4" />
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-md">
+                  <DialogTitle className="text-lg font-medium mb-4">
+                    အသေးစိတ်
+                  </DialogTitle>
+                  <div className="grid gap-4">
+                    {[
+                      { label: "အမည်", value: data.name },
+                      { label: "Email", value: data.email || "-" },
+                      { label: "ဖုန်းနံပါတ်", value: data.phone },
+                      { label: "လိပ်စာ", value: data.address },
+                      {
+                        label: "ရာထူး",
+                        value: (
+                          <Badge
+                            variant={
+                              data.role === "STAFF" ? "staff" : "manager"
+                            }>
+                            {data.role}
+                          </Badge>
+                        ),
+                      },
+                      /*                         {
                           label: "အလုပ်",
                           value: (
                             <Badge
@@ -187,31 +203,30 @@ export default function ManageStaffTable() {
                             </Badge>
                           ),
                         }, */
-                        {
-                          label: "since",
-                          value: data.createdAt.toLocaleString(),
-                        },
-                        {
-                          label: "Last Update",
-                          value: data.updatedAt.toLocaleString(),
-                        },
-                      ].map(({ label, value }) => (
-                        <div
-                          key={label}
-                          className="grid grid-cols-3 items-center">
-                          <Label className="font-medium">{label}</Label>
-                          <div className="col-span-2 text-sm text-gray-600">
-                            {value}
-                          </div>
+                      {
+                        label: "since",
+                        value: data.createdAt.toLocaleString(),
+                      },
+                      {
+                        label: "Last Update",
+                        value: data.updatedAt.toLocaleString(),
+                      },
+                    ].map(({ label, value }) => (
+                      <div
+                        key={label}
+                        className="grid grid-cols-3 items-center">
+                        <Label className="font-medium">{label}</Label>
+                        <div className="col-span-2 text-sm text-gray-600">
+                          {value}
                         </div>
-                      ))}
-                    </div>
-                  </DialogContent>
-                </Dialog>
-              </TableCell>
-            </TableRow>
-          ))
-        )}
+                      </div>
+                    ))}
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </TableCell>
+          </TableRow>
+        ))}
       </>
     );
   };

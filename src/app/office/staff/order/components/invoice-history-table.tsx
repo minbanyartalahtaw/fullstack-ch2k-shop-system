@@ -19,7 +19,6 @@ import {
   PaginationEllipsis,
 } from "@/components/ui/pagination";
 import { ORDER_STATUS } from "@/lib/constants/order-status";
-import { InvoiceHistorySkeleton } from "./invoice-history-skeleton";
 import {
   Popover,
   PopoverContent,
@@ -46,6 +45,7 @@ import {
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { formatDate } from "@/lib/constants/date_format";
+import { TableSkeleton } from "@/components/skeleton/table-skeleton";
 
 // Types
 interface ColumnConfig {
@@ -197,7 +197,7 @@ export function InvoiceHistoryTable() {
       return (
         <TableRow>
           <TableCell colSpan={11}>
-            <InvoiceHistorySkeleton />
+            <TableSkeleton />
           </TableCell>
         </TableRow>
       );

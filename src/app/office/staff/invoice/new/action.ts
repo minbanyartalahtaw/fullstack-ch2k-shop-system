@@ -5,7 +5,7 @@ import { OrderStatus } from "@prisma/client";
 
 // --- Types (aligned with schema) ---
 
-interface ProductType {
+export interface ProductType {
   id: number;
   name: string;
 }
@@ -101,6 +101,9 @@ export async function createInvoice(formData: InvoiceDataInput) {
       formData.total_Amount < 0
     ) {
       return { success: false, error: "စုစုပေါင်းတန်ဖိုးထည့်ရန်" };
+    }
+    if (formData.isOrder && !formData.appointment_Date) {
+      return { success: false, error: "ရက်ချိန်းရွှေးရန်" };
     }
 
     const productDetails = await prisma.productDetails.create({

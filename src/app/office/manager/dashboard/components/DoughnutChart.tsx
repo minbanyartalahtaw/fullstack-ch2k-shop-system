@@ -1,95 +1,110 @@
 "use client";
 
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
-import { Doughnut } from "react-chartjs-2";
+import { useTheme } from "next-themes";
+import { Pie, PieChart, Label } from "recharts";
+import {
+  ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart";
 
-// Register required Chart.js components
-ChartJS.register(ArcElement, Tooltip, Legend);
-
-// Define the props interface
-interface DoughnutChartProps {
-  data: {
-    labels: string[];
-    counts: number[];
-  };
-}
-
-// Predefined minimalist color palette
-const colorPalette = [
-  { bg: "#EFF6FF", border: "#3B82F6" }, // Blue
-  { bg: "#F0FDF4", border: "#10B981" }, // Green
-  { bg: "#FEF3C7", border: "#F59E0B" }, // Amber
-  { bg: "#FCE7F3", border: "#EC4899" }, // Pink
-  { bg: "#F0F9FF", border: "#0EA5E9" }, // Sky Blue
-  { bg: "#F5F3FF", border: "#8B5CF6" }, // Violet
-  { bg: "#FFF7ED", border: "#F97316" }, // Orange
-  { bg: "#F1F5F9", border: "#64748B" }, // Slate Gray
+const PALETTE = [
+  { light: "#3B82F6", dark: "#60A5FA" }, // Blue
+  { light: "#10B981", dark: "#34D399" }, // Emerald
+  { light: "#F59E0B", dark: "#FCD34D" }, // Amber
+  { light: "#F43F5E", dark: "#FB7185" }, // Rose
+  { light: "#8B5CF6", dark: "#A78BFA" }, // Violet
+  { light: "#F97316", dark: "#FB923C" }, // Orange
+  { light: "#0EA5E9", dark: "#38BDF8" }, // Sky
+  { light: "#14B8A6", dark: "#2DD4BF" }, // Teal
 ];
 
-const generateColors = (count: number) => {
-  const colors = [];
-  const backgroundColors = [];
+interface DoughnutChartProps {
+  data: { name: string; value: number }[];
+}
 
-  for (let i = 0; i < count; i++) {
-    const colorIndex = i % colorPalette.length;
-    colors.push(colorPalette[colorIndex].border);
-    backgroundColors.push(colorPalette[colorIndex].bg);
-  }
+export default function DoughnutChart({ data }: DoughnutChartProps) {
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === "dark";
 
-  return { colors, backgroundColors };
-};
+  const total = data.reduce((sum, d) => sum + d.value, 0);
 
-const DoughnutChart = ({ data }: DoughnutChartProps) => {
-  const { labels, counts } = data;
-  const { colors, backgroundColors } = generateColors(labels.length);
-
-  const chartData = {
-    labels,
-    datasets: [
-      {
-        label: "အရေအတွက်",
-        data: counts,
-        backgroundColor: backgroundColors,
-        borderColor: colors,
-        borderWidth: 1,
-      },
-    ],
+  const getColor = (i: number) => {
+    const p = PALETTE[i % PALETTE.length];
+    return isDark ? p.dark : p.light;
   };
 
-  const options = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        position: "bottom" as const,
-        labels: {
-          padding: 20,
-          usePointStyle: true,
-          pointStyle: "circle",
-          font: {
-            size: 12,
-          },
-        },
-      },
-      tooltip: {
-        callbacks: {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          label: function (context: any) {
-            const label = context.label || "";
-            const value = context.raw || 0;
-            const total = context.dataset.data.reduce(
-              (a: number, b: number) => a + b,
-              0,
-            );
-            const percentage = Math.round((value / total) * 100);
-            return `${label} ${value} ခု (${percentage}%)`;
-          },
-        },
-      },
-    },
-  };
+  const chartData = data.map((d, i) => ({ ...d, fill: getColor(i) }));
 
-  return <Doughnut data={chartData} options={options} />;
-};
+  const config = Object.fromEntries(
+    data.map((d, i) => [`item${i}`, { label: d.name, color: getColor(i) }]),
+  ) as ChartConfig;
 
-export default DoughnutChart;
+  return (
+    <div className="w-full">
+      <div className="h-[200px] sm:h-[240px]">
+        <ChartContainer config={config} className="aspect-auto h-full w-full">
+          <PieChart>
+            <ChartTooltip
+              cursor={false}
+              content={<ChartTooltipContent nameKey="name" hideLabel />}
+            />
+            <Pie
+              data={chartData}
+              dataKey="value"
+              nameKey="name"
+              innerRadius="52%"
+              outerRadius="80%"
+              strokeWidth={2}
+            >
+              <Label
+                content={({ viewBox }) => {
+                  if (viewBox && "cx" in viewBox && "cy" in viewBox) {
+                    const cx = viewBox.cx ?? 0;
+                    const cy = viewBox.cy ?? 0;
+                    return (
+                      <text x={cx} y={cy} textAnchor="middle" dominantBaseline="middle">
+                        <tspan
+                          x={cx}
+                          y={cy - 10}
+                          style={{ fill: "var(--muted-foreground)", fontSize: "12px" }}
+                        >
+                          စုစုပေါင်း
+                        </tspan>
+                        <tspan
+                          x={cx}
+                          y={cy + 16}
+                          style={{
+                            fill: "var(--foreground)",
+                            fontSize: "28px",
+                            fontWeight: "bold",
+                          }}
+                        >
+                          {total}
+                        </tspan>
+                      </text>
+                    );
+                  }
+                }}
+              />
+            </Pie>
+          </PieChart>
+        </ChartContainer>
+      </div>
+
+      {/* Legend rendered outside SVG so CSS vars from PALETTE apply correctly */}
+      <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 pt-2 text-xs">
+        {data.map((d, i) => (
+          <span key={d.name} className="flex items-center gap-1.5">
+            <span
+              className="inline-block h-2 w-2 shrink-0 rounded-sm"
+              style={{ backgroundColor: getColor(i) }}
+            />
+            <span className="text-muted-foreground">{d.name}</span>
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}

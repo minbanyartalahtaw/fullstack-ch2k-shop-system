@@ -8,6 +8,7 @@ import {
   getProductTypes,
   getSellers,
   type InvoiceDataInput,
+  type ProductType,
 } from "./action";
 import {
   ORDER_STATUS,
@@ -34,11 +35,7 @@ import {
 } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { useRouter } from "next/navigation";
-
-interface ProductType {
-  id: number;
-  name: string;
-}
+import { formatDate } from "@/lib/constants/date_format";
 
 /** Form state shape (aligned with InvoiceDataInput + ProductDetails)
  *  Lastest updated at 2026-03-05
@@ -84,7 +81,7 @@ interface Seller {
 }
 
 const INITIAL_PRODUCT_DETAILS: ProductDetailsForm = {
-  productTypeId: undefined as unknown as number,
+  productTypeId: 0,
   productType: "",
   productName: "",
   purity_16: null,
@@ -122,27 +119,27 @@ export function NewInvoiceForm() {
   const router = useRouter();
   const [productTypes, setProductTypes] = useState<ProductType[]>([]);
   const [sellers, setSellers] = useState<Seller[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const [formData, setFormData] = useState<InvoiceFormData>(getInitialFormData);
 
-  const fetchSellers = async () => {
-    const { success, staff } = await getSellers();
-    if (success && staff) {
-      setSellers(
-        staff.map((item) => ({ id: item.id.toString(), name: item.name })),
-      );
-    }
-  };
-  const fetchProductTypes = async () => {
-    const { success, productTypes } = await getProductTypes();
-    if (success && productTypes) {
-      setProductTypes(productTypes);
-    }
-  };
-
   useEffect(() => {
-    fetchSellers();
-    fetchProductTypes();
+    Promise.all([getSellers(), getProductTypes()]).then(
+      ([sellersResult, typesResult]) => {
+        if (sellersResult.success && sellersResult.staff) {
+          setSellers(
+            sellersResult.staff.map((item) => ({
+              id: item.id.toString(),
+              name: item.name,
+            })),
+          );
+        }
+        if (typesResult.success && typesResult.productTypes) {
+          setProductTypes(typesResult.productTypes);
+        }
+        setIsLoading(false);
+      },
+    );
   }, []);
 
   useEffect(() => {
@@ -200,15 +197,13 @@ export function NewInvoiceForm() {
   };
 
   const buildInvoicePayload = (): InvoiceDataInput => {
-    const total =
-      typeof formData.total_Amount === "number" ? formData.total_Amount : 0;
     return {
       customer_Name: formData.customer_Name,
       mobile_Number: formData.mobile_Number || null,
       address: formData.address || null,
       purchase_date: formData.purchase_date,
       product_Details: formData.product_Details,
-      total_Amount: total,
+      total_Amount: formData.total_Amount as number,
       reject_Amount: formData.isOrder ? (formData.reject_Amount ?? null) : null,
       remaining_Amount: formData.isOrder
         ? (formData.remaining_Amount ?? null)
@@ -231,27 +226,24 @@ export function NewInvoiceForm() {
     }
 
     const payload = buildInvoicePayload();
-    const promise = createInvoice(payload).then((result) => {
-      if (result.success) {
-        setFormData(getInitialFormData());
-        return result;
-      }
-      throw new Error(result.error || "Failed to create invoice");
-    });
+    const toastId = toast.loading("Saving invoice ...");
+    const result = await createInvoice(payload);
 
-    toast.promise(promise, {
-      loading: "Saving invoice ...",
-      success: `${(await promise).invoice?.customer_Name} ဘောက်ချာသိမ်းပြီး `,
-      error: (err) => `Error: ${err.message || "Failed to save data!"}`,
-      action: {
-        label: "ကြည့်ရန်",
-        onClick: async () => {
-          router.push(
-            `/office/staff/invoice/${(await promise).invoice?.invoiceId}`,
-          );
+    if (result.success) {
+      setFormData(getInitialFormData());
+      toast.success(`${result.invoice?.customer_Name} ဘောက်ချာသိမ်းပြီး`, {
+        id: toastId,
+        action: {
+          label: "ကြည့်ရန်",
+          onClick: () =>
+            router.push(`/office/staff/invoice/${result.invoice?.invoiceId}`),
         },
-      },
-    });
+      });
+    } else {
+      toast.error(`Error: ${result.error || "Failed to save data!"}`, {
+        id: toastId,
+      });
+    }
   };
 
   return (
@@ -317,7 +309,7 @@ export function NewInvoiceForm() {
                 >
                   <AppIcon name="calendar" className="mr-2 h-4 w-4" />
                   {formData.purchase_date ? (
-                    formData.purchase_date.toLocaleDateString()
+                    formatDate(formData.purchase_date)
                   ) : (
                     <span>Pick a date</span>
                   )}
@@ -369,6 +361,7 @@ export function NewInvoiceForm() {
               အမျိုးအစား
             </Label>
             <Select
+              disabled={isLoading}
               value={
                 formData.product_Details.productTypeId
                   ? formData.product_Details.productTypeId.toString()
@@ -660,7 +653,7 @@ export function NewInvoiceForm() {
                           className={`mr-2 h-4 w-4 ${!formData.appointment_Date ? "text-red-500" : ""}`}
                         />
                         {formData.appointment_Date ? (
-                          formData.appointment_Date.toLocaleDateString()
+                          formatDate(formData.appointment_Date)
                         ) : (
                           <span className="text-red-500">
                             ရက်ချိန်းရွှေးရန်
@@ -689,7 +682,8 @@ export function NewInvoiceForm() {
       <div className="flex justify-end space-x-4 px-2">
         <div className="space-y-2">
           <Select
-            value={formData.seller} // Controlled component
+            disabled={isLoading}
+            value={formData.seller}
             onValueChange={(value) => updateFormData("seller", value)}
             required>
             <SelectTrigger id="seller_select">

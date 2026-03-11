@@ -2,8 +2,8 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Suspense } from "react";
-import { ManageStaffSkeleton } from "./components/manage-staff-skeleton";
 import ManageStaffTable from "./components/manage-staff-table";
+import { TableSkeleton } from "@/components/skeleton/table-skeleton";
 
 export default function ManageStaff() {
   return (
@@ -13,7 +13,7 @@ export default function ManageStaff() {
           <CardTitle>ဝန်ထမ်းဆိုင်ရာ</CardTitle>
         </CardHeader>
         <CardContent>
-          <Suspense fallback={<ManageStaffSkeleton />}>
+          <Suspense fallback={<TableSkeleton />}>
             <ManageStaffTable />
           </Suspense>
         </CardContent>

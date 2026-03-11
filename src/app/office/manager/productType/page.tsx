@@ -23,7 +23,8 @@ import { toast } from "sonner";
 import { ProductType } from "@prisma/client";
 import { useEffect, useState } from "react";
 import { Switch } from "@/components/ui/switch";
-import { InvoiceHistorySkeleton } from "../../staff/order/components/invoice-history-skeleton";
+import { TableSkeleton } from "@/components/skeleton/table-skeleton";
+import { formatDate } from "@/lib/constants/date_format";
 
 export default function NewProductType() {
   const [productTypes, setProductTypes] = useState<ProductType[]>([]);
@@ -80,6 +81,53 @@ export default function NewProductType() {
     fetchProductTypes();
   }, []);
 
+  const renderTableBody = () => {
+    if (isLoading)
+      return (
+        <TableRow>
+          <TableCell colSpan={4}>
+            <TableSkeleton />
+          </TableCell>
+        </TableRow>
+      );
+
+    if (!productTypes.length)
+      return (
+        <TableRow>
+          <TableCell colSpan={4} className="py-8 text-center">
+            <p className="text-lg font-medium text-muted-foreground">
+              ပစ္စည်းအမျိုးအစား မရှိသေးပါ
+            </p>
+          </TableCell>
+        </TableRow>
+      );
+
+    return productTypes.map((productType) => (
+      <TableRow key={productType.id}>
+        <TableCell>{productType.id}</TableCell>
+        <TableCell>{productType.name}</TableCell>
+        <TableCell>{formatDate(productType.createdAt)}</TableCell>
+        <TableCell>
+          <div className="flex items-center gap-2.5">
+            <Switch
+              checked={productType.isAvailable}
+              onCheckedChange={() => handleToggle(productType.id)}
+              disabled={togglingIds.has(productType.id)}
+            />
+            <span
+              className={`text-xs font-medium ${
+                productType.isAvailable
+                  ? "text-green-600"
+                  : "text-muted-foreground"
+              }`}>
+              {productType.isAvailable ? "Active" : "Inactive"}
+            </span>
+          </div>
+        </TableCell>
+      </TableRow>
+    ));
+  };
+
   return (
     <div className=" pt-4 pb-20">
       <Card>
@@ -122,52 +170,7 @@ export default function NewProductType() {
                     <TableHead></TableHead>
                   </TableRow>
                 </TableHeader>
-                <TableBody>
-                  {isLoading ? (
-                    <TableRow>
-                      <TableCell colSpan={4}>
-                        <InvoiceHistorySkeleton />
-                      </TableCell>
-                    </TableRow>
-                  ) : productTypes.length === 0 ? (
-                    <TableRow>
-                      <TableCell
-                        colSpan={4}
-                        className="text-center h-24 text-muted-foreground">
-                        ပစ္စည်းအမျိုးအစား မရှိသေးပါ
-                      </TableCell>
-                    </TableRow>
-                  ) : (
-                    productTypes.map((productType) => (
-                      <TableRow key={productType.id}>
-                        <TableCell>{productType.id}</TableCell>
-                        <TableCell>{productType.name}</TableCell>
-                        <TableCell>
-                          {productType.createdAt.toLocaleDateString()}
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-2.5">
-                            <Switch
-                              checked={productType.isAvailable}
-                              onCheckedChange={() =>
-                                handleToggle(productType.id)
-                              }
-                              disabled={togglingIds.has(productType.id)}
-                            />
-                            <span
-                              className={`text-xs font-medium ${
-                                productType.isAvailable
-                                  ? "text-green-600"
-                                  : "text-muted-foreground"
-                              }`}>
-                              {productType.isAvailable ? "Active" : "Inactive"}
-                            </span>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  )}
-                </TableBody>
+                <TableBody>{renderTableBody()}</TableBody>
               </Table>
             </div>
           </div>

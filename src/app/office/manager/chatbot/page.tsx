@@ -7,7 +7,6 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
 import rehypeSanitize from "rehype-sanitize";
-import { Badge } from "@/components/ui/badge";
 
 interface Message {
   role: "user" | "assistant";
@@ -31,9 +30,11 @@ export default function ChatbotPage() {
   const [isAssistantThinking, setIsAssistantThinking] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     const content = input.trim();
@@ -111,20 +112,20 @@ export default function ChatbotPage() {
   }
 
   return (
-    <div className="flex flex-col h-[calc(100dvh-2rem)] max-w-3xl mx-auto w-full rounded-xl overflow-hidden">
-      {/* Messages - scrollable, scrollbar hidden */}
-      <div className="flex-1 overflow-y-auto overflow-x-hidden px-4 sm:px-6 py-6 space-y-6 min-h-0 [scrollbar-width:none] [&::-webkit-scrollbar]:size-0">
+    <div className="flex flex-col h-[calc(100dvh-2rem)] max-w-3xl mx-auto w-full">
+      {/* Messages */}
+      <div className="flex-1 overflow-y-auto overflow-x-hidden px-4 sm:px-6 py-8 space-y-6 min-h-0 [scrollbar-width:none] [&::-webkit-scrollbar]:size-0">
         {messages.length === 0 && (
-          <div className="flex flex-1 min-h-0 flex-col items-center justify-center px-4 select-none">
-            <div className="flex flex-col items-center gap-6 text-center max-w-sm">
-              <div className="h-14 w-14 rounded-2xl bg-primary/5 flex items-center justify-center border border-primary/10">
-                <AppIcon name="bot" className="h-7 w-7 text-primary/70" />
+          <div className="flex flex-1 flex-col items-center justify-center h-full select-none">
+            <div className="flex flex-col items-center gap-5 text-center">
+              <div className="h-16 w-16 rounded-2xl bg-primary/8 flex items-center justify-center">
+                <AppIcon name="bot" className="h-8 w-8 text-primary/60" />
               </div>
-              <div className="space-y-1.5">
-                <h2 className="text-base font-semibold text-foreground tracking-tight">
+              <div className="space-y-2">
+                <h2 className="text-lg font-semibold text-foreground tracking-tight">
                   AI Assistant
                 </h2>
-                <p className="text-sm text-muted-foreground/90 leading-relaxed">
+                <p className="text-sm text-muted-foreground">
                   ချမ်းထော Office Management System
                 </p>
               </div>
@@ -137,9 +138,9 @@ export default function ChatbotPage() {
             key={i}
             className={`flex gap-3 ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
             {msg.role === "assistant" && (
-              <div className="shrink-0 mt-1.5">
-                <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center ring-1 ring-primary/5">
-                  <AppIcon name="bot" className="h-4 w-4 text-primary" />
+              <div className="shrink-0 mt-1">
+                <div className="h-7 w-7 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <AppIcon name="bot" className="h-3.5 w-3.5 text-primary" />
                 </div>
               </div>
             )}
@@ -147,8 +148,8 @@ export default function ChatbotPage() {
             <div
               className={`max-w-[85%] text-sm leading-relaxed break-words ${
                 msg.role === "user"
-                  ? "bg-primary text-primary-foreground rounded-2xl rounded-br-md px-5 py-3 shadow-sm whitespace-pre-wrap"
-                  : "bg-muted/50 text-foreground rounded-2xl rounded-bl-md px-5 py-4 border border-border/30"
+                  ? "bg-primary text-primary-foreground rounded-2xl rounded-br-sm px-4 py-3 shadow-xs whitespace-pre-wrap"
+                  : "bg-muted/50 border border-border/40 text-foreground rounded-2xl rounded-bl-sm px-5 py-4"
               }`}>
               {msg.role === "assistant" ? (
                 <div className="markdown-body text-foreground [&>*:first-child]:mt-0 [&>*:last-child]:mb-0">
@@ -157,7 +158,7 @@ export default function ChatbotPage() {
                     rehypePlugins={[rehypeRaw, rehypeSanitize]}
                     components={{
                       p: ({ children }) => (
-                        <p className="mb-4 last:mb-0 text-foreground/90 leading-6">
+                        <p className="mb-3 last:mb-0 text-foreground/90 leading-6">
                           {children}
                         </p>
                       ),
@@ -177,12 +178,12 @@ export default function ChatbotPage() {
                         </h3>
                       ),
                       ul: ({ children }) => (
-                        <ul className="list-disc list-outside pl-5 mb-4 space-y-1 text-foreground/90">
+                        <ul className="list-disc list-outside pl-5 mb-3 space-y-1 text-foreground/90">
                           {children}
                         </ul>
                       ),
                       ol: ({ children }) => (
-                        <ol className="list-decimal list-outside pl-5 mb-4 space-y-1 text-foreground/90">
+                        <ol className="list-decimal list-outside pl-5 mb-3 space-y-1 text-foreground/90">
                           {children}
                         </ol>
                       ),
@@ -190,7 +191,7 @@ export default function ChatbotPage() {
                         <li className="leading-6">{children}</li>
                       ),
                       blockquote: ({ children }) => (
-                        <blockquote className="border-l-2 border-primary/50 pl-4 my-4 text-muted-foreground text-sm italic leading-6">
+                        <blockquote className="border-l-2 border-primary/40 pl-4 my-3 text-muted-foreground text-sm italic leading-6">
                           {children}
                         </blockquote>
                       ),
@@ -204,30 +205,30 @@ export default function ChatbotPage() {
                         </a>
                       ),
                       table: ({ children }) => (
-                        <div className="my-4 overflow-x-auto overflow-y-hidden rounded-lg border border-border w-full [scrollbar-width:thin]">
+                        <div className="my-4 overflow-x-auto overflow-y-hidden rounded-xl border border-border/60 w-full [scrollbar-width:thin]">
                           <table className="w-max min-w-full border-collapse text-sm">
                             {children}
                           </table>
                         </div>
                       ),
                       thead: ({ children }) => (
-                        <thead className="bg-muted/60">{children}</thead>
+                        <thead className="bg-muted/40">{children}</thead>
                       ),
                       tbody: ({ children }) => (
-                        <tbody className="divide-y divide-border">
+                        <tbody className="divide-y divide-border/60">
                           {children}
                         </tbody>
                       ),
                       tr: ({ children }) => (
-                        <tr className="border-border">{children}</tr>
+                        <tr className="border-border/60">{children}</tr>
                       ),
                       th: ({ children }) => (
-                        <th className="px-4 py-2.5 text-left font-medium text-foreground border-b border-border whitespace-nowrap">
+                        <th className="px-4 py-2.5 text-left font-medium text-foreground border-b border-border/60 whitespace-nowrap">
                           {children}
                         </th>
                       ),
                       td: ({ children }) => (
-                        <td className="px-4 py-2.5 text-foreground/90 leading-5 whitespace-nowrap">
+                        <td className="px-4 py-2.5 text-foreground/80 leading-5 whitespace-nowrap">
                           {children}
                         </td>
                       ),
@@ -236,73 +237,76 @@ export default function ChatbotPage() {
                   </ReactMarkdown>
                 </div>
               ) : (
-                <span className="block py-0.5">{msg.content}</span>
+                <span className="block">{msg.content}</span>
               )}
             </div>
           </div>
         ))}
+
         {isAssistantThinking && (
           <div className="flex gap-3 justify-start">
-            <div className="shrink-0 mt-1.5">
-              <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center ring-1 ring-primary/5">
-                <AppIcon name="bot" className="h-4 w-4 text-primary" />
+            <div className="shrink-0 mt-1">
+              <div className="h-7 w-7 rounded-lg bg-primary/10 flex items-center justify-center">
+                <AppIcon name="bot" className="h-3.5 w-3.5 text-primary" />
               </div>
             </div>
-            <div className="bg-muted/50 text-foreground rounded-2xl rounded-bl-md px-5 py-4 border border-border/30">
-              <div className="flex items-center gap-1.5">
-                <span className="h-2 w-2 rounded-full bg-muted-foreground/60 animate-bounce [animation-delay:-0.2s]" />
-                <span className="h-2 w-2 rounded-full bg-muted-foreground/60 animate-bounce [animation-delay:-0.1s]" />
-                <span className="h-2 w-2 rounded-full bg-muted-foreground/60 animate-bounce" />
-              </div>
+            <div className="flex items-center gap-1.5 py-2">
+              <span className="h-1.5 w-1.5 rounded-full bg-muted-foreground/40 animate-bounce [animation-delay:-0.2s]" />
+              <span className="h-1.5 w-1.5 rounded-full bg-muted-foreground/40 animate-bounce [animation-delay:-0.1s]" />
+              <span className="h-1.5 w-1.5 rounded-full bg-muted-foreground/40 animate-bounce" />
             </div>
           </div>
         )}
         <div ref={scrollRef} />
       </div>
 
-      {/* Input - fixed at bottom */}
-      <div className="shrink-0 px-2 pb-2 pt-0 bg-background/50 border-t border-border/50">
-        {/* Suggestions - horizontal chips, scrollbar hidden */}
+      {/* Input area */}
+      <div className="shrink-0 px-4 sm:px-6 pb-4 pt-2">
+        {/* Suggestions */}
         <div
           onWheel={handleSuggestionWheel}
-          className="overflow-x-auto overflow-y-hidden py-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden touch-pan-x">
-          <div className="flex gap-2 justify-start py-0.5 min-w-max snap-x snap-mandatory scroll-px-1">
+          className="overflow-x-auto overflow-y-hidden pb-3 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden touch-pan-x">
+          <div className="flex gap-1.5 min-w-max">
             {SUGGESTIONS.map((s) => (
               <button
                 key={s}
                 type="button"
                 onClick={() => sendSuggestion(s)}
-                className="px-3.5 py-2 text-xs font-medium rounded-full border border-border/80 bg-background text-muted-foreground hover:bg-accent/60 hover:text-foreground hover:border-accent-foreground/20 transition-colors cursor-pointer shrink-0 snap-start whitespace-nowrap">
+                className="px-3 py-1.5 text-xs rounded-full border border-border/60 bg-background text-muted-foreground hover:bg-muted/60 hover:text-foreground transition-colors cursor-pointer shrink-0 whitespace-nowrap">
                 {s}
               </button>
             ))}
           </div>
         </div>
-        <form onSubmit={handleSubmit} className="flex gap-2 items-end w-full">
-          <div className="flex-1 flex items-end rounded-lg border border-input bg-background shadow-sm focus-within:ring-2 focus-within:ring-ring/50 focus-within:border-ring transition-all">
+
+        {/* Input box */}
+        <form onSubmit={handleSubmit}>
+          <div className="flex flex-col rounded-2xl border border-input bg-background shadow-sm focus-within:border-ring/60 transition-colors">
             <textarea
               ref={inputRef}
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder="မေးခွန်းရိုက်ထည့်ပါ..."
-              className="flex-1 field-sizing-content min-h-10 max-h-32 resize-none bg-transparent px-4 py-2.5 text-sm placeholder:text-muted-foreground focus-visible:outline-none disabled:opacity-50 rounded-2xl"
-              rows={1}
+              className="w-full min-h-16 max-h-48 resize-none bg-transparent px-5 pt-4 pb-2 text-sm placeholder:text-muted-foreground/60 focus-visible:outline-none disabled:opacity-50 leading-relaxed field-sizing-content"
+              rows={2}
               disabled={isLoading}
               autoFocus
             />
-            <Button
-              type="submit"
-              size="icon"
-              variant="ghost"
-              className="shrink-0 h-10 w-10 rounded-xl mr-0.5 mb-0.5 text-muted-foreground hover:text-primary hover:bg-primary/10 disabled:opacity-30 transition-colors"
-              disabled={isLoading || !input.trim()}>
-              <AppIcon name="send" className="h-4 w-4" />
-            </Button>
+            <div className="flex items-center justify-end px-3 pb-3">
+              <Button
+                type="submit"
+                size="icon"
+                className="h-9 w-9 rounded-xl shrink-0 disabled:opacity-30 transition-opacity"
+                disabled={isLoading || !input.trim()}>
+                <AppIcon name="send" className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
         </form>
-        <p className="text-[11px] text-muted-foreground/50 text-center mt-2 select-none">
-          AI can make mistakes, please check the information carefully.
+
+        <p className="text-[11px] text-muted-foreground/40 text-center mt-3 select-none">
+          AI can make mistakes — verify important information.
         </p>
       </div>
     </div>

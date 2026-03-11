@@ -2,7 +2,7 @@
 
 import { Skeleton } from "@/components/ui/skeleton";
 
-export function ManageStaffSkeleton() {
+export function TableSkeleton() {
   return (
     <div className="space-y-2">
       {Array.from({ length: 5 }).map((_, index) => (

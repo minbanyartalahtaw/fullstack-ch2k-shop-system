@@ -2,10 +2,11 @@
 import prisma from "@/lib/prisma";
 
 export async function addProductType(formData: FormData) {
-  const productName = formData.get("productName") as string;
+  const productName = (formData.get("productName") as string).trim();
   if (!productName) {
     throw new Error("Product name is required");
   }
+
   const isProductNameIsTaken = await prisma.productType.findFirst({
     where: {
       name: productName as string,
@@ -47,6 +48,6 @@ export async function toggleProductType(id: number) {
 
   return {
     status: true,
-    message: `${updated.name} ${updated.isAvailable ? "enabled" : "disabled"}`,
+    message: `${updated.name} ${updated.isAvailable ? "ဖွင့်ပြီးပါပြီ" : "ပိတ်ပြီးပါပြီ"}`,
   };
 }

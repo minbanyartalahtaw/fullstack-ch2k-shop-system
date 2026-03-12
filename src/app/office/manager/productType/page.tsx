@@ -5,7 +5,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
+  DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
@@ -137,22 +139,29 @@ export default function NewProductType() {
         <div className="pl-6">
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
-              <Button variant="outline" className="w-fit">
+              <Button variant={"outline"} className="w-fit gap-2">
                 အသစ်လုပ်ရန်
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-md">
-              <DialogTitle></DialogTitle>
-              <form onSubmit={handleSubmit} className="space-y-4 py-4">
-                <div className="space-y-2">
-                  <Input
-                    placeholder="ပစ္စည်းအမျိုးအစားအမည်"
-                    name="productName"
-                    required
-                  />
+            <DialogContent className="sm:max-w-sm">
+              <DialogHeader>
+                <div className="flex items-center gap-3">
+                  <div>
+                    <DialogTitle className="text-base">
+                      အမျိုးအစားအမည် ထည့်သွင်းပါ
+                    </DialogTitle>
+                  </div>
                 </div>
-                <DialogFooter className="flex justify-end gap-2">
-                  <Button type="submit">အသစ်လုပ်ရန်</Button>
+              </DialogHeader>
+              <form onSubmit={handleSubmit} className="space-y-4 pt-2">
+                <Input
+                  placeholder="ဥပမာ — လက်စွပ်၊ နားကပ်"
+                  name="productName"
+                  required
+                  autoFocus
+                />
+                <DialogFooter>
+                  <Button type="submit">သိမ်းရန်</Button>
                 </DialogFooter>
               </form>
             </DialogContent>

@@ -57,6 +57,30 @@ const COLUMNS: ColumnConfig[] = [
 const formatCurrency = (amount: number | null) =>
   amount === null ? "-" : amount.toLocaleString();
 
+function Highlight({ text, query }: { text: string; query: string }) {
+  if (!query.trim()) return <>{text}</>;
+  const regex = new RegExp(
+    `(${query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`,
+    "gi",
+  );
+  const parts = text.split(regex);
+  return (
+    <>
+      {parts.map((part, i) =>
+        regex.test(part) ? (
+          <mark
+            key={i}
+            className="bg-yellow-200 dark:bg-yellow-500 rounded-sm px-0.5">
+            {part}
+          </mark>
+        ) : (
+          part
+        ),
+      )}
+    </>
+  );
+}
+
 export function InvoiceHistoryTable() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -180,13 +204,22 @@ export function InvoiceHistoryTable() {
     return invoices.map((invoice) => (
       <TableRow key={invoice.id}>
         {columnVisibility.invoiceId && (
-          <TableCell>{invoice.invoiceId}</TableCell>
+          <TableCell>
+            <Highlight text={invoice.invoiceId} query={debouncedSearch} />
+          </TableCell>
         )}
         {columnVisibility.customerName && (
-          <TableCell className="border">{invoice.customer_Name}</TableCell>
+          <TableCell className="border">
+            <Highlight text={invoice.customer_Name} query={debouncedSearch} />
+          </TableCell>
         )}
         {columnVisibility.mobile && (
-          <TableCell className="border">{invoice.mobile_Number}</TableCell>
+          <TableCell className="border">
+            <Highlight
+              text={invoice.mobile_Number ?? ""}
+              query={debouncedSearch}
+            />
+          </TableCell>
         )}
         {columnVisibility.purchaseDate && (
           <TableCell className="border">

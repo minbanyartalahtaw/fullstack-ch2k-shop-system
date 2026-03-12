@@ -12,7 +12,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 export const metadata: Metadata = {
-  title: "ch2k office",
+  title: "Chan Htaw Office",
   description: "Chan Htaw Back Office",
 };
 

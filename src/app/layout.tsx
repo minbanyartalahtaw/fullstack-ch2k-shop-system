@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Please Login",
+  title: "Chan Htaw Office",
   description: "Backoffice For Chan Htaw",
 };
 

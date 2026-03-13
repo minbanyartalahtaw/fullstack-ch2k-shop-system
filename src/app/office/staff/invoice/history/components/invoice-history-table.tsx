@@ -43,7 +43,7 @@ interface ColumnConfig {
 }
 
 const COLUMNS: ColumnConfig[] = [
-  { id: "invoiceId", label: "ဘောက်ချာနံပါတ်", visible: false },
+  { id: "invoiceNumber", label: "ဘောက်ချာနံပါတ်", visible: true },
   { id: "customerName", label: "အမည်", visible: true },
   { id: "mobile", label: "ဖုန်းနံပါတ်", visible: true },
   { id: "purchaseDate", label: "ရက်စွဲ", visible: true },
@@ -205,6 +205,11 @@ export function InvoiceHistoryTable() {
       <TableRow key={invoice.id}>
         {columnVisibility.invoiceId && (
           <TableCell>
+            <Highlight text={invoice.invoiceId} query={debouncedSearch} />
+          </TableCell>
+        )}
+        {columnVisibility.invoiceNumber && (
+          <TableCell className="border">
             <Highlight text={invoice.invoiceId} query={debouncedSearch} />
           </TableCell>
         )}

@@ -8,6 +8,13 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 const PALETTE = [
   { light: "#3B82F6", dark: "#60A5FA" },
@@ -39,52 +46,72 @@ export default function ProductTypeSalesChart({
     types.map((type, i) => [type, { label: type, color: getColor(i) }]),
   ) as ChartConfig;
 
-  return (
-    <div className="flex w-full flex-col gap-3">
-      <ChartContainer
-        config={chartConfig}
-        className="aspect-auto h-[260px] w-full sm:h-[300px]"
-      >
-        <BarChart data={data} margin={{ top: 4, right: 8, left: -20, bottom: 0 }}>
-          <CartesianGrid vertical={false} strokeDasharray="3 3" />
-          <XAxis
-            dataKey="month"
-            tickLine={false}
-            axisLine={false}
-            tickMargin={6}
-            tick={{ fontSize: 11 }}
-          />
-          <YAxis
-            tickLine={false}
-            axisLine={false}
-            tick={{ fontSize: 10 }}
-            allowDecimals={false}
-            width={28}
-          />
-          <ChartTooltip content={<ChartTooltipContent />} />
-          {types.map((type, i) => (
-            <Bar
-              key={type}
-              dataKey={type}
-              stackId="a"
-              fill={getColor(i)}
-              radius={i === types.length - 1 ? [4, 4, 0, 0] : 0}
-            />
-          ))}
-        </BarChart>
-      </ChartContainer>
+  if (data.length === 0 || types.length === 0) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>ပစ္စည်းအမျိုးအစား</CardTitle>
+          <CardDescription>၆ လအတွင်းရောင်းရသောပစ္စည်းအမျိုးအစားများ</CardDescription>
+        </CardHeader>
+        <CardContent className="flex h-[300px] items-center justify-center">
+          <p className="text-sm text-muted-foreground">ဒေတာမရှိသေးပါ</p>
+        </CardContent>
+      </Card>
+    );
+  }
 
-      <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 text-xs">
-        {types.map((type, i) => (
-          <span key={type} className="flex items-center gap-1.5">
-            <span
-              className="inline-block h-2 w-2 shrink-0 rounded-sm"
-              style={{ backgroundColor: getColor(i) }}
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>ပစ္စည်းအမျိုးအစား</CardTitle>
+        <CardDescription>၆ လအတွင်းရောင်းရသောပစ္စည်းအမျိုးအစားများ</CardDescription>
+      </CardHeader>
+      <CardContent className="flex flex-col gap-3">
+        <ChartContainer
+          config={chartConfig}
+          className="aspect-auto h-[260px] w-full sm:h-[300px]"
+        >
+          <BarChart data={data} margin={{ top: 4, right: 8, left: -20, bottom: 0 }}>
+            <CartesianGrid vertical={false} strokeDasharray="3 3" />
+            <XAxis
+              dataKey="month"
+              tickLine={false}
+              axisLine={false}
+              tickMargin={6}
+              tick={{ fontSize: 11 }}
             />
-            <span className="text-muted-foreground">{type}</span>
-          </span>
-        ))}
-      </div>
-    </div>
+            <YAxis
+              tickLine={false}
+              axisLine={false}
+              tick={{ fontSize: 10 }}
+              allowDecimals={false}
+              width={28}
+            />
+            <ChartTooltip content={<ChartTooltipContent />} />
+            {types.map((type, i) => (
+              <Bar
+                key={type}
+                dataKey={type}
+                stackId="a"
+                fill={getColor(i)}
+                radius={i === types.length - 1 ? [4, 4, 0, 0] : 0}
+              />
+            ))}
+          </BarChart>
+        </ChartContainer>
+
+        <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 text-xs">
+          {types.map((type, i) => (
+            <span key={type} className="flex items-center gap-1.5">
+              <span
+                className="inline-block h-2 w-2 shrink-0 rounded-sm"
+                style={{ backgroundColor: getColor(i) }}
+              />
+              <span className="text-muted-foreground">{type}</span>
+            </span>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
   );
 }

@@ -2,7 +2,7 @@
 
 //import { Suspense } from 'react'
 //import { InvoiceHistorySkeleton } from './components/invoice-history-skeleton'
-import { InvoiceHistoryTable } from "./components/invoice-history-table";
+import { InvoiceHistoryTable } from "./components/invoice-order-table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AppIcon } from "@/components/app-icons";
 import { useIsMobile } from "@/hooks/use-mobile";

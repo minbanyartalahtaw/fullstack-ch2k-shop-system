@@ -346,7 +346,7 @@ export default function ManageStaffTable() {
 
       <div className="rounded-md border overflow-hidden">
         <div className="overflow-x-auto max-h-[calc(100vh-250px)]">
-          <Table className="rounded-md border overflow-hidden">
+          <Table className="rounded-md  overflow-hidden">
             <TableHeader>{renderTableHeader()}</TableHeader>
             <TableBody>{renderTableBody()}</TableBody>
           </Table>

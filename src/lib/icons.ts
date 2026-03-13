@@ -33,6 +33,8 @@ import {
   LogOut,
   Bot,
   SendHorizontal,
+  ChartPie,
+  ChartColumn,
 } from "lucide-react";
 
 // Pick ONLY the icons your app should use.
@@ -71,6 +73,8 @@ export const ICONS = {
   logout: LogOut,
   bot: Bot,
   send: SendHorizontal,
+  Pie: ChartPie,
+  LineChart: ChartColumn,
 } satisfies Record<string, LucideIcon>;
 
 export type IconName = keyof typeof ICONS;

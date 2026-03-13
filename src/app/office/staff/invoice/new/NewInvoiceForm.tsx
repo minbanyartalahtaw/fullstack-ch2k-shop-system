@@ -240,7 +240,7 @@ export function NewInvoiceForm() {
         },
       });
     } else {
-      toast.error(`Error: ${result.error || "Failed to save data!"}`, {
+      toast.error(`${result.error || "Failed to save data!"}`, {
         id: toastId,
       });
     }
@@ -248,13 +248,6 @@ export function NewInvoiceForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6 mx-auto max-w-4xl">
-      <Card className="bg-muted border shadow-sm">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            ဘောက်ချာအသစ်လုပ်ရန်
-          </CardTitle>
-        </CardHeader>
-      </Card>
       {/* Customer Information */}
       <Card>
         <CardHeader>
@@ -342,7 +335,7 @@ export function NewInvoiceForm() {
         <CardContent className="space-y-4">
           <div className="space-y-2 flex justify-center items-center">
             <Label htmlFor="product_name" className="w-1/3 md:w-1/5">
-              ပစ္စည်းအမည်
+              အမည်
             </Label>
             <Input
               onClick={(e) => (e.target as HTMLInputElement).select()}

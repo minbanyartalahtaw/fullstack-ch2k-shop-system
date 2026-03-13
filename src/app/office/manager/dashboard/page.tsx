@@ -2,7 +2,6 @@ import { Suspense } from "react";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -11,7 +10,7 @@ import {
 import { AppIcon } from "@/components/app-icons";
 import prisma from "@/lib/prisma";
 import { OrderStatus } from "@prisma/client";
-import DoughnutChart from "./components/DoughnutChart";
+import TotalProductSell from "./components/TotalProductSell";
 import LineChart from "./components/LineChart";
 import ProductTypeSalesChart from "./components/ProductTypeSalesChart";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
@@ -150,54 +149,11 @@ async function DashboardContent() {
   return (
     <div className="space-y-6">
       <div className="grid gap-4 md:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>ပစ္စည်းအမျိုးအစား</CardTitle>
-            <CardDescription>
-              ပစ္စည်းများ၏ အမျိုးအစားအလိုက် ခွဲခြမ်းမှု
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="flex justify-center">
-            {donutChartData.length > 0 ? (
-              <DoughnutChart data={donutChartData} />
-            ) : (
-              <div className="flex h-[300px] items-center justify-center">
-                <p className="text-sm text-muted-foreground">
-                  ပစ္စည်းအမျိုးအစား မရှိသေးပါ
-                </p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>ပစ္စည်းအမျိုးအစား</CardTitle>
-            <CardDescription>
-              ၆ လအတွင်းရောင်းရသောပစ္စည်းအမျိုးအစားများ
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {salesRows.length > 0 && salesTypes.length > 0 ? (
-              <ProductTypeSalesChart data={salesRows} types={salesTypes} />
-            ) : (
-              <div className="flex h-[300px] items-center justify-center">
-                <p className="text-sm text-muted-foreground">ဒေတာမရှိသေးပါ</p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+        <TotalProductSell data={donutChartData} />
+        <ProductTypeSalesChart data={salesRows} types={salesTypes} />
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>ဘောက်ချာအရေအတွက်</CardTitle>
-          <CardDescription>၆ လအတွင်း ဘောက်ချာများ</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <LineChart data={lineChartData} />
-        </CardContent>
-      </Card>
+      <LineChart data={lineChartData} />
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>

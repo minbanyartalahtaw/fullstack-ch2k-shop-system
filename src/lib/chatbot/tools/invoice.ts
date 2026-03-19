@@ -13,7 +13,10 @@ export const getInvoiceDetails = tool({
 Return compact JSON:
 - Success: { d: { i,n,p,dt,a,s,it:{n,t,o,k} } }
 - Error: { e: "not_found" | "error" }
-Keys: i=invoiceId, n=name, p=phone, dt=date, a=amount, s=seller, it=item, t=type, o=isOrder, k=orderStatus.
+Keys: i=invoiceId, n=name, p=phone, dt=date, a=amount, s=seller, it=item, t=type, o=isOrder(ဘောက်ချာအမျိုးအစား), k=orderStatus string.
+If o=true: show a clear label that this is an ORDER invoice, then show k as order status:
+  "ORDER_PENDING" → "ပစ္စည်းမပေးရသေးပါ", "ORDER_COMPLETED" → "ပစ္စည်းပေးပြီး".
+If o=false: show that this is a normal sale (k will be "NOT_ORDER", display as "အရောင်းဘောက်ချာ").
 Reply in Burmese and present as 2-column Markdown table.`,
   inputSchema: z.object({
     invoiceId: z.string().describe("Invoice ID (e.g. INV-123)"),
@@ -53,7 +56,7 @@ Reply in Burmese and present as 2-column Markdown table.`,
             n: p.productName,
             t: p.productType,
             o: inv.isOrder,
-            k: inv.orderStatus === OrderStatus.ORDER_COMPLETED,
+            k: inv.orderStatus,
           },
         },
       };

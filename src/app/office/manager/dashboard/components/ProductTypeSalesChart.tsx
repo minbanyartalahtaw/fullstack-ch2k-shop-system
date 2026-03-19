@@ -51,7 +51,9 @@ export default function ProductTypeSalesChart({
       <Card>
         <CardHeader>
           <CardTitle>ပစ္စည်းအမျိုးအစား</CardTitle>
-          <CardDescription>၆ လအတွင်းရောင်းရသောပစ္စည်းအမျိုးအစားများ</CardDescription>
+          <CardDescription>
+            ၆ လအတွင်းရောင်းရသောပစ္စည်းအမျိုးအစားများ
+          </CardDescription>
         </CardHeader>
         <CardContent className="flex h-[300px] items-center justify-center">
           <p className="text-sm text-muted-foreground">ဒေတာမရှိသေးပါ</p>
@@ -63,15 +65,17 @@ export default function ProductTypeSalesChart({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>ပစ္စည်းအမျိုးအစား</CardTitle>
-        <CardDescription>၆ လအတွင်းရောင်းရသောပစ္စည်းအမျိုးအစားများ</CardDescription>
+        <CardDescription>
+          ၆ လအတွင်းရောင်းရသောပစ္စည်းအမျိုးအစားများ
+        </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-3">
         <ChartContainer
           config={chartConfig}
-          className="aspect-auto h-[260px] w-full sm:h-[300px]"
-        >
-          <BarChart data={data} margin={{ top: 4, right: 8, left: -20, bottom: 0 }}>
+          className="aspect-auto h-[260px] w-full sm:h-[300px]">
+          <BarChart
+            data={data}
+            margin={{ top: 4, right: 8, left: -20, bottom: 0 }}>
             <CartesianGrid vertical={false} strokeDasharray="3 3" />
             <XAxis
               dataKey="month"

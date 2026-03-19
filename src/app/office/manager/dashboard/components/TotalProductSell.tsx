@@ -39,11 +39,11 @@ const PALETTE = [
   { light: "#14B8A6", dark: "#2DD4BF" }, // Teal
 ];
 
-interface DoughnutChartProps {
+interface Prop {
   data: { name: string; value: number }[];
 }
 
-export default function TotalProductSell({ data }: DoughnutChartProps) {
+export default function TotalProductSell({ data }: Prop) {
   const { resolvedTheme } = useTheme();
   const isDark = resolvedTheme === "dark";
   const [chartType, setChartType] = useState<"donut" | "bar">("donut");
@@ -56,6 +56,27 @@ export default function TotalProductSell({ data }: DoughnutChartProps) {
   };
 
   const chartData = data.map((d, i) => ({ ...d, fill: getColor(i) }));
+
+  const BarTooltip = ({
+    active,
+    payload,
+  }: {
+    active?: boolean;
+    payload?: { payload: { name: string }; value: number; fill: string }[];
+  }) => {
+    if (!active || !payload?.length) return null;
+    const item = payload[0];
+    return (
+      <div className="rounded-lg border bg-background px-3 py-2 text-xs shadow-md flex items-center gap-1.5">
+        <span
+          className="inline-block h-2 w-2 shrink-0 rounded-sm"
+          style={{ backgroundColor: item.fill }}
+        />
+        <span className="font-medium">{item.payload.name}</span>
+        <span className="text-muted-foreground">{item.value}</span>
+      </div>
+    );
+  };
 
   const config = Object.fromEntries(
     data.map((d, i) => [`item${i}`, { label: d.name, color: getColor(i) }]),
@@ -83,7 +104,6 @@ export default function TotalProductSell({ data }: DoughnutChartProps) {
     <Card>
       <CardHeader className="flex flex-row items-start justify-between pb-2">
         <div>
-          <CardTitle>ပစ္စည်းအမျိုးအစား</CardTitle>
           <CardDescription>
             ပစ္စည်းများ၏ အမျိုးအစားအလိုက် ခွဲခြမ်းမှု
           </CardDescription>
@@ -174,7 +194,7 @@ export default function TotalProductSell({ data }: DoughnutChartProps) {
                 />
                 <ChartTooltip
                   cursor={{ fill: "var(--muted)", opacity: 0.3 }}
-                  content={<ChartTooltipContent nameKey="name" hideLabel />}
+                  content={<BarTooltip />}
                 />
                 <Bar dataKey="value" radius={[4, 4, 0, 0]}>
                   {chartData.map((d, i) => (

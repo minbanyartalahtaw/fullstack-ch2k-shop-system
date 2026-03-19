@@ -2,6 +2,7 @@
 
 # dependencies
 /CLAUDE.md
+/docs
 /node_modules
 /.pnp
 .pnp.*

@@ -11,7 +11,6 @@ function ChartCardSkeleton() {
   return (
     <Card>
       <CardHeader className="space-y-2 pb-4">
-        <SkeletonBlock className="h-5 w-36" />
         <SkeletonBlock className="h-3.5 w-52" />
       </CardHeader>
       <CardContent>

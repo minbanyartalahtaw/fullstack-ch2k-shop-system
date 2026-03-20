@@ -10,7 +10,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 export default function InvoiceHistory() {
   const isMobile = useIsMobile();
   return (
-    <div className="w-full h-full overflow-auto  px-1 pt-4">
+    <div className="w-full h-full overflow-auto  px-1 pt-4 pb-30">
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">

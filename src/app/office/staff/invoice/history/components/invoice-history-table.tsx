@@ -93,13 +93,20 @@ export function InvoiceHistoryTable() {
   const [pagination, setPagination] = useState({
     total: 0,
     page: initialPage,
-    limit: 10,
+    limit: 11,
     totalPages: 0,
   });
 
-  const [search, setSearch] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState("");
-  const [isOrder, setIsOrder] = useState<boolean | undefined>(undefined);
+  const initialSearch = searchParams.get("q") ?? "";
+  const [search, setSearch] = useState(initialSearch);
+  const [debouncedSearch, setDebouncedSearch] = useState(initialSearch);
+  const [isOrder, setIsOrder] = useState<boolean | undefined>(
+    searchParams.get("isOrder") === "true"
+      ? true
+      : searchParams.get("isOrder") === "false"
+        ? false
+        : undefined,
+  );
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   const [columnVisibility, setColumnVisibility] = useState(
@@ -110,17 +117,32 @@ export function InvoiceHistoryTable() {
     setColumnVisibility((prev) => ({ ...prev, [columnId]: !prev[columnId] }));
   };
 
-  const setPage = (page: number) => {
-    setPagination((prev) => ({ ...prev, page }));
+  const updateURL = (updates: {
+    q?: string;
+    isOrder?: boolean | undefined;
+    page?: number;
+  }) => {
     const params = new URLSearchParams(searchParams.toString());
-    params.set("page", String(page));
+    if ("q" in updates) {
+      if (updates.q) params.set("q", updates.q);
+      else params.delete("q");
+    }
+    if ("isOrder" in updates) {
+      if (updates.isOrder !== undefined) params.set("isOrder", String(updates.isOrder));
+      else params.delete("isOrder");
+    }
+    if ("page" in updates) {
+      const p = updates.page ?? 1;
+      if (p > 1) params.set("page", String(p));
+      else params.delete("page");
+    }
     router.replace(`?${params.toString()}`, { scroll: false });
   };
 
-  const resetToPage1 = useCallback(() => {
-    setPagination((prev) => ({ ...prev, page: 1 }));
-    router.replace("?page=1", { scroll: false });
-  }, [router]);
+  const setPage = (page: number) => {
+    setPagination((prev) => ({ ...prev, page }));
+    updateURL({ page });
+  };
 
   // Debounce search input — skip initial mount to avoid double-fetch
   const isFirstRender = useRef(true);
@@ -131,10 +153,11 @@ export function InvoiceHistoryTable() {
     }
     const timer = setTimeout(() => {
       setDebouncedSearch(search);
-      resetToPage1();
+      setPagination((prev) => ({ ...prev, page: 1 }));
+      updateURL({ q: search, page: 1 });
     }, 400);
     return () => clearTimeout(timer);
-  }, [search, resetToPage1]);
+  }, [search]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const fetchInvoices = useCallback(async () => {
     setLoading(true);
@@ -153,15 +176,6 @@ export function InvoiceHistoryTable() {
       setLoading(false);
     }
   }, [pagination.page, pagination.limit, debouncedSearch, isOrder]);
-
-  useEffect(() => {
-    const current = Number(searchParams.get("page") || "1");
-    const nextPage = Number.isFinite(current) && current > 0 ? current : 1;
-    if (nextPage !== pagination.page) {
-      setPagination((prev) => ({ ...prev, page: nextPage }));
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams]);
 
   useEffect(() => {
     fetchInvoices();
@@ -302,8 +316,10 @@ export function InvoiceHistoryTable() {
                     id="history-order-true"
                     checked={isOrder === true}
                     onCheckedChange={(checked) => {
-                      setIsOrder(checked ? true : undefined);
-                      resetToPage1();
+                      const val = checked ? true : undefined;
+                      setIsOrder(val);
+                      setPagination((prev) => ({ ...prev, page: 1 }));
+                      updateURL({ isOrder: val, page: 1 });
                     }}
                   />
                   <Label
@@ -317,8 +333,10 @@ export function InvoiceHistoryTable() {
                     id="history-order-false"
                     checked={isOrder === false}
                     onCheckedChange={(checked) => {
-                      setIsOrder(checked ? false : undefined);
-                      resetToPage1();
+                      const val = checked ? false : undefined;
+                      setIsOrder(val);
+                      setPagination((prev) => ({ ...prev, page: 1 }));
+                      updateURL({ isOrder: val, page: 1 });
                     }}
                   />
                   <Label
@@ -336,7 +354,8 @@ export function InvoiceHistoryTable() {
                   className="w-full"
                   onClick={() => {
                     setIsOrder(undefined);
-                    resetToPage1();
+                    setPagination((prev) => ({ ...prev, page: 1 }));
+                    updateURL({ isOrder: undefined, page: 1 });
                   }}>
                   <AppIcon name="reset" className="h-4 w-4 mr-1" />
                   Reset

@@ -1,7 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { loginAction } from "./action";
 import { checkHasUsers } from "./action";
 import { Card, CardContent } from "@/components/ui/card";
@@ -12,6 +11,7 @@ import { useEffect, useState } from "react";
 export default function Home() {
   const router = useRouter();
   const [ready, setReady] = useState(false);
+  const [retryAfter, setRetryAfter] = useState(0);
 
   useEffect(() => {
     checkHasUsers().then((hasUsers) => {
@@ -23,24 +23,34 @@ export default function Home() {
     });
   }, [router]);
 
+  useEffect(() => {
+    if (retryAfter <= 0) return;
+    const timer = setInterval(() => {
+      setRetryAfter((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [retryAfter]);
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (retryAfter > 0) return;
     const formData = new FormData(e.target as HTMLFormElement);
-    toast.promise(loginAction(formData), {
-      loading: "ခနစောင့်ပါ...",
-      success: (data: { success: boolean; message: string }) => {
-        if (!data.success) {
-          throw new Error(data.message);
-        }
-        router.push("/office/manager/dashboard");
-        return "Login successful";
-      },
-      error: (err) => {
-        return err.message;
-      },
-    });
-    return;
+    const data = await loginAction(formData);
+    if (data.success) {
+      router.push("/office/manager/dashboard");
+    } else if (data.retryAfterMs) {
+      setRetryAfter(Math.ceil(data.retryAfterMs / 1000));
+    } else {
+      toast.error(data.message);
+    }
   };
+
   if (!ready) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-muted/30">
@@ -65,11 +75,6 @@ export default function Home() {
           <form className="space-y-5" onSubmit={handleSubmit}>
             <div className="space-y-4">
               <div className="space-y-2">
-                {/*                 <Label
-                  htmlFor="phoneNumber"
-                  className="text-sm font-medium text-foreground">
-                  Phone Number
-                </Label> */}
                 <Input
                   id="phoneNumber"
                   name="phoneNumber"
@@ -81,13 +86,6 @@ export default function Home() {
               </div>
 
               <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  {/*                   <Label
-                    htmlFor="password"
-                    className="text-sm font-medium text-foreground">
-                    Password
-                  </Label> */}
-                </div>
                 <Input
                   id="password"
                   name="password"
@@ -102,9 +100,21 @@ export default function Home() {
 
             <Button
               type="submit"
+              disabled={retryAfter > 0}
               className="w-full h-11 bg-primary hover:bg-primary/90 text-primary-foreground font-medium transition-colors shadow-sm">
-              အကောင့်ဝင်ရန်
+              {retryAfter > 0 ? "ခဏစောင့်ပါ..." : "အကောင့်ဝင်ရန်"}
             </Button>
+
+            {retryAfter > 0 && (
+              <div className="flex items-center justify-center gap-2 rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">
+                <span>Too many attempts. Retry in</span>
+                <span className="font-mono font-semibold">
+                  {Math.floor(retryAfter / 60) > 0
+                    ? `${Math.floor(retryAfter / 60)}m ${retryAfter % 60}s`
+                    : `${retryAfter}s`}
+                </span>
+              </div>
+            )}
           </form>
         </CardContent>
       </Card>

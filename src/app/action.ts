@@ -1,7 +1,8 @@
 "use server";
 import { signJwt } from "@/lib/jwt";
+import { checkRate } from "@/lib/rate-limit";
 import prisma from "@/lib/prisma";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 export async function checkHasUsers(): Promise<boolean> {
@@ -10,6 +11,17 @@ export async function checkHasUsers(): Promise<boolean> {
 }
 
 export async function loginAction(formData: FormData) {
+  const h = await headers();
+  const ip =
+    h.get("x-forwarded-for")?.split(",")[0].trim() ??
+    h.get("x-real-ip") ??
+    "unknown";
+
+  const rate = checkRate(ip);
+  if (!rate.allowed) {
+    return { success: false, message: "တောင်းဆိုမှု များလွန်းသည်။", retryAfterMs: rate.retryAfterMs };
+  }
+
   const phoneNumber = formData.get("phoneNumber");
   const password = formData.get("password");
 

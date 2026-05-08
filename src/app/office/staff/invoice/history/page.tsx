@@ -9,7 +9,7 @@ export default function InvoiceHistory() {
   const isMobile = useIsMobile();
   return (
     <div className="w-full h-full overflow-auto  px-1 pt-4 pb-30">
-      <Card className="w-full">
+      <Card className="w-full" variant={null}>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <AppIcon name="invoiceHistory" className="h-5 w-5" />

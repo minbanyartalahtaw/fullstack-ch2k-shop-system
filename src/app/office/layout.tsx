@@ -31,7 +31,7 @@ export default async function Layout({
     <ThemeProvider>
       <SidebarProvider className="overflow-hidden">
         <AppSidebar role={role} name={name} />
-        <SidebarInset>
+        <SidebarInset className="pr-3">
           <div className="h-9 w-full bg-background/60 backdrop-blur-md fixed top-0 left-0 right-0 z-40 shadow-sm flex items-center justify-between flex-row p-2">
             <SidebarTrigger />
 

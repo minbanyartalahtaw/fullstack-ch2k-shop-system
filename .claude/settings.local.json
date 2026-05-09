@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(find /home/dumark/workspace/website/ch2k-office/src/app -name \"action.ts\" -exec wc -l {} +)"
+      "Bash(find /home/dumark/workspace/website/ch2k-office/src/app -name \"action.ts\" -exec wc -l {} +)",
+      "Bash(file /home/dumark/workspace/website/ch2k-office/public/*.png)"
     ]
   }
 }

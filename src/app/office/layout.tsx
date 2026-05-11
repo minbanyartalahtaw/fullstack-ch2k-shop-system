@@ -29,15 +29,13 @@ export default async function Layout({
   const role = payload.role as string;
   return (
     <ThemeProvider>
-      <SidebarProvider className="overflow-hidden">
+      <SidebarProvider>
         <AppSidebar role={role} name={name} />
-        <SidebarInset className="pr-3">
-          <div className="h-9 w-full bg-background/60 backdrop-blur-md fixed top-0 left-0 right-0 z-40 shadow-sm flex items-center justify-between flex-row p-2">
+        <SidebarInset>
+          <div className="h-9 sticky top-0 z-40 bg-background/60 backdrop-blur-md shadow-sm flex items-center justify-between flex-row p-2">
             <SidebarTrigger />
-
             <ThemeToggle />
           </div>
-          <div className="flex justify-end p-4 "></div>
           {children}
         </SidebarInset>
       </SidebarProvider>

@@ -8,7 +8,7 @@ import { TableSkeleton } from "@/components/skeleton/table-skeleton";
 export default function ManageStaff() {
   return (
     <div className="w-full h-full overflow-auto pt-4">
-      <Card>
+      <Card variant={'transparent'}>
         <CardHeader>
           <CardTitle>ဝန်ထမ်းဆိုင်ရာ</CardTitle>
         </CardHeader>

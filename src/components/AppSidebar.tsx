@@ -44,7 +44,7 @@ export function AppSidebar({ role, name }: Prop) {
   const pathname = usePathname();
 
   return (
-    <Sidebar variant="floating" className="pt-12">
+    <Sidebar variant="sidebar" >
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>ဝန်ထမ်း</SidebarGroupLabel>

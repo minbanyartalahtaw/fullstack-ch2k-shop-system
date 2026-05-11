@@ -10,6 +10,7 @@ const cardVariants = cva(
       variant: {
         default: "border shadow-sm",
         noborder: "",
+        transparent: "bg-transparent shadow-none",
       },
     },
     defaultVariants: {

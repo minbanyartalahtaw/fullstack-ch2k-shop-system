@@ -132,7 +132,7 @@ export default function NewProductType() {
 
   return (
     <div className=" pt-4 pb-20">
-      <Card>
+      <Card variant={'transparent'}>
         <CardHeader>
           <CardTitle>ပစ္စည်းအမျိုးအစား</CardTitle>
         </CardHeader>

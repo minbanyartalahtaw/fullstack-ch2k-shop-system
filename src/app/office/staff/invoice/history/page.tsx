@@ -8,14 +8,14 @@ import { useIsMobile } from "@/hooks/use-mobile";
 export default function InvoiceHistory() {
   const isMobile = useIsMobile();
   return (
-    <div className="w-full h-full overflow-auto  px-1 pt-4 pb-30">
+    <div className="w-full h-full overflow-auto pb-20">
       <Card className="w-full" variant={'transparent'}>
-        <CardHeader>
+{/*         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <AppIcon name="invoiceHistory" className="h-5 w-5" />
             ဘောက်ချာအဟောင်းများ{" "}
           </CardTitle>
-        </CardHeader>
+        </CardHeader> */}
         <CardContent className={`${isMobile ? "p-1" : ""}`}>
           <InvoiceHistoryTable />
         </CardContent>

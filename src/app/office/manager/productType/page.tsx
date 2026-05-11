@@ -131,11 +131,11 @@ export default function NewProductType() {
   };
 
   return (
-    <div className=" pt-4 pb-20">
+    <div className="pb-20">
       <Card variant={'transparent'}>
-        <CardHeader>
+{/*         <CardHeader>
           <CardTitle>ပစ္စည်းအမျိုးအစား</CardTitle>
-        </CardHeader>
+        </CardHeader> */}
         <div className="pl-6">
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>

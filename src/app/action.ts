@@ -34,11 +34,15 @@ export async function loginAction(formData: FormData) {
       role: true,
       staffId: true,
       name: true,
+      isFire: true,
     },
   });
 
   if (!result) {
     return { success: false, message: "မှားယွင်းနေပါသည်" };
+  }
+  if (result.isFire) {
+    return { success: false, message: "သင့်အကောင့်ကို ပိတ်ထားသည်" };
   }
   const token = await signJwt({
     staffId: result.staffId,

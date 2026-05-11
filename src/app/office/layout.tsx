@@ -10,6 +10,7 @@ import { cookies } from "next/headers";
 import { verifyJwt } from "@/lib/jwt";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { PageTitle } from "@/components/page-title";
 
 export const metadata: Metadata = {
   title: "Chan Htaw Office",
@@ -32,8 +33,11 @@ export default async function Layout({
       <SidebarProvider>
         <AppSidebar role={role} name={name} />
         <SidebarInset>
-          <div className="h-9 sticky top-0 z-40 bg-background/60 backdrop-blur-md shadow-sm flex items-center justify-between flex-row p-2">
-            <SidebarTrigger />
+          <div className="h-10 sticky top-0 z-40 bg-background/60 backdrop-blur-md shadow-sm flex items-center justify-between flex-row p-2">
+            <div className="text-sm font-medium flex items-center gap-2">
+              <SidebarTrigger />
+              <PageTitle />
+            </div>
             <ThemeToggle />
           </div>
           {children}

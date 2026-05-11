@@ -93,7 +93,7 @@ export function InvoiceHistoryTable() {
   const [pagination, setPagination] = useState({
     total: 0,
     page: initialPage,
-    limit: 11,
+    limit: 13,
     totalPages: 0,
   });
 

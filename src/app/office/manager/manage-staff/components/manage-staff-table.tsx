@@ -8,7 +8,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { createStaff, getStaff, Staff, StaffFormData } from "../action";
+import {
+  createStaff,
+  getStaff,
+  Staff,
+  StaffFormData,
+  toggleFireStatus,
+} from "../action";
 import {
   Dialog,
   DialogContent,
@@ -34,6 +40,7 @@ import { toast } from "sonner";
 import { useEffect, useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { TableSkeleton } from "@/components/skeleton/table-skeleton";
+import { formatDate } from "@/lib/constants/date_format";
 
 interface ColumnConfig {
   id: string;
@@ -48,7 +55,8 @@ export default function ManageStaffTable() {
     { id: "name", label: "အမည်", visible: true },
     { id: "phone", label: "ဖုန်းနံပါတ်", visible: true },
     { id: "role", label: "ရာထူး", visible: true },
-    { id: "action", label: "", visible: true },
+    { id: "action", label: "အသေးစိတ်", visible: true },
+    { id: "fire", label: "", visible: true },
   ];
 
   const [formData, setFormData] = useState<StaffFormData>({
@@ -185,7 +193,8 @@ export default function ManageStaffTable() {
                           <Badge
                             variant={
                               data.role === "STAFF" ? "staff" : "manager"
-                            }>
+                            }
+                          >
                             {data.role}
                           </Badge>
                         ),
@@ -205,16 +214,17 @@ export default function ManageStaffTable() {
                         }, */
                       {
                         label: "since",
-                        value: data.createdAt.toLocaleString(),
+                        value: formatDate(data.createdAt),
                       },
                       {
                         label: "Last Update",
-                        value: data.updatedAt.toLocaleString(),
+                        value: formatDate(data.updatedAt),
                       },
                     ].map(({ label, value }) => (
                       <div
                         key={label}
-                        className="grid grid-cols-3 items-center">
+                        className="grid grid-cols-3 items-center"
+                      >
                         <Label className="font-medium">{label}</Label>
                         <div className="col-span-2 text-sm text-gray-600">
                           {value}
@@ -224,6 +234,10 @@ export default function ManageStaffTable() {
                   </div>
                 </DialogContent>
               </Dialog>
+            </TableCell>
+
+            <TableCell>
+              <FireStaffDialog staff={data} onDone={fetchStaff} />
             </TableCell>
           </TableRow>
         ))}
@@ -253,7 +267,8 @@ export default function ManageStaffTable() {
 
           <form
             onSubmit={handleSubmit}
-            className="flex flex-col flex-1 overflow-hidden">
+            className="flex flex-col flex-1 overflow-hidden"
+          >
             <div className="flex-1 overflow-y-auto px-5 py-4 sm:px-6">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
@@ -319,7 +334,8 @@ export default function ManageStaffTable() {
                   <Label htmlFor="role">Role</Label>
                   <Select
                     value={formData.role}
-                    onValueChange={(value) => updateFormData("role", value)}>
+                    onValueChange={(value) => updateFormData("role", value)}
+                  >
                     <SelectTrigger id="role">
                       <SelectValue placeholder="Select role" />
                     </SelectTrigger>
@@ -336,7 +352,8 @@ export default function ManageStaffTable() {
               <Button
                 type="submit"
                 className="w-full sm:w-auto"
-                disabled={isSubmitting}>
+                disabled={isSubmitting}
+              >
                 ပြုလုပ်ရန်
               </Button>
             </DialogFooter>
@@ -353,5 +370,97 @@ export default function ManageStaffTable() {
         </div>
       </div>
     </div>
+  );
+}
+
+function FireStaffDialog({
+  staff,
+  onDone,
+}: {
+  staff: Staff;
+  onDone: () => Promise<void> | void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const isManager = staff.role === "MANAGER";
+
+  const handleConfirm = async () => {
+    if (isManager) {
+      toast.error("Manager ကိုအလုပ်မထုတ်နိုင်ပါ");
+      return;
+    }
+    setIsSubmitting(true);
+    try {
+      const result = await toggleFireStatus(staff.id);
+      if (result.success) {
+        toast.success(
+          result.staff?.isFire
+            ? `${result.staff.name} အလုပ်ထုတ်ပြီးပါပြီ`
+            : `${result.staff?.name} ပြန်လည်ခန့်ထားပြီးပါပြီ`,
+        );
+        setOpen(false);
+        await onDone();
+      } else {
+        toast.error(result.error || "Failed");
+      }
+    } catch (error) {
+      console.error("Toggle fire status error:", error);
+      toast.error("မမျှော်လင့်ထားသောအမှား");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const actionLabel = staff.isFire ? "အလုပ်ပြန်ခန့်ရန်" : "အလုပ်ထုတ်ရန်";
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button variant="outline" size="sm">
+          {actionLabel}
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="max-w-md">
+        <DialogHeader>
+          <DialogTitle hidden></DialogTitle>
+            
+  
+          <DialogDescription>
+            အောက်ပါဝန်ထမ်းကို {actionLabel} သေချာပါသလား?
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="grid gap-3 py-2">
+          {[
+            { label: "အမည်", value: staff.name },
+            { label: "ဖုန်းနံပါတ်", value: staff.phone },
+            { label: "လိပ်စာ", value: staff.address },
+          ].map(({ label, value }) => (
+            <div key={label} className="grid grid-cols-3 items-center">
+              <Label className="font-medium">{label}</Label>
+              <div className="col-span-2 text-sm text-muted-foreground">
+                {value}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {isManager && (
+          <div className="rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+            Manager ကိုအလုပ်မထုတ်၍မရပါ
+          </div>
+        )}
+
+        <DialogFooter>
+          <Button
+            variant={staff.isFire ? "default" : "destructive"}
+            onClick={handleConfirm}
+            disabled={isSubmitting || isManager}
+          >
+            {isSubmitting ? "..." : actionLabel}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

@@ -161,6 +161,12 @@ export async function getSellers() {
   try {
     const staff = await prisma.staff.findMany({
       select: { id: true, name: true },
+      where: {
+        isFire: false,
+      },
+      orderBy: {
+        id: "asc",
+      },
     });
 
     return { success: true, staff };

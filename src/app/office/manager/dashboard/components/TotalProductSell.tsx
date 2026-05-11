@@ -86,9 +86,9 @@ export default function TotalProductSell({ data }: Prop) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>ပစ္စည်းအမျိုးအစား</CardTitle>
+          
           <CardDescription>
-            ပစ္စည်းများ၏ အမျိုးအစားအလိုက် ခွဲခြမ်းမှု
+            အမျိုးအစားအလိုက် ခွဲခြမ်းမှု
           </CardDescription>
         </CardHeader>
         <CardContent className="flex h-[300px] items-center justify-center">
@@ -105,7 +105,7 @@ export default function TotalProductSell({ data }: Prop) {
       <CardHeader className="flex flex-row items-start justify-between pb-2">
         <div>
           <CardDescription>
-            ပစ္စည်းများ၏ အမျိုးအစားအလိုက် ခွဲခြမ်းမှု
+            အမျိုးအစားအလိုက် ခွဲခြမ်းမှု
           </CardDescription>
         </div>
         <div className="flex gap-1">

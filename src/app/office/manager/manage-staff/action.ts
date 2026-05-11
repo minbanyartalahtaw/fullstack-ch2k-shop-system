@@ -81,6 +81,38 @@ function validateStaffData(data: StaffFormData): {
   return { success: true, message: "Validation successful" };
 }
 
+export async function toggleFireStatus(id: number) {
+  try {
+    const staff = await prisma.staff.findUnique({
+      where: { id },
+      select: { role: true, isFire: true, name: true },
+    });
+
+    if (!staff) {
+      return { success: false, error: "ဝန်ထမ်းမတွေ့ပါ" };
+    }
+
+    if (staff.role === "MANAGER") {
+      return { success: false, error: "Manager ကိုအလုပ်မထုတ်နိုင်ပါ" };
+    }
+
+    const updated = await prisma.staff.update({
+      where: { id },
+      data: { isFire: !staff.isFire },
+      select: { name: true, isFire: true },
+    });
+
+    return { success: true, staff: updated };
+  } catch (error) {
+    console.error("Failed to toggle fire status:", error);
+    return {
+      success: false,
+      error:
+        error instanceof Error ? error.message : "မမျှော်လင့်ထားသောအမှား",
+    };
+  }
+}
+
 export async function createStaff(data: StaffFormData) {
   try {
     // Validate input data

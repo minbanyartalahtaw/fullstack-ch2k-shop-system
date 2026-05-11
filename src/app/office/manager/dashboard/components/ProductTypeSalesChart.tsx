@@ -50,9 +50,9 @@ export default function ProductTypeSalesChart({
     return (
       <Card>
         <CardHeader>
-          <CardTitle>ပစ္စည်းအမျိုးအစား</CardTitle>
+          
           <CardDescription>
-            ၆ လအတွင်းရောင်းရသောပစ္စည်းအမျိုးအစားများ
+            ၆ လအတွင်းရောင်းရသောအမျိုးအစားများ
           </CardDescription>
         </CardHeader>
         <CardContent className="flex h-[300px] items-center justify-center">
@@ -66,7 +66,7 @@ export default function ProductTypeSalesChart({
     <Card>
       <CardHeader>
         <CardDescription>
-          ၆ လအတွင်းရောင်းရသောပစ္စည်းအမျိုးအစားများ
+          ၆ လအတွင်းရောင်းရသောအမျိုးအစားများ
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-3">

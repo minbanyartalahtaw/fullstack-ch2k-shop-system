@@ -7,11 +7,11 @@ import { TableSkeleton } from "@/components/skeleton/table-skeleton";
 
 export default function ManageStaff() {
   return (
-    <div className="w-full h-full overflow-auto pt-4">
+    <div className="w-full h-full overflow-auto ">
       <Card variant={'transparent'}>
-        <CardHeader>
+{/*         <CardHeader>
           <CardTitle>ဝန်ထမ်းဆိုင်ရာ</CardTitle>
-        </CardHeader>
+        </CardHeader> */}
         <CardContent>
           <Suspense fallback={<TableSkeleton />}>
             <ManageStaffTable />

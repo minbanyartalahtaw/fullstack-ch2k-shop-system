@@ -91,7 +91,7 @@ export function InvoiceHistoryTable() {
   const [pagination, setPagination] = useState({
     total: 0,
     page: initialPage,
-    limit: 11,
+    limit: 13,
     totalPages: 0,
   });
 
@@ -340,8 +340,8 @@ export function InvoiceHistoryTable() {
   };
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between mb-2">
+    <div className="flex flex-col gap-4">
+      <div className="flex items-center justify-end gap-2">
         <Button
           variant="outline"
           className="flex items-center gap-2"

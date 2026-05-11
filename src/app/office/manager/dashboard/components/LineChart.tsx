@@ -43,7 +43,6 @@ export default function LineChart({ data }: { data: LineChartData[] }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>ဘောက်ချာအရေအတွက်</CardTitle>
         <CardDescription>၆ လအတွင်း ဘောက်ချာများ</CardDescription>
       </CardHeader>
       <CardContent>

@@ -9,8 +9,8 @@ import { Metadata } from "next";
 import { cookies } from "next/headers";
 import { verifyJwt } from "@/lib/jwt";
 import { ThemeProvider } from "@/components/theme-provider";
-import { ThemeToggle } from "@/components/theme-toggle";
 import { PageTitle } from "@/components/page-title";
+
 
 export const metadata: Metadata = {
   title: "Chan Htaw Office",
@@ -22,23 +22,25 @@ export default async function Layout({
 }: {
   children: React.ReactNode;
 }) {
-  const token = (await cookies()).get("staff-token")?.value;
+  const cookieStore = await cookies();
+  const token = cookieStore.get("staff-token")?.value;
   if (!token) return null;
   const payload = await verifyJwt(token);
   if (!payload) return null;
   const name = payload.name as string;
   const role = payload.role as string;
+  const sidebarOpen = cookieStore.get("sidebar_state")?.value !== "false";
   return (
     <ThemeProvider>
-      <SidebarProvider>
+      <SidebarProvider defaultOpen={sidebarOpen}>
         <AppSidebar role={role} name={name} />
         <SidebarInset>
-          <div className="h-10 sticky top-0 z-40 bg-background/60 backdrop-blur-md shadow-sm flex items-center justify-between flex-row p-2">
+          <div className="h-10 sticky top-0 z-40 bg-background/60 backdrop-blur-md shadow-sm flex items-center flex-row p-2">
             <div className="text-sm font-medium flex items-center gap-2">
               <SidebarTrigger />
               <PageTitle />
             </div>
-            <ThemeToggle />
+            
           </div>
           {children}
         </SidebarInset>

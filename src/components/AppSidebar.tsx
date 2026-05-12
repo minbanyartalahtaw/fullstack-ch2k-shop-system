@@ -25,11 +25,11 @@ import { logoutAction } from "@/app/action";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { Badge } from "./ui/badge";
+import { ThemeToggle } from "./theme-toggle";
 
 interface Prop {
   role: string;
@@ -222,20 +222,18 @@ export function AppSidebar({ role, name }: Prop) {
                   </Badge>
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
+              
               <DropdownMenuContent
                 side="top"
-                align="start"
-                className="w-[--radix-dropdown-menu-trigger-width]">
-                <DropdownMenuGroup>
-                  <DropdownMenuItem asChild variant="destructive">
-                    <button
-                      onClick={logoutAction}
-                      className="flex w-full cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none">
-                      <AppIcon name="logout" className="h-4 w-4" />
-                      <span>ထွက်ရန်</span>
-                    </button>
-                  </DropdownMenuItem>
-                </DropdownMenuGroup>
+                align="end"
+                className="w-[var(--radix-dropdown-menu-trigger-width)]">
+                <ThemeToggle />
+                <DropdownMenuItem
+                  variant="destructive"
+                  onClick={logoutAction}>
+                  <AppIcon name="logout" className="h-4 w-4" />
+                  <span>ထွက်ရန်</span>
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </SidebarMenuItem>

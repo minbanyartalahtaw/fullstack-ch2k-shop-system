@@ -3,10 +3,14 @@
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { AppIcon } from "./app-icons";
+import {
+  DropdownMenuItem,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export function ThemeToggle() {
   const { setTheme, resolvedTheme } = useTheme();
@@ -16,26 +20,37 @@ export function ThemeToggle() {
     setMounted(true);
   }, []);
 
-  if (!mounted) {
-    return (
-      <div className="flex items-center gap-2">
-        <Switch disabled className="opacity-50" />
-        <Label className="text-muted-foreground text-xs">Theme</Label>
-      </div>
-    );
-  }
-
-  const isDark = resolvedTheme === "dark";
+  const isDark = mounted && resolvedTheme === "dark";
 
   return (
-    <div className="flex items-center gap-2">
-      <AppIcon name="sun" className="size-4 transition-opacity" />
-      <Switch
-        checked={isDark}
-        onCheckedChange={(checked) => setTheme(checked ? "dark" : "light")}
-        aria-label="Toggle dark mode"
-      />
-      <AppIcon name="moon" className="size-4 transition-opacity" />
-    </div>
+    <DropdownMenuSub>
+      <DropdownMenuSubTrigger className="focus:bg-sidebar-accent focus:text-sidebar-accent-foreground data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
+        <AppIcon
+          name={isDark ? "moon" : "sun"}
+          className="h-4 w-4"
+        />
+        <span>Theme</span>
+      </DropdownMenuSubTrigger>
+      <DropdownMenuSubContent>
+        <DropdownMenuItem
+          onClick={() => setTheme("light")}
+          className={cn(
+            "focus:bg-sidebar-accent focus:text-sidebar-accent-foreground",
+            !isDark && "bg-sidebar-accent text-sidebar-accent-foreground",
+          )}>
+          <AppIcon name="sun" className="h-4 w-4" />
+          <span>Light</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={() => setTheme("dark")}
+          className={cn(
+            "focus:bg-sidebar-accent focus:text-sidebar-accent-foreground",
+            isDark && "bg-sidebar-accent text-sidebar-accent-foreground",
+          )}>
+          <AppIcon name="moon" className="h-4 w-4" />
+          <span>Dark</span>
+        </DropdownMenuItem>
+      </DropdownMenuSubContent>
+    </DropdownMenuSub>
   );
 }

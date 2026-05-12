@@ -33,6 +33,8 @@ model Staff {
   updatedAt DateTime @updatedAt
 
   isFire    Boolean  @default(false)
+
+  invoices  Invoice[]
 }
 
 model ProductType {
@@ -77,7 +79,8 @@ model Invoice {
   remaining_Amount Float?
   purchase_date    DateTime
   appointment_Date DateTime?
-  seller           String
+  sellerId         Int
+  seller           Staff         @relation(fields: [sellerId], references: [id])
   isOrder          Boolean       @default(false)
   orderStatus      OrderStatus   @default(NOT_ORDER)
   createdAt        DateTime      @default(now())

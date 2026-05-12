@@ -31,7 +31,7 @@ Reply in Burmese and present as 2-column Markdown table.`,
           mobile_Number: true,
           purchase_date: true,
           total_Amount: true,
-          seller: true,
+          seller: { select: { name: true } },
           isOrder: true,
           orderStatus: true,
           productDetails: {
@@ -51,7 +51,7 @@ Reply in Burmese and present as 2-column Markdown table.`,
           p: inv.mobile_Number ?? "",
           dt: formatDate(inv.purchase_date),
           a: inv.total_Amount ?? 0,
-          s: inv.seller,
+          s: inv.seller.name,
           it: {
             n: p.productName,
             t: p.productType,
@@ -100,7 +100,7 @@ Reply in Burmese and present as Markdown table (DD-MM-YYYY).`,
           mobile_Number: true,
           total_Amount: true,
           purchase_date: true,
-          seller: true,
+          seller: { select: { name: true } },
         },
         orderBy: { purchase_date: "desc" },
         take: 50,
@@ -113,7 +113,7 @@ Reply in Burmese and present as Markdown table (DD-MM-YYYY).`,
           p: r.mobile_Number ?? "",
           a: r.total_Amount ?? 0,
           dt: formatDate(r.purchase_date),
-          s: r.seller,
+          s: r.seller.name,
         })),
       };
     } catch {
@@ -196,7 +196,7 @@ export const getInvoiceWithOrderPending = tool({
           total_Amount: true,
           purchase_date: true,
           appointment_Date: true,
-          seller: true,
+          seller: { select: { name: true } },
           productDetails: {
             select: {
               productName: true,
@@ -215,7 +215,7 @@ export const getInvoiceWithOrderPending = tool({
           a: r.total_Amount ?? 0,
           dt: formatDate(r.purchase_date),
           ad: r.appointment_Date ? formatDate(r.appointment_Date) : "",
-          s: r.seller,
+          s: r.seller.name,
           pName: r.productDetails?.productName ?? "",
           pType: r.productDetails?.productType ?? "",
         })),
@@ -247,7 +247,7 @@ export const getInvoiceWithOrderCompleted = tool({
           total_Amount: true,
           purchase_date: true,
           appointment_Date: true,
-          seller: true,
+          seller: { select: { name: true } },
           productDetails: {
             select: {
               productName: true,
@@ -266,9 +266,128 @@ export const getInvoiceWithOrderCompleted = tool({
           a: r.total_Amount ?? 0,
           dt: formatDate(r.purchase_date),
           ad: r.appointment_Date ? formatDate(r.appointment_Date) : "",
-          s: r.seller,
+          s: r.seller.name,
           pName: r.productDetails?.productName ?? "",
           pType: r.productDetails?.productType ?? "",
+        })),
+      };
+    } catch {
+      return { e: "error" };
+    }
+  },
+});
+
+// Rank staff by performance — single-call aggregation, no per-staff loop needed.
+export const getStaffSalesRanking = tool({
+  description: `Rank staff (sellers) by sales performance. Returns top staff ordered by invoice count or total revenue, optionally within a date range.
+Use for questions like "who is the best seller", "which staff sold the most", "top staff by revenue this month".
+Return compact JSON:
+- Success: { d: [{ r,s,c,a }] }
+- Error: { e: "bad_start" | "bad_end" | "no_data" | "error" }
+Keys: r=rank (1-based), s=staff name, c=invoice count, a=total revenue (sum of total_Amount, ကျပ်).
+Reply in Burmese as a ranked Markdown table with columns: အဆင့်, ဝန်ထမ်း, ဘောက်ချာ, စုစုပေါင်းရငွေ.`,
+  inputSchema: z.object({
+    startDate: z.string().optional().describe("DD-MM-YYYY (optional)"),
+    endDate: z.string().optional().describe("DD-MM-YYYY (optional)"),
+    onlySales: z
+      .boolean()
+      .optional()
+      .default(false)
+      .describe(
+        "If true, exclude order invoices (isOrder=true). Default false = include all invoices.",
+      ),
+    sortBy: z
+      .enum(["count", "revenue"])
+      .optional()
+      .default("count")
+      .describe(
+        "count = rank by invoice count desc; revenue = rank by total revenue desc",
+      ),
+    limit: z.number().int().min(1).max(20).optional().default(10),
+  }),
+  execute: async ({ startDate, endDate, onlySales, sortBy, limit }) => {
+    try {
+      const start = startDate ? parseDate(startDate) : undefined;
+      const end = endDate ? parseDate(endDate) : undefined;
+      if (startDate && !start) return { e: "bad_start" };
+      if (endDate && !end) return { e: "bad_end" };
+      const startUTC = start ? toUTCStartOfDay(start) : undefined;
+      const endUTC = end ? toUTCEndOfDay(end) : undefined;
+
+      const grouped = await prisma.invoice.groupBy({
+        by: ["sellerId"],
+        where: {
+          ...((startUTC || endUTC) && {
+            purchase_date: {
+              ...(startUTC && { gte: startUTC }),
+              ...(endUTC && { lte: endUTC }),
+            },
+          }),
+          ...(onlySales && { isOrder: false }),
+        },
+        _count: { id: true },
+        _sum: { total_Amount: true },
+        orderBy:
+          sortBy === "revenue"
+            ? { _sum: { total_Amount: "desc" } }
+            : { _count: { id: "desc" } },
+        take: limit,
+      });
+
+      if (!grouped.length) return { e: "no_data" };
+
+      const staff = await prisma.staff.findMany({
+        where: { id: { in: grouped.map((g) => g.sellerId) } },
+        select: { id: true, name: true },
+      });
+      const byId = new Map(staff.map((s) => [s.id, s.name]));
+
+      return {
+        d: grouped.map((g, i) => ({
+          r: i + 1,
+          s: byId.get(g.sellerId) ?? "Unknown",
+          c: g._count.id,
+          a: g._sum.total_Amount ?? 0,
+        })),
+      };
+    } catch {
+      return { e: "error" };
+    }
+  },
+});
+
+export const getSaleInvoiceByStaff = tool({
+  description: `Fetch latest ${MAX_INVOICES} sale invoices (isOrder=false) by staff name.
+Return compact JSON:
+- Success: { d: [{ i,n,p,dt,a }] }
+- Error: { e: "no_invoices" | "error" }
+Keys: i=invoiceId, n=name, p=phone, dt=date, a=amount.
+Reply in Burmese and present as Markdown table (DD-MM-YYYY).`,
+  inputSchema: z.object({
+    staffName: z.string().describe("Seller staff name"),
+  }),
+  execute: async ({ staffName }) => {
+    try {
+      const rows = await prisma.invoice.findMany({
+        where: { isOrder: false, seller: { name: staffName } },
+        orderBy: { purchase_date: "desc" },
+        take: MAX_INVOICES,
+        select: {
+          invoiceId: true,
+          customer_Name: true,
+          mobile_Number: true,
+          purchase_date: true,
+          total_Amount: true,
+        },
+      });
+      if (!rows.length) return { e: "no_invoices" };
+      return {
+        d: rows.map((r) => ({
+          i: r.invoiceId,
+          n: r.customer_Name,
+          p: r.mobile_Number ?? "",
+          dt: formatDate(r.purchase_date),
+          a: r.total_Amount ?? 0,
         })),
       };
     } catch {

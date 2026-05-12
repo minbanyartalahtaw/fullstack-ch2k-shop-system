@@ -1,21 +1,11 @@
 import { Suspense } from "react";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-
-import { AppIcon } from "@/components/app-icons";
 import prisma from "@/lib/prisma";
 import { OrderStatus } from "@prisma/client";
 import TotalProductSell from "./components/TotalProductSell";
 import LineChart from "./components/LineChart";
 import ProductTypeSalesChart from "./components/ProductTypeSalesChart";
-import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import BestSellersCard from "./components/BestSellersCard";
+import OrderTrackingCard from "./components/OrderTrackingCard";
 import { DashboardSkeleton } from "@/components/skeleton/dashboard-skeleton";
 
 async function getInvoiceStats() {
@@ -140,11 +130,31 @@ async function getProductTypeSales() {
   return { rows, types: allTypes };
 }
 
+async function getBestSellers() {
+  const grouped = await prisma.invoice.groupBy({
+    by: ["sellerId"],
+    _count: { id: true },
+    orderBy: { _count: { id: "desc" } },
+    take: 5,
+  });
+  if (grouped.length === 0) return [];
+  const staff = await prisma.staff.findMany({
+    where: { id: { in: grouped.map((g) => g.sellerId) } },
+    select: { id: true, name: true },
+  });
+  const byId = new Map(staff.map((s) => [s.id, s.name]));
+  return grouped.map((g) => ({
+    name: byId.get(g.sellerId) ?? "Unknown",
+    invoiceCount: g._count.id,
+  }));
+}
+
 async function DashboardContent() {
   const { totalInvoices, lineChartData } = await getInvoiceStats();
   const { orderedProducts, takenProducts, donutChartData } =
     await getProductStats();
   const { rows: salesRows, types: salesTypes } = await getProductTypeSales();
+  const bestSellers = await getBestSellers();
 
   return (
     <div className="space-y-6">
@@ -156,7 +166,7 @@ async function DashboardContent() {
       <LineChart data={lineChartData} />
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
+{/*         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-xl font-bold">ဘောက်ချာ</CardTitle>
             <AppIcon name="invoice" className="h-4 w-4 text-muted-foreground" />
@@ -202,64 +212,14 @@ async function DashboardContent() {
               </TableBody>
             </Table>
           </CardContent>
-        </Card>
+        </Card> */}
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-xl font-bold">
-              အော်ဒါပစ္စည်းများ
-            </CardTitle>
-            <AppIcon name="order" className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableBody>
-                <TableRow>
-                  <TableCell className="text-sm text-muted-foreground">
-                    အော်ဒါပစ္စည်း
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <span className="font-bold">{orderedProducts}</span>
-                  </TableCell>
-                  <TableCell className="text-sm text-muted-foreground">
-                    ခု
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell className="text-sm text-muted-foreground">
-                    ပစ္စည်းပေးပြီး
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <span className="font-bold">{takenProducts}</span>
-                  </TableCell>
-                  <TableCell className="text-sm text-muted-foreground">
-                    ခု
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell className="text-sm text-muted-foreground">
-                    ကျန်အော်ဒါ
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <span className="font-bold">
-                      {orderedProducts - takenProducts}
-                    </span>
-                  </TableCell>
-                  <TableCell className="text-sm text-muted-foreground">
-                    ခု
-                  </TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
-          </CardContent>
-          <CardFooter>
-            <Link href="/office/staff/order">
-              <Button variant="ghost" className="w-full">
-                အသေးစိတ်ကြည့်ရန်
-              </Button>
-            </Link>
-          </CardFooter>
-        </Card>
+        <OrderTrackingCard
+          orderedProducts={orderedProducts}
+          takenProducts={takenProducts}
+        />
+
+        <BestSellersCard data={bestSellers} />
       </div>
     </div>
   );

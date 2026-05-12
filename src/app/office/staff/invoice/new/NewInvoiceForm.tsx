@@ -70,7 +70,7 @@ interface InvoiceFormData {
   reject_Amount: number | null;
   remaining_Amount: number | null;
   appointment_Date: Date | null;
-  seller: string;
+  sellerId: number | null;
   isOrder: boolean;
   orderStatus: OrderStatusValue;
 }
@@ -110,7 +110,7 @@ const getInitialFormData = (): InvoiceFormData => ({
   reject_Amount: null,
   remaining_Amount: null,
   appointment_Date: null,
-  seller: "",
+  sellerId: null,
   isOrder: false,
   orderStatus: ORDER_STATUS.NOT_ORDER,
 });
@@ -209,7 +209,7 @@ export function NewInvoiceForm() {
         ? (formData.remaining_Amount ?? null)
         : null,
       appointment_Date: formData.appointment_Date ?? null,
-      seller: formData.seller,
+      sellerId: formData.sellerId as number,
       isOrder: formData.isOrder,
       orderStatus: formData.orderStatus,
     };
@@ -676,15 +676,17 @@ export function NewInvoiceForm() {
         <div className="space-y-2">
           <Select
             disabled={isLoading}
-            value={formData.seller}
-            onValueChange={(value) => updateFormData("seller", value)}
+            value={formData.sellerId != null ? String(formData.sellerId) : ""}
+            onValueChange={(value) =>
+              updateFormData("sellerId", value ? Number(value) : null)
+            }
             required>
             <SelectTrigger id="seller_select">
               <SelectValue placeholder="အရောင်းဝန်ထမ်းရွေးရန်" />
             </SelectTrigger>
             <SelectContent>
               {sellers.map((seller) => (
-                <SelectItem key={seller.id} value={seller.name}>
+                <SelectItem key={seller.id} value={seller.id}>
                   {seller.name}
                 </SelectItem>
               ))}
@@ -694,7 +696,7 @@ export function NewInvoiceForm() {
         <Button
           type="submit"
           className="flex items-center gap-2"
-          disabled={!formData.seller}>
+          disabled={!formData.sellerId}>
           ဘောက်ချာထုတ်ရန်
         </Button>
       </div>

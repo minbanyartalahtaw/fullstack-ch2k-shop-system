@@ -29,6 +29,7 @@ import { AppIcon } from "@/components/app-icons";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   Select,
   SelectContent,
@@ -386,7 +387,7 @@ function FireStaffDialog({
 
   const handleConfirm = async () => {
     if (isManager) {
-      toast.error("Manager ကိုအလုပ်မထုတ်နိုင်ပါ");
+      toast.error("Manager အကောင့်ကိုပိတ်လို့မရပါ");
       return;
     }
     setIsSubmitting(true);
@@ -395,8 +396,8 @@ function FireStaffDialog({
       if (result.success) {
         toast.success(
           result.staff?.isFire
-            ? `${result.staff.name} အလုပ်ထုတ်ပြီးပါပြီ`
-            : `${result.staff?.name} ပြန်လည်ခန့်ထားပြီးပါပြီ`,
+            ? `${result.staff.name} အကောင့်ပိတ်ပြီးပါပြီ`
+            : `${result.staff?.name} အကောက်ဖွင့်ပြီးပါပြီ`,
         );
         setOpen(false);
         await onDone();
@@ -411,12 +412,12 @@ function FireStaffDialog({
     }
   };
 
-  const actionLabel = staff.isFire ? "အလုပ်ပြန်ခန့်ရန်" : "အလုပ်ထုတ်ရန်";
+  const actionLabel = staff.isFire ? "အကောက်ဖွင့်ရန်" : "အကောင့်ပိတ်ရန်";
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm">
+        <Button variant={staff.isFire ? "ghost" : "destructive"} size="sm" >
           {actionLabel}
         </Button>
       </DialogTrigger>
@@ -446,9 +447,12 @@ function FireStaffDialog({
         </div>
 
         {isManager && (
-          <div className="rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive">
-            Manager ကိုအလုပ်မထုတ်၍မရပါ
-          </div>
+          <Alert variant="destructive">
+            <AppIcon name="info" className="h-4 w-4" />
+            <AlertDescription>
+            Manager အကောင့်ကိုပိတ်လို့မရပါ
+            </AlertDescription>
+          </Alert>
         )}
 
         <DialogFooter>

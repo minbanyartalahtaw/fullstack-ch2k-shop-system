@@ -52,7 +52,7 @@ export interface InvoiceDataInput {
   reject_Amount?: number | null;
   remaining_Amount?: number | null;
   appointment_Date?: Date | null;
-  seller: string;
+  sellerId: number;
   isOrder: boolean;
   orderStatus: OrderStatus;
 }
@@ -141,7 +141,7 @@ export async function createInvoice(formData: InvoiceDataInput) {
         total_Amount: formData.total_Amount,
         ...orderAmounts,
         appointment_Date: formData.appointment_Date ?? null,
-        seller: formData.seller,
+        sellerId: formData.sellerId,
         isOrder,
         orderStatus: formData.orderStatus,
         productDetailsId: productDetails.id,

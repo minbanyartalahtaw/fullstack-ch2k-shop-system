@@ -35,6 +35,7 @@ import {
   SendHorizontal,
   ChartPie,
   ChartColumn,
+  Info
 } from "lucide-react";
 
 // Pick ONLY the icons your app should use.
@@ -75,6 +76,7 @@ export const ICONS = {
   send: SendHorizontal,
   Pie: ChartPie,
   LineChart: ChartColumn,
+  info: Info,
 } satisfies Record<string, LucideIcon>;
 
 export type IconName = keyof typeof ICONS;

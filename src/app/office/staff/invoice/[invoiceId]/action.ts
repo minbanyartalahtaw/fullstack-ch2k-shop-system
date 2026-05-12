@@ -15,7 +15,8 @@ export type InvoiceWithDetails = {
   reject_Amount: number | null;
   remaining_Amount: number | null;
   appointment_Date: Date | null;
-  seller: string;
+  sellerId: number;
+  seller: { name: string };
   isOrder: boolean;
   orderStatus: OrderStatus;
   createdAt: Date;
@@ -44,7 +45,10 @@ export async function getSingleInvoice(
 ): Promise<InvoiceWithDetails | null> {
   const invoice = await prisma.invoice.findUnique({
     where: { invoiceId },
-    include: { productDetails: true },
+    include: {
+      productDetails: true,
+      seller: { select: { name: true } },
+    },
   });
   return invoice as InvoiceWithDetails | null;
 }

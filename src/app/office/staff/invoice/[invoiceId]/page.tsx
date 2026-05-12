@@ -58,6 +58,68 @@ export default async function InvoicePage({ params }: Props) {
         </CardHeader>
       </Card>
 
+                {invoice.isOrder && (
+            <Card className="bg-muted/50 p-4">
+              <CardTitle className="text-base mb-4">အော်ဒါအသေးစိတ်</CardTitle>
+              <Table>
+                <TableBody>
+
+                   <TableRow>
+                <TableCell className="font-medium w-1/3">
+                  စုစုပေါင်းတန်ဖိုး
+                </TableCell>
+                <TableCell>{fmtCurrency(invoice.total_Amount)}</TableCell>
+                <TableCell className="w-16">ကျပ်</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell className="font-medium">စရံငွေ</TableCell>
+                <TableCell>{fmtCurrency(invoice.reject_Amount)}</TableCell>
+                <TableCell>ကျပ်</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell className="font-medium">
+                  {invoice.orderStatus === "ORDER_COMPLETED"
+                    ? "ပေးပြီးငွေ"
+                    : "ကျန်ငွေ"}
+                </TableCell>
+                <TableCell
+                  className={
+                    invoice.orderStatus === "ORDER_COMPLETED"
+                      ? "text-green-600 font-medium"
+                      : ""
+                  }>
+                  {fmtCurrency(invoice.remaining_Amount)}
+                </TableCell>
+                <TableCell>ကျပ်</TableCell>
+              </TableRow>
+                                <TableRow>
+                    <TableCell className="font-medium w-1/3">
+                      ရက်ချိန်း
+                    </TableCell>
+                    <TableCell>
+                      {invoice.appointment_Date
+                        ? formatDate(invoice.appointment_Date)
+                        : "-"}
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell className="font-medium">အခြေအနေ</TableCell>
+                    <TableCell
+                      className={
+                        invoice.orderStatus === "ORDER_COMPLETED"
+                          ? "text-green-600 font-medium"
+                          : "text-amber-600"
+                      }>
+                      {ORDER_STATUS_LABELS[invoice.orderStatus] ??
+                        invoice.orderStatus}
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+                  
+            </Card>
+          )}
+
       {/* Customer */}
       <Card>
         <CardHeader>
@@ -84,7 +146,7 @@ export default async function InvoicePage({ params }: Props) {
               </TableRow>
               <TableRow>
                 <TableCell className="font-medium">အရောင်းဝန်ထမ်း</TableCell>
-                <TableCell>{invoice.seller}</TableCell>
+                <TableCell>{invoice.seller.name}</TableCell>
               </TableRow>
             </TableBody>
           </Table>
@@ -92,7 +154,7 @@ export default async function InvoicePage({ params }: Props) {
       </Card>
 
       {/* Amounts */}
-      <Card>
+{/*       <Card>
         <CardHeader>
           <CardTitle>ငွေကြေးအသေးစိတ်</CardTitle>
         </CardHeader>
@@ -112,14 +174,25 @@ export default async function InvoicePage({ params }: Props) {
                 <TableCell>ကျပ်</TableCell>
               </TableRow>
               <TableRow>
-                <TableCell className="font-medium">ကျန်ငွေ</TableCell>
-                <TableCell>{fmtCurrency(invoice.remaining_Amount)}</TableCell>
+                <TableCell className="font-medium">
+                  {invoice.orderStatus === "ORDER_COMPLETED"
+                    ? "ပေးပြီးငွေ"
+                    : "ကျန်ငွေ"}
+                </TableCell>
+                <TableCell
+                  className={
+                    invoice.orderStatus === "ORDER_COMPLETED"
+                      ? "text-green-600 font-medium"
+                      : ""
+                  }>
+                  {fmtCurrency(invoice.remaining_Amount)}
+                </TableCell>
                 <TableCell>ကျပ်</TableCell>
               </TableRow>
             </TableBody>
           </Table>
         </CardContent>
-      </Card>
+      </Card> */}
 
       {/* Product Details */}
       <Card>
@@ -212,37 +285,7 @@ export default async function InvoicePage({ params }: Props) {
             </Table>
           </div>
 
-          {invoice.isOrder && (
-            <Card className="bg-muted/50 p-4">
-              <CardTitle className="text-base mb-4">အော်ဒါအသေးစိတ်</CardTitle>
-              <Table>
-                <TableBody>
-                  <TableRow>
-                    <TableCell className="font-medium w-1/3">
-                      ရက်ချိန်း
-                    </TableCell>
-                    <TableCell>
-                      {invoice.appointment_Date
-                        ? formatDate(invoice.appointment_Date)
-                        : "-"}
-                    </TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell className="font-medium">အခြေအနေ</TableCell>
-                    <TableCell
-                      className={
-                        invoice.orderStatus === "ORDER_COMPLETED"
-                          ? "text-green-600 font-medium"
-                          : "text-amber-600"
-                      }>
-                      {ORDER_STATUS_LABELS[invoice.orderStatus] ??
-                        invoice.orderStatus}
-                    </TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
-            </Card>
-          )}
+
         </CardContent>
       </Card>
     </div>

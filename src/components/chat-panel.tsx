@@ -277,7 +277,6 @@ export function ChatPanel({
               className="w-full min-h-15 max-h-32 resize-none bg-transparent py-1.5 text-sm placeholder:text-muted-foreground/50 focus-visible:outline-none disabled:opacity-50 leading-5 field-sizing-content"
               rows={1}
               disabled={isLoading}
-              autoFocus
             />
             <Button
               type="submit"

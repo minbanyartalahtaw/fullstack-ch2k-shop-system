@@ -3,8 +3,9 @@
 import { useEffect, useRef, useState } from "react";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { PageTitle } from "@/components/page-title";
+import { ChatBotDrawer } from "@/components/chatbot-drawer";
 
-export function TopBar() {
+export function TopBar({ role }: { role: string }) {
   const [hidden, setHidden] = useState(false);
   const lastY = useRef(0);
 
@@ -28,7 +29,7 @@ export function TopBar() {
 
   return (
     <div
-      className={`h-10 sticky top-0 z-40 bg-background/60 backdrop-blur-md shadow-sm flex items-center flex-row p-2 transition-transform duration-300 ${
+      className={`h-10 sticky top-0 z-40 bg-background/60 backdrop-blur-md shadow-sm flex items-center justify-between p-2 transition-transform duration-300 ${
         hidden ? "-translate-y-full" : "translate-y-0"
       }`}
     >
@@ -36,6 +37,7 @@ export function TopBar() {
         <SidebarTrigger />
         <PageTitle />
       </div>
+      {role === "MANAGER" && <ChatBotDrawer />}
     </div>
   );
 }

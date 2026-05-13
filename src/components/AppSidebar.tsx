@@ -166,23 +166,6 @@ export function AppSidebar({ role, name }: Prop) {
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
-
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={isActivePath(
-                      pathname,
-                      "/office/manager/chatbot",
-                    )}>
-                    <Link href="/office/manager/chatbot">
-                      <div>
-                        <AppIcon name="bot" className="h-4 w-4" />
-                      </div>
-                      <span>AI Assistant</span>
-                      <Badge variant="outline">beta</Badge>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>

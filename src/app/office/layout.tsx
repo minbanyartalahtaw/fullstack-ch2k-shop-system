@@ -34,7 +34,7 @@ export default async function Layout({
       <SidebarProvider defaultOpen={sidebarOpen}>
         <AppSidebar role={role} name={name} />
         <SidebarInset>
-          <TopBar />
+          <TopBar role={role} />
           {children}
         </SidebarInset>
       </SidebarProvider>

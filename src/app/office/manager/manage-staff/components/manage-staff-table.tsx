@@ -248,13 +248,14 @@ export default function ManageStaffTable() {
 
   return (
     <div>
+    
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogTrigger asChild className="mb-5">
           <Button variant="outline" className="w-fit">
             အသစ်လုပ်ရန်
           </Button>
         </DialogTrigger>
-        <DialogContent className="max-w-md sm:max-w-lg max-h-[90dvh] flex flex-col p-0">
+        <DialogContent className="max-w-md sm:max-w-lg  flex flex-col p-0">
           <DialogHeader className="px-5 pt-5 sm:px-6 sm:pt-6">
             <div className="flex items-center gap-3">
               <div>
@@ -361,6 +362,7 @@ export default function ManageStaffTable() {
           </form>
         </DialogContent>
       </Dialog>
+      
 
       <div className="rounded-md border overflow-hidden">
         <div className="overflow-x-auto max-h-[calc(100vh-250px)]">
@@ -417,7 +419,7 @@ function FireStaffDialog({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant={staff.isFire ? "ghost" : "destructive"} size="sm" >
+        <Button variant={staff.isFire ? "outline" : "destructive"} size="sm" >
           {actionLabel}
         </Button>
       </DialogTrigger>

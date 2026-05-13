@@ -47,7 +47,7 @@ const COLUMNS: ColumnConfig[] = [
   { id: "customerName", label: "အမည်", visible: true },
   { id: "mobile", label: "ဖုန်းနံပါတ်", visible: true },
   { id: "purchaseDate", label: "ရက်စွဲ", visible: true },
-  { id: "productType", label: "ပစ္စည်းအမျိုးအစား", visible: true },
+  { id: "productType", label: "ပစ္စည်းအမျိုးအစား", visible: false },
   { id: "productName", label: "ပစ္စည်းအမည်", visible: true },
   { id: "totalAmount", label: "တန်ဖိုး", visible: true },
   { id: "orderType", label: "အော်ဒါ/အရောင်း", visible: true },
@@ -93,7 +93,7 @@ export function InvoiceHistoryTable() {
   const [pagination, setPagination] = useState({
     total: 0,
     page: initialPage,
-    limit: 13,
+    limit: 14,
     totalPages: 0,
   });
 

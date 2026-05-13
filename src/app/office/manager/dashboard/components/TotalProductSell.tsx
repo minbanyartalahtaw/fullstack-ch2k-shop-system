@@ -18,13 +18,13 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import { Button } from "@/components/ui/button";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
+
 } from "@/components/ui/card";
 import { AppIcon } from "@/components/app-icons";
 
@@ -46,7 +46,7 @@ interface Prop {
 export default function TotalProductSell({ data }: Prop) {
   const { resolvedTheme } = useTheme();
   const isDark = resolvedTheme === "dark";
-  const [chartType, setChartType] = useState<"donut" | "bar">("donut");
+  const [chartType, setChartType] = useState<"donut" | "bar">("bar");
 
   const total = data.reduce((sum, d) => sum + d.value, 0);
 
@@ -108,20 +108,18 @@ export default function TotalProductSell({ data }: Prop) {
             အမျိုးအစားအလိုက် ခွဲခြမ်းမှု
           </CardDescription>
         </div>
-        <div className="flex gap-1">
-          <Button
-            variant={chartType === "donut" ? "outline" : "ghost"}
-            size="sm"
-            onClick={() => setChartType("donut")}>
-            <AppIcon name="Pie" />
-          </Button>
-          <Button
-            variant={chartType === "bar" ? "outline" : "ghost"}
-            size="sm"
-            onClick={() => setChartType("bar")}>
-            <AppIcon name="LineChart" />
-          </Button>
-        </div>
+        <Tabs
+          value={chartType}
+          onValueChange={(v) => setChartType(v as "donut" | "bar")}>
+          <TabsList>
+            <TabsTrigger value="donut" className="px-2">
+              <AppIcon name="Pie" />
+            </TabsTrigger>
+            <TabsTrigger value="bar" className="px-2">
+              <AppIcon name="LineChart" />
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
       </CardHeader>
 
       <CardContent>

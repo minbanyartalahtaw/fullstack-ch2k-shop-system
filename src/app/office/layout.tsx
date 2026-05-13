@@ -1,6 +1,5 @@
 import {
   SidebarProvider,
-  SidebarTrigger,
   SidebarInset,
 } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
@@ -9,7 +8,7 @@ import { Metadata } from "next";
 import { cookies } from "next/headers";
 import { verifyJwt } from "@/lib/jwt";
 import { ThemeProvider } from "@/components/theme-provider";
-import { PageTitle } from "@/components/page-title";
+import { TopBar } from "@/components/top-bar";
 
 
 export const metadata: Metadata = {
@@ -35,13 +34,7 @@ export default async function Layout({
       <SidebarProvider defaultOpen={sidebarOpen}>
         <AppSidebar role={role} name={name} />
         <SidebarInset>
-          <div className="h-10 sticky top-0 z-40 bg-background/60 backdrop-blur-md shadow-sm flex items-center flex-row p-2">
-            <div className="text-sm font-medium flex items-center gap-2">
-              <SidebarTrigger />
-              <PageTitle />
-            </div>
-            
-          </div>
+          <TopBar />
           {children}
         </SidebarInset>
       </SidebarProvider>

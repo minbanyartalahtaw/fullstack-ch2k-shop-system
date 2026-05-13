@@ -14,11 +14,6 @@ import {
   SidebarMenuItem,
   SidebarMenuSub,
 } from "@/components/ui/sidebar";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "./ui/collapsible";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { logoutAction } from "@/app/action";
@@ -50,58 +45,47 @@ export function AppSidebar({ role, name }: Prop) {
           <SidebarGroupLabel>ဝန်ထမ်း</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              <Collapsible defaultOpen className="group/collapsible">
-                <SidebarMenuItem>
-                  <CollapsibleTrigger asChild>
-                    <SidebarMenuButton className="flex justify-between items-center gap-2">
-                      <div className="flex items-center gap-2 ">
-                        <AppIcon name="invoice" className="h-4 w-4" />
-                        <span>ဘောက်ချာ</span>
-                      </div>
-                      <div className="transition-transform duration-200 group-data-[state=open]/collapsible:rotate-180">
-                        <AppIcon name="chevronDown" className="h-4 w-4" />
-                      </div>
+              <SidebarMenuItem>
+                <SidebarMenuButton className="flex items-center gap-2">
+                  <AppIcon name="invoice" className="h-4 w-4" />
+                  <span>ဘောက်ချာ</span>
+                </SidebarMenuButton>
+                <SidebarMenuSub>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={isActivePath(
+                        pathname,
+                        "/office/staff/invoice/new",
+                      )}>
+                      <Link href="/office/staff/invoice/new">
+                        <div>
+                          <AppIcon name="newInvoice" className="h-4 w-4" />
+                        </div>
+                        <span>အသစ်လုပ်ရန်</span>
+                      </Link>
                     </SidebarMenuButton>
-                  </CollapsibleTrigger>
-                  <CollapsibleContent>
-                    <SidebarMenuSub>
-                      <SidebarMenuItem>
-                        <SidebarMenuButton
-                          asChild
-                          isActive={isActivePath(
-                            pathname,
-                            "/office/staff/invoice/new",
-                          )}>
-                          <Link href="/office/staff/invoice/new">
-                            <div>
-                              <AppIcon name="newInvoice" className="h-4 w-4" />
-                            </div>
-                            <span>အသစ်လုပ်ရန်</span>
-                          </Link>
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
-                      <SidebarMenuItem>
-                        <SidebarMenuButton
-                          asChild
-                          isActive={isActivePath(
-                            pathname,
-                            "/office/staff/invoice/history",
-                          )}>
-                          <Link href="/office/staff/invoice/history">
-                            <div>
-                              <AppIcon
-                                name="invoiceHistory"
-                                className="h-4 w-4"
-                              />
-                            </div>
-                            <span>အဟောင်းများ</span>
-                          </Link>
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
-                    </SidebarMenuSub>
-                  </CollapsibleContent>
-                </SidebarMenuItem>
-              </Collapsible>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={isActivePath(
+                        pathname,
+                        "/office/staff/invoice/history",
+                      )}>
+                      <Link href="/office/staff/invoice/history">
+                        <div>
+                          <AppIcon
+                            name="invoiceHistory"
+                            className="h-4 w-4"
+                          />
+                        </div>
+                        <span>အဟောင်းများ</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                </SidebarMenuSub>
+              </SidebarMenuItem>
 
               <SidebarMenuItem>
                 <SidebarMenuButton

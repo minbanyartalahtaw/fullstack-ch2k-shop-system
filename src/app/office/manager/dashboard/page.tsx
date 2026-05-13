@@ -9,7 +9,7 @@ import OrderTrackingCard from "./components/OrderTrackingCard";
 import { DashboardSkeleton } from "@/components/skeleton/dashboard-skeleton";
 
 async function getInvoiceStats() {
-  const totalInvoices = await prisma.invoice.count();
+
 
   const today = new Date();
   const sixMonthsAgo = new Date(today);
@@ -63,7 +63,7 @@ async function getInvoiceStats() {
     sell: sellByMonth[i],
   }));
 
-  return { totalInvoices, lineChartData };
+  return { lineChartData };
 }
 
 async function getProductStats() {
@@ -150,7 +150,7 @@ async function getBestSellers() {
 }
 
 async function DashboardContent() {
-  const { totalInvoices, lineChartData } = await getInvoiceStats();
+  const { lineChartData } = await getInvoiceStats();
   const { orderedProducts, takenProducts, donutChartData } =
     await getProductStats();
   const { rows: salesRows, types: salesTypes } = await getProductTypeSales();
@@ -165,54 +165,8 @@ async function DashboardContent() {
 
       <LineChart data={lineChartData} />
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-{/*         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-xl font-bold">ဘောက်ချာ</CardTitle>
-            <AppIcon name="invoice" className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableBody>
-                <TableRow>
-                  <TableCell className="text-sm text-muted-foreground">
-                    စုစုပေါင်းဘောက်ချာ
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <span className="font-bold">{totalInvoices}</span>
-                  </TableCell>
-                  <TableCell className="text-sm text-muted-foreground">
-                    ခု
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell className="text-sm text-muted-foreground">
-                    အော်ဒါဘောက်ချာ
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <span className="font-bold">{orderedProducts}</span>
-                  </TableCell>
-                  <TableCell className="text-sm text-muted-foreground">
-                    ခု
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell className="text-sm text-muted-foreground">
-                    အရောင်းဘောက်ချာ
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <span className="font-bold">
-                      {totalInvoices - orderedProducts}
-                    </span>
-                  </TableCell>
-                  <TableCell className="text-sm text-muted-foreground">
-                    ခု
-                  </TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card> */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-2">
+
 
         <OrderTrackingCard
           orderedProducts={orderedProducts}

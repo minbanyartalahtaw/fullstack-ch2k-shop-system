@@ -62,9 +62,9 @@ const COLUMNS: ColumnConfig[] = [
   { id: "mobile", label: "ဖုန်းနံပါတ်", visible: true },
   { id: "purchaseDate", label: "ရက်စွဲ", visible: true },
   { id: "appointmentDate", label: "ရက်ချိန်း", visible: true },
-  { id: "productType", label: "ပစ္စည်းအမျိုးအစား", visible: true },
+  { id: "productType", label: "ပစ္စည်းအမျိုးအစား", visible: false },
   { id: "productName", label: "ပစ္စည်းအမည်", visible: true },
-  { id: "totalAmount", label: "တန်ဖိုး", visible: true },
+  { id: "totalAmount", label: "တန်ဖိုး", visible: false },
   { id: "receivedAmount", label: "စရံငွေ", visible: true },
   { id: "remainingAmount", label: "ကျန်ငွေ", visible: true },
   { id: "length", label: "အရှည်", visible: false },
@@ -91,7 +91,7 @@ export function InvoiceHistoryTable() {
   const [pagination, setPagination] = useState({
     total: 0,
     page: initialPage,
-    limit: 13,
+    limit: 14,
     totalPages: 0,
   });
 
@@ -258,7 +258,12 @@ export function InvoiceHistoryTable() {
           </TableCell>
         )}
         {columnVisibility.remainingAmount && (
-          <TableCell className="border">
+          <TableCell
+            className={`border font-medium ${
+              invoice.orderStatus === ORDER_STATUS.ORDER_COMPLETED 
+                ? "text-green-600 dark:text-green-400"
+                : "text-red-600 dark:text-red-400"
+            }`}>
             {formatCurrency(invoice.remaining_Amount)}
           </TableCell>
         )}
@@ -380,7 +385,7 @@ export function InvoiceHistoryTable() {
       </div>
 
       <div className="rounded-md border overflow-hidden">
-        <div className="overflow-x-auto">
+        <div className="overflow-x-scroll">
           <Table>
             {renderTableHeader()}
             <TableBody>{renderTableBody()}</TableBody>

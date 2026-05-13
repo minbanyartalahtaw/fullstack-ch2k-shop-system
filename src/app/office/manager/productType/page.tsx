@@ -27,8 +27,10 @@ import { useEffect, useState } from "react";
 import { Switch } from "@/components/ui/switch";
 import { TableSkeleton } from "@/components/skeleton/table-skeleton";
 import { formatDate } from "@/lib/constants/date_format";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export default function NewProductType() {
+    const isMobile = useIsMobile();
   const [productTypes, setProductTypes] = useState<ProductType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [togglingIds, setTogglingIds] = useState<Set<number>>(new Set());
@@ -136,7 +138,10 @@ export default function NewProductType() {
 {/*         <CardHeader>
           <CardTitle>ပစ္စည်းအမျိုးအစား</CardTitle>
         </CardHeader> */}
-        <div className="pl-6">
+
+        <CardContent className={`${isMobile ? "p-3" : ""}`}>
+
+          <div className="mb-5">      
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
               <Button variant={"outline"} className="w-fit gap-2">
@@ -167,7 +172,6 @@ export default function NewProductType() {
             </DialogContent>
           </Dialog>
         </div>
-        <CardContent>
           <div className="rounded-md border overflow-hidden">
             <div className="overflow-x-auto max-h-[calc(100vh-270px)]">
               <Table>
